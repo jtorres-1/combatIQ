@@ -1,12 +1,13 @@
 {
   "name": "Ilia Topuria",
-  "record": "N/A",
-  "height": "N/A",
-  "reach": "N/A",
-  "stance": "N/A",
-  "weight": "N/A",
-  "team": "Tapology Team",
-  "last_opponent": "N/A",
-  "image_url": null,
-  "url": "https://www.tapology.com/fightcenter/fighters/129278-ilia-topuria"
+  "fighterId": "4350812",
+  "link": "https://www.espn.com/mma/fighter/_/id/4350812/ilia-topuria",
+  "image": "https://a.espncdn.com/i/headshots/mma/players/full/4350812.png",
+  "sport": "mma",
+  "record": "17-0-0",
+  "height": "5'7\" (170cm)",
+  "reach": "69.0\" (175cm)",
+  "weight_class": "Lightweight",
+  "last_weigh_in": "155.0 lbs",
+  "team": "Climent Club"
 }
