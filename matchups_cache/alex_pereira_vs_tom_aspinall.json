@@ -1,0 +1,36 @@
+{
+  "fighter1": "Alex pereira",
+  "fighter2": "tom Aspinall",
+  "stats1": {
+    "name": "Alex Pereira",
+    "fighterId": "4705658",
+    "link": "https://www.espn.com/mma/fighter/_/id/4705658/alex-pereira",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/4705658.png",
+    "sport": "mma",
+    "record": "13-3-0",
+    "height": "6'0\" (183cm)",
+    "reach": "73.0\" (185cm)",
+    "weight_class": "Light Heavyweight",
+    "last_weigh_in": "191.7 lbs",
+    "team": "Dragon Fight / Nova União"
+  },
+  "stats2": {
+    "name": "Tom Aspinall",
+    "fighterId": "4010976",
+    "link": "https://www.espn.com/mma/fighter/_/id/4010976/tom-aspinall",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/4010976.png",
+    "sport": "mma",
+    "record": "15-3-0",
+    "height": "6'5\" (196cm)",
+    "reach": "78.0\" (198cm)",
+    "weight_class": "Heavyweight",
+    "last_weigh_in": "251.0 lbs",
+    "team": "N/A"
+  },
+  "result": "<h3>Fight Analysis: Alex Pereira vs. Tom Aspinall</h3>\n\n<h4>Striking</h4>\n<p>\n    <strong>Alex Pereira</strong> is known for his striking pedigree, having built a reputation in kickboxing before transitioning to MMA. With a professional MMA record of <strong>13 wins</strong> and <strong>3 losses</strong>, Pereira has demonstrated knockout power, particularly in the Light Heavyweight division. His striking accuracy and ability to control distance are important aspects of his game.\n</p>\n<p>\n    <strong>Tom Aspinall</strong> also possesses striking skills that complement his grappling. Although primarily a heavyweight fighter with a record of <strong>15 wins</strong> and <strong>3 losses</strong>, Aspinall utilizes his reach advantage effectively; he stands <strong>6'5\"</strong> and has a reach of <strong>78.0 inches</strong>. This gives him a favorable range when striking his opponents.\n</p>\n<p>\n    In terms of striking, this matchup shows a competitive edge for Pereira due to his extensive striking background, but Aspinall's reach may allow him to keep Pereira at bay while maintaining an offensive stance.\n</p>\n\n<h4>Grappling</h4>\n<p>\n    Grappling may play a significant role in this matchup. Pereira's grappling skills have been improving, but he is not primarily known for his ground game. On the other hand, Aspinall has shown a strong grappling foundation, utilizing his size and strength to control opponents on the ground. Aspinall is adept at submissions and ground-and-pound, which could lead to a tactical advantage if he can get Pereira down.\n</p>\n<p>\n    Thus, Aspinall may have the edge in grappling exchanges, furthering his ability to dictate the pace of the fight, especially if he neutralizes Pereira's striking power by bringing the fight to the ground.\n</p>\n\n<h4>Fight IQ</h4>\n<p>\n    Both fighters exhibit high fight IQ in their performances, but they do so in different ways. Pereira is experienced in high-pressure situations after his time in kickboxing and has the ability to make adjustments mid-fight. His experience in championship rounds (due to long rounds in kickboxing) gives him confidence in deep waters.\n</p>\n<p>\n    Aspinall, having fought against a variety of styles, shows adaptability and the capacity to toggle between striking and grappling effectively. His ability to read opponent weaknesses allows him to exploit them during fights, which is a crucial aspect of high fight IQ.\n</p>\n\n<h4>Current Form</h4>\n<p>\n    As of their last bouts, both fighters are relatively active, but Aspinall has shown a more consistent winning trajectory in recent fights. Pereira is still a formidable opponent, but he may face challenges moving up in weight to face heavier hitters like Aspinall. The heavyweight division generally operates at a different intensity regarding both power and pace.\n</p>\n<p>\n    While Pereira remains a dangerous competitor with knockout abilities, Aspinall appears to be in a solid form, benefiting from his recent successes and a style that allows him to blend striking with effective grappling.\n</p>\n\n<h4>Prediction</h4>\n<p>\n    Considering striking, grappling, fight IQ, and current form, the most likely winner in a matchup between <strong>Alex Pereira</strong> and <strong>Tom Aspinall</strong> would be <strong>Tom Aspinall</strong>. His advantages in grappling, combined with his reach and current performance trends, suggest that he can implement a game plan that could neutralize Pereira's striking proficiency.\n</p>\n\n<h4>Final Thoughts</h4>\n<p>\n    While anything can happen in MMA, Tom Aspinall's skills and recent form position him as the likely victor in this matchup. Each fighter has their strengths, but the well-rounded game of Aspinall might just prove too much for Pereira in a potential bout.\n</p>",
+  "confidence": 72,
+  "height1_pct": 48,
+  "height2_pct": 52,
+  "reach1_pct": 48,
+  "reach2_pct": 52
+}

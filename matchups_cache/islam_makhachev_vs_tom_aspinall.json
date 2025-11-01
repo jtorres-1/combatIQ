@@ -1,0 +1,36 @@
+{
+  "fighter1": "islam makhachev",
+  "fighter2": "tom aspinall",
+  "stats1": {
+    "name": "Islam Makhachev",
+    "fighterId": "3332412",
+    "link": "https://www.espn.com/mma/fighter/_/id/3332412/islam-makhachev",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/3332412.png",
+    "sport": "mma",
+    "record": "27-1-0",
+    "height": "5'10\" (178cm)",
+    "reach": "70.5\" (179cm)",
+    "weight_class": "Lightweight",
+    "last_weigh_in": "154.5 lbs",
+    "team": "Fightspirit Team"
+  },
+  "stats2": {
+    "name": "Tom Aspinall",
+    "fighterId": "4010976",
+    "link": "https://www.espn.com/mma/fighter/_/id/4010976/tom-aspinall",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/4010976.png",
+    "sport": "mma",
+    "record": "15-3-0",
+    "height": "6'5\" (196cm)",
+    "reach": "78.0\" (198cm)",
+    "weight_class": "Heavyweight",
+    "last_weigh_in": "251.0 lbs",
+    "team": "N/A"
+  },
+  "result": "<h3>MMA Fight Analysis: Islam Makhachev vs. Tom Aspinall</h3>\n\n<div>\n    <img src=\"https://a.espncdn.com/i/headshots/mma/players/full/3332412.png\" alt=\"Islam Makhachev\" style=\"width: 150px; height: auto;\">\n    <h4>Fighter Profile: Islam Makhachev</h4>\n    <p><strong>Record:</strong> 27-1-0</p>\n    <p><strong>Height:</strong> 5'10\" (178cm)</p>\n    <p><strong>Reach:</strong> 70.5\" (179cm)</p>\n    <p><strong>Weight Class:</strong> Lightweight</p>\n    <p><strong>Last Weigh-in:</strong> 154.5 lbs</p>\n    <p><strong>Team:</strong> Fightspirit Team</p>\n    <p><a href=\"https://www.espn.com/mma/fighter/_/id/3332412/islam-makhachev\">More about Islam Makhachev</a></p>\n</div>\n\n<div>\n    <img src=\"https://a.espncdn.com/i/headshots/mma/players/full/4010976.png\" alt=\"Tom Aspinall\" style=\"width: 150px; height: auto;\">\n    <h4>Fighter Profile: Tom Aspinall</h4>\n    <p><strong>Record:</strong> 15-3-0</p>\n    <p><strong>Height:</strong> 6'5\" (196cm)</p>\n    <p><strong>Reach:</strong> 78.0\" (198cm)</p>\n    <p><strong>Weight Class:</strong> Heavyweight</p>\n    <p><strong>Last Weigh-in:</strong> 251.0 lbs</p>\n    <p><a href=\"https://www.espn.com/mma/fighter/_/id/4010976/tom-aspinall\">More about Tom Aspinall</a></p>\n</div>\n\n<h4>Fight Analysis</h4>\n<h5>Striking</h5>\n<p>Islam Makhachev is known for his well-rounded striking but excels more in grappling. His ability to mix his strikes with takedown threats makes him a formidable opponent, while Tom Aspinall possesses explosive striking power with a more kickboxing-oriented style. Aspinall's reach advantage may help him in standing exchanges, allowing him to keep Makhachev at bay.</p>\n\n<h5>Grappling</h5>\n<p>Makhachev's background in wrestling and Sambo provides him with elite grappling skills. He effectively uses his grappling to dictate the pace of fights and transition into submissions when the opportunity arises. Aspinall, primarily a striker, has shown some grappling skills, but he will be at a significant disadvantage against an elite grappler like Makhachev, who can exploit weaknesses on the ground.</p>\n\n<h5>Fight IQ</h5>\n<p>Makhachev's fight IQ is often highlighted by his ability to adapt during fights, making intelligent adjustments to his game plan based on his opponents' weaknesses. Aspinall, while tactical, has less experience in high-stakes fights compared to Makhachev, which may affect his ability to execute plans under pressure.</p>\n\n<h5>Current Form</h5>\n<p>Makhachev is riding a significant win streak and has been active in the Lightweight division, showcasing consistent improvement in performance. In contrast, Aspinall has faced challenges that have halted his momentum, including injuries and lower-level competition due to fluctuating activity in the Heavyweight division.</p>\n\n<h4>Prediction</h4>\n<p>Based on the analysis of striking, grappling, fight IQ, and current form, the most likely winner is <strong>Islam Makhachev</strong>. His superior grappling ability, fight experience, and current form provide him with the advantages needed to secure a victory against Tom Aspinall.</p>",
+  "confidence": 82,
+  "height1_pct": 90.81632653061224,
+  "height2_pct": 100.0,
+  "reach1_pct": 90.40404040404042,
+  "reach2_pct": 100.0
+}

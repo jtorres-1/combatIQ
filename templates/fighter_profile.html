@@ -1,0 +1,54 @@
+<!-- templates/fighter_profile.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ fighter }} — CombatIQ Profile</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>⚔️ {{ fighter }} — CombatIQ Profile</h1>
+
+        {% if stats %}
+        <div class="fighter-card" style="margin: 0 auto;">
+            <h3>{{ fighter }}</h3>
+            <p><strong>Height:</strong> {{ stats.get('height', 'N/A') }}</p>
+            <p><strong>Weight:</strong> {{ stats.get('weight', 'N/A') }}</p>
+            <p><strong>Reach:</strong> {{ stats.get('reach', 'N/A') }}</p>
+            <p><strong>Stance:</strong> {{ stats.get('stance', 'N/A') }}</p>
+            <p><strong>DOB:</strong> {{ stats.get('dob', 'N/A') }}</p>
+            <hr style="border: 0.5px solid #ff4d4d; margin: 15px 0;">
+            <h4>📊 Career Statistics</h4>
+            <p><strong>SLpM:</strong> {{ stats.get('sig_strikes_per_min', 'N/A') }}</p>
+            <p><strong>Striking Accuracy:</strong> {{ stats.get('striking_accuracy', 'N/A') }}%</p>
+            <p><strong>SApM:</strong> {{ stats.get('sig_strikes_absorbed_per_min', 'N/A') }}</p>
+            <p><strong>Striking Defense:</strong> {{ stats.get('striking_defense', 'N/A') }}%</p>
+            <p><strong>Takedown Avg:</strong> {{ stats.get('takedown_avg', 'N/A') }}</p>
+            <p><strong>Takedown Accuracy:</strong> {{ stats.get('takedown_accuracy', 'N/A') }}%</p>
+            <p><strong>Takedown Defense:</strong> {{ stats.get('takedown_defense', 'N/A') }}%</p>
+            <p><strong>Submission Avg:</strong> {{ stats.get('submissions_avg', 'N/A') }}</p>
+            <hr style="border: 0.5px solid #ff4d4d; margin: 15px 0;">
+            <h4>⚙️ Averages (Normalized)</h4>
+            <p><strong>Avg Sig Strikes:</strong> {{ stats.get('avg_sig_strikes', 'N/A') }}</p>
+            <p><strong>Avg Takedowns:</strong> {{ stats.get('avg_takedowns', 'N/A') }}</p>
+            <p><strong>Avg Submissions:</strong> {{ stats.get('avg_submissions', 'N/A') }}</p>
+            {% if stats.get('team') %}
+                <hr style="border: 0.5px solid #ff4d4d; margin: 15px 0;">
+                <p><strong>Team:</strong> {{ stats['team'] }}</p>
+            {% endif %}
+            {% if stats.get('weight_class') %}
+                <p><strong>Weight Class:</strong> {{ stats['weight_class'] }}</p>
+            {% endif %}
+        </div>
+        {% else %}
+            <p>⚠️ Fighter data unavailable. Try refreshing or checking the spelling.</p>
+        {% endif %}
+
+        <div style="margin-top: 40px;">
+            <a href="/" style="color:#ff4d4d; text-decoration:none;">← Back to Fight Predictor</a>
+        </div>
+    </div>
+</body>
+</html>

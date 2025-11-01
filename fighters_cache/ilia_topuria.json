@@ -1,13 +1,25 @@
 {
   "name": "Ilia Topuria",
-  "fighterId": "4350812",
-  "link": "https://www.espn.com/mma/fighter/_/id/4350812/ilia-topuria",
-  "image": "https://a.espncdn.com/i/headshots/mma/players/full/4350812.png",
-  "sport": "mma",
-  "record": "17-0-0",
-  "height": "5'7\" (170cm)",
-  "reach": "69.0\" (175cm)",
+  "source": [
+    "ufcstats",
+    "tapology"
+  ],
+  "height": "5' 7\"",
+  "weight": "155 lbs.",
+  "reach": "69\"",
+  "dob": "Jan 21, 1997",
+  "sig_strikes_per_min": 4.81,
+  "striking_accuracy": 48.0,
+  "sig_strikes_absorbed_per_min": 3.83,
+  "striking_defense": 64.0,
+  "takedown_avg": 1.96,
+  "takedown_accuracy": 61.0,
+  "takedown_defense": 93.0,
+  "submissions_avg": 1.1,
+  "avg_sig_strikes": 15.0,
+  "avg_takedowns": 3.08,
+  "avg_submissions": 2.26,
+  "image": "https://images.tapology.com/letterbox_images/129278/default/f.elconfidencial.com_original_d70_97f_0c5_d7097f0c5fa2faa6da13f7005e95997c_edit_9549835779116750.jpg?1675041526",
   "weight_class": "Lightweight",
-  "last_weigh_in": "155.0 lbs",
   "team": "Climent Club"
 }

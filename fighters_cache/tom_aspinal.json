@@ -1,0 +1,25 @@
+{
+  "name": "tom aspinal",
+  "source": [
+    "ufcstats",
+    "tapology"
+  ],
+  "height": "6' 5\"",
+  "weight": "255 lbs.",
+  "reach": "78\"",
+  "dob": "Apr 11, 1993",
+  "sig_strikes_per_min": 7.63,
+  "striking_accuracy": 67.0,
+  "sig_strikes_absorbed_per_min": 3.62,
+  "striking_defense": 56.0,
+  "takedown_avg": 2.62,
+  "takedown_accuracy": 80.0,
+  "takedown_defense": 100,
+  "submissions_avg": 1.3,
+  "avg_sig_strikes": 15.0,
+  "avg_takedowns": 4.44,
+  "avg_submissions": 2.22,
+  "image": "https://images.tapology.com/letterbox_images/23273/default/3750412-76298168-2560-1440_2.jpg?1761945563",
+  "weight_class": "Heavyweight",
+  "team": "Team Kaobon Liverpool"
+}

@@ -1,0 +1,36 @@
+{
+  "fighter1": "ilia topuria",
+  "fighter2": "Justin Gaethje",
+  "stats1": {
+    "name": "Ilia Topuria",
+    "fighterId": "4350812",
+    "link": "https://www.espn.com/mma/fighter/_/id/4350812/ilia-topuria",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/4350812.png",
+    "sport": "mma",
+    "record": "17-0-0",
+    "height": "5'7\" (170cm)",
+    "reach": "69.0\" (175cm)",
+    "weight_class": "Lightweight",
+    "last_weigh_in": "155.0 lbs",
+    "team": "Climent Club"
+  },
+  "stats2": {
+    "name": "Justin Gaethje",
+    "fighterId": "3022345",
+    "link": "https://www.espn.com/mma/fighter/_/id/3022345/justin-gaethje",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/3022345.png",
+    "sport": "mma",
+    "record": "26-5-0",
+    "height": "5'11\" (181cm)",
+    "reach": "70.0\" (178cm)",
+    "weight_class": "Lightweight",
+    "last_weigh_in": "156.0 lbs",
+    "team": "N/A"
+  },
+  "result": "<h3>Fight Analysis: Ilia Topuria vs. Justin Gaethje</h3>\n\n<h4>General Overview</h4>\n<p>\n    The upcoming clash between <strong><a href=\"https://www.espn.com/mma/fighter/_/id/4350812/ilia-topuria\">Ilia Topuria</a></strong> and <strong><a href=\"https://www.espn.com/mma/fighter/_/id/3022345/justin-gaethje\">Justin Gaethje</a></strong> promises to be a thrilling encounter in the lightweight division. Topuria enters this fight undefeated with a record of 17-0-0, showcasing his grappling prowess along with impressive striking. On the other hand, Gaethje, known for his striking power and relentless fighting style, holds a record of 26-5-0.\n</p>\n\n<h4>Striking</h4>\n<p>\n    Justin Gaethje is recognized for his exceptional striking and has one of the highest knockout rates in MMA. His boxing skills, combined with leg kicks, allow him to both control the distance and inflict significant damage. Gaethje's ability to engage in striking exchanges makes him a dangerous opponent. \n    <br/>\n    In contrast, Ilia Topuria has demonstrated effective striking as well, with notable knockout power and accuracy. Topuria tends to engage with a more mixed approach, blending strikes with his grappling game. His ability to adapt during fights could counter some of Gaethje's striking strengths.\n</p>\n\n<h4>Grappling</h4>\n<p>\n    This is where Ilia Topuria might find a significant advantage. He possesses an impressive grappling skill set, capable of executing takedowns and controlling opponents on the ground. Topuria has shown his ability to submit opponents, which adds an additional threat when the fight transitions to the ground. \n    <br/>\n    Justin Gaethje has traditionally relied more on striking, although he has wrestling credentials from his college days. However, he might be hesitant to grapple due to Topuria's submission skills, which could limit his options if the fight goes to that area.\n</p>\n\n<h4>Fight IQ</h4>\n<p>\n    Fight IQ is crucial in determining the outcome of a fight. Justin Gaethje has shown remarkable adaptability and strategic thinking in his recent bouts, often adjusting his game plan mid-fight to secure victories. His experience in high-pressure situations has honed his instincts.\n    <br/>\n    Ilia Topuria, while slightly less experienced, has showcased high fight IQ in his performances, showing the ability to read his opponents effectively and adjust accordingly. However, this fight will be one of the most significant tests of his career thus far.\n</p>\n\n<h4>Current Form</h4>\n<p>\n    Ilia Topuria is currently undefeated and has built momentum with consecutive wins, reflecting his growth as a fighter. His confidence and form suggest that he is at his peak, ready to confront a high-caliber opponent like Gaethje.\n    <br/>\n    Justin Gaethje has been in the title conversation for years and remains a dangerous competition, but there have been signs of vulnerability in his last fights that could be taken advantage of by a younger, faster opponent like Topuria.\n</p>\n\n<h4>Predicted Winner</h4>\n<p>\n    Considering all aspects—striking, grappling, fight IQ, and current form—Ilia Topuria emerges as the most likely winner in this matchup. His grappling advantage, combined with effective striking and an undefeated mindset, gives him the edge against Gaethje’s striking-heavy style.\n</p>",
+  "confidence": 72,
+  "height1_pct": 93.92265193370166,
+  "height2_pct": 100.0,
+  "reach1_pct": 98.31460674157303,
+  "reach2_pct": 100.0
+}

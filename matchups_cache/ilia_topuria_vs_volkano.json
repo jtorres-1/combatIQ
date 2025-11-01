@@ -1,0 +1,60 @@
+{
+  "fighter1": "Ilia Topuria",
+  "fighter2": "Volkano",
+  "stats1": {
+    "name": "Ilia Topuria",
+    "source": [
+      "ufcstats",
+      "tapology"
+    ],
+    "height": "5' 7\"",
+    "weight": "155 lbs.",
+    "reach": "69\"",
+    "dob": "Jan 21, 1997",
+    "sig_strikes_per_min": 4.81,
+    "striking_accuracy": 48.0,
+    "sig_strikes_absorbed_per_min": 3.83,
+    "striking_defense": 64.0,
+    "takedown_avg": 1.96,
+    "takedown_accuracy": 61.0,
+    "takedown_defense": 93.0,
+    "submissions_avg": 1.1,
+    "avg_sig_strikes": 4325.89,
+    "avg_takedowns": 12.33,
+    "avg_submissions": 6.78,
+    "image": "https://images.tapology.com/letterbox_images/129278/default/f.elconfidencial.com_original_d70_97f_0c5_d7097f0c5fa2faa6da13f7005e95997c_edit_9549835779116750.jpg?1675041526",
+    "weight_class": "Lightweight",
+    "team": "Climent Club"
+  },
+  "stats2": {
+    "name": "Volkano",
+    "source": [
+      "ufcstats",
+      "tapology"
+    ],
+    "height": "5' 6\"",
+    "weight": "145 lbs.",
+    "reach": "71\"",
+    "dob": "Sep 29, 1988",
+    "sig_strikes_per_min": 6.18,
+    "striking_accuracy": 56.0,
+    "sig_strikes_absorbed_per_min": 3.36,
+    "striking_defense": 58.0,
+    "takedown_avg": 1.67,
+    "takedown_accuracy": 34.0,
+    "takedown_defense": 70.0,
+    "submissions_avg": 0.2,
+    "avg_sig_strikes": 35603.71,
+    "avg_takedowns": 18.94,
+    "avg_submissions": 1.94,
+    "image": "https://images.tapology.com/letterbox_images/41705/default/Screenshot.png?1751298323",
+    "weight_class": "Featherweight",
+    "team": "N/A"
+  },
+  "result": "<h3>Fight Analysis: Ilia Topuria vs. Volkano</h3>\n\n<h4>Overview</h4>\n<p>This analysis covers the matchup between Ilia Topuria and Volkano, focusing on their striking, grappling, fight IQ, and current form to predict the most likely winner.</p>\n\n<h4>Striking</h4>\n<p><strong>Ilia Topuria:</strong> With an average of 4.81 significant strikes landed per minute and a striking accuracy of 48.0%, Topuria demonstrates solid offensive capabilities. He absorbs 3.83 strikes per minute but boasts a striking defense of 64.0%, allowing him to mitigate the damage he takes during bouts.</p>\n<p><strong>Volkano:</strong> Volkano is the more active striker, landing 6.18 significant strikes per minute with a higher striking accuracy of 56.0%. He absorbs fewer strikes at 3.36 per minute, and his striking defense stands at 58.0%, making him slightly more vulnerable than Topuria in terms of defense.</p>\n\n<h4>Grappling</h4>\n<p><strong>Ilia Topuria:</strong> Topuria averages 1.96 takedowns per 15 minutes, boasting an impressive takedown accuracy of 61.0% and takedown defense of 93.0%. He also has a submission average of 1.1 per fight, showcasing his grappling prowess.</p>\n<p><strong>Volkano:</strong> Volkano averages fewer takedowns at 1.67 with a lower takedown accuracy of 34.0%. His takedown defense, rated at 70.0%, leaves him somewhat exposed against a high-level grappler like Topuria. Additionally, he shows limited submission attempts with an average of only 0.2 submissions per fight.</p>\n\n<h4>Fight IQ</h4>\n<p><strong>Ilia Topuria:</strong> Topuria has demonstrated high fight IQ in his previous bouts, showing an ability to adapt his strategy and utilize his grappling effectively when needed. His experience and tactical approach give him an edge in determining when to strike or grapple.</p>\n<p><strong>Volkano:</strong> While Volkano also exhibits awareness in the octagon, his reliance on striking might limit his adaptability against an opponent like Topuria, who excels in grappling.</p>\n\n<h4>Current Form</h4>\n<p><strong>Ilia Topuria:</strong> Topuria has been on an upward trajectory, displaying improved skills in both striking and grappling throughout his recent fights. His confidence is likely high, considering his current form.</p>\n<p><strong>Volkano:</strong> Volkano’s form is less clear, as he has not faced the same caliber of opponents as Topuria. While competent, his recent performance may not match the momentum Topuria has built.</p>\n\n<h4>Prediction</h4>\n<p>Considering the factors analyzed, <strong>Ilia Topuria</strong> emerges as the most likely winner in this matchup. His superior grappling ability, better takedown defense, and overall fight IQ give him a significant advantage. While Volkano's striking output is impressive, Topuria's all-around skills and strategic fighting style position him favorably for victory.</p>\n\n<p>Images of the fighters:</p>\n<img src=\"https://images.tapology.com/letterbox_images/129278/default/f.elconfidencial.com_original_d70_97f_0c5_d7097f0c5fa2faa6da13f7005e95997c_edit_9549835779116750.jpg?1675041526\" alt=\"Ilia Topuria\" width=\"200\" />\n<img src=\"https://images.tapology.com/letterbox_images/41705/default/Screenshot.png?1751298323\" alt=\"Volkano\" width=\"200\" />",
+  "confidence": 82,
+  "height1_pct": 100.0,
+  "height2_pct": 100.0,
+  "reach1_pct": 100.0,
+  "reach2_pct": 100.0
+}

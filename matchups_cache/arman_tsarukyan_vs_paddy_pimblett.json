@@ -1,0 +1,36 @@
+{
+  "fighter1": "arman tsarukyan",
+  "fighter2": "paddy pimblett",
+  "stats1": {
+    "name": "Arman Tsarukyan",
+    "fighterId": "4419372",
+    "link": "https://www.espn.com/mma/fighter/_/id/4419372/arman-tsarukyan",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/4419372.png",
+    "sport": "mma",
+    "record": "22-3-0",
+    "height": "5'7\" (170cm)",
+    "reach": "72.5\" (184cm)",
+    "weight_class": "Lightweight",
+    "last_weigh_in": "174.8 lbs",
+    "team": "Khabarovsk MMA"
+  },
+  "stats2": {
+    "name": "Paddy Pimblett",
+    "fighterId": "4008549",
+    "link": "https://www.espn.com/mma/fighter/_/id/4008549/paddy-pimblett",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/4008549.png",
+    "sport": "mma",
+    "record": "23-3-0",
+    "height": "5'10\" (178cm)",
+    "reach": "73.0\" (185cm)",
+    "weight_class": "Lightweight",
+    "last_weigh_in": "156.0 lbs",
+    "team": "Next Generation MMA Liverpool"
+  },
+  "result": "<h3>Fight Analysis: Arman Tsarukyan vs. Paddy Pimblett</h3>\n\n<h4>Overview</h4>\n<p>\n    In this matchup between Arman Tsarukyan and Paddy Pimblett, we will take a closer look at several key factors: striking, grappling, fight IQ, and current form, to predict the most likely winner.\n</p>\n\n<h4>Fighter Profiles</h4>\n<p>\n    <strong>Arman Tsarukyan</strong><br>\n    Record: 22-3-0<br>\n    Height: 5'7\" (170 cm)<br>\n    Reach: 72.5\" (184 cm)<br>\n    Team: Khabarovsk MMA<br>\n    <a href=\"https://www.espn.com/mma/fighter/_/id/4419372/arman-tsarukyan\"><img src=\"https://a.espncdn.com/i/headshots/mma/players/full/4419372.png\" alt=\"Arman Tsarukyan\" /></a>\n</p>\n\n<p>\n    <strong>Paddy Pimblett</strong><br>\n    Record: 23-3-0<br>\n    Height: 5'10\" (178 cm)<br>\n    Reach: 73.0\" (185 cm)<br>\n    Team: Next Generation MMA Liverpool<br>\n    <a href=\"https://www.espn.com/mma/fighter/_/id/4008549/paddy-pimblett\"><img src=\"https://a.espncdn.com/i/headshots/mma/players/full/4008549.png\" alt=\"Paddy Pimblett\" /></a>\n</p>\n\n<h4>Striking</h4>\n<p>\n    Tsarukyan showcases well-rounded striking with a solid kickboxing base, emphasizing volume and accuracy. His striking defense is effective, allowing him to evade attacks while setting up counters.\n    Pimblett, on the other hand, possesses unorthodox striking that can be unpredictable. While he has shown power and creativity, he is sometimes prone to being drawn into brawls, which could play into Tsarukyan's hands.\n</p>\n\n<h4>Grappling</h4>\n<p>\n    Tsarukyan has a robust wrestling background and demonstrates a strong ability to maintain control on the ground. His takedown accuracy and ability to transition into submissions highlight a superior grappling skill set.\n    Pimblett, while capable on the ground, often relies on his guard and scrambles rather than offensive wrestling. This may put him at a disadvantage against Tsarukyan's wrestling-based approach.\n</p>\n\n<h4>Fight IQ</h4>\n<p>\n    Tsarukyan has shown high fight IQ, effectively adapting his strategy mid-fight and utilizing his skill set intelligently. His ability to manage distance and dictate the pace has been a cornerstone of his success.\n    Pimblett exhibits charisma and capability but has sometimes made strategic errors that can be costly in high-stakes matchups. This could potentially give Tsarukyan an edge in maintaining control throughout the fight.\n</p>\n\n<h4>Current Form</h4>\n<p>\n    Tsarukyan comes into the match with strong momentum, having faced higher caliber opponents and showing steady improvement in all aspects of his game. His recent performances highlight consistency in both striking and grappling.\n    Pimblett has also shown promise but has faced a range of competition. His last fight raised some questions regarding his readiness against top-tier opposition, which could affect his confidence going into this bout.\n</p>\n\n<h4>Prediction</h4>\n<p>\n    Based on an analysis of striking, grappling, fight IQ, and current form, the most likely winner of this matchup is <strong>Arman Tsarukyan</strong>. His well-rounded skill set and strategic approach should enable him to navigate Pimblett's unpredictability and secure a victory, likely via decision or a submission.\n</p>",
+  "confidence": 80,
+  "height1_pct": 95.50561797752809,
+  "height2_pct": 100.0,
+  "reach1_pct": 99.45945945945947,
+  "reach2_pct": 100.0
+}

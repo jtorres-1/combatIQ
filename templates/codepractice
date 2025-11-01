@@ -1,0 +1,67 @@
+numnbers = [3, 6, 9, 12]
+for n in numbers:
+    print(n * 2)
+
+
+
+score = 88
+if score >= 90:
+    print("A")
+elif score >= 80:
+    print("B")
+else:
+    print("C")
+
+user = {"name": "Jesse", "role": "FDE", "age": 23}
+print(user["name"])
+for key, value in user.items():
+    print(key, value)
+
+def greet(name):
+    return f"Hey {name}, welcome aboard!"
+
+import requests, json
+
+
+import requests
+
+def get_group_users():
+    url = "https://jsonpaceholder.typicode.com.users"
+    res =requests.get(url)
+    data = res.json()
+
+    group_users = []
+    for user in data: 
+        if "Group" in user["company"]["name"]:
+            group_users.append(user["name"])
+
+    return group_users
+print(get_group_users())
+
+
+import requests
+
+def get_group_users():
+    url = "https://jsonplaceholder,typicodecom/users"
+    res = requests.get(url)
+    data = res.json()
+
+    group_users = []
+    for user in data:
+        if "Group" in user["company"]["name"]:
+            group_users.append(user["name"])
+    return group_users
+print(get_group_users)
+
+
+users = [
+    {"name: "Ava", "score": 91},
+     {"name": "Ben", "score": 78"},
+    {"name": "Chris", "score": 95},
+    {"name": "Dana", "score": 83}
+
+]
+
+top_three = sorted9users, key=lambda u: u["score"], reverse=True)[:3]
+for u in top_three: 
+    print(u["name"], u["score"])

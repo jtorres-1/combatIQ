@@ -1,0 +1,36 @@
+{
+  "fighter1": "ilia topuria",
+  "fighter2": "islam makhachev",
+  "stats1": {
+    "name": "Ilia Topuria",
+    "fighterId": "4350812",
+    "link": "https://www.espn.com/mma/fighter/_/id/4350812/ilia-topuria",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/4350812.png",
+    "sport": "mma",
+    "record": "17-0-0",
+    "height": "5'7\" (170cm)",
+    "reach": "69.0\" (175cm)",
+    "weight_class": "Lightweight",
+    "last_weigh_in": "155.0 lbs",
+    "team": "Climent Club"
+  },
+  "stats2": {
+    "name": "Islam Makhachev",
+    "fighterId": "3332412",
+    "link": "https://www.espn.com/mma/fighter/_/id/3332412/islam-makhachev",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/3332412.png",
+    "sport": "mma",
+    "record": "27-1-0",
+    "height": "5'10\" (178cm)",
+    "reach": "70.5\" (179cm)",
+    "weight_class": "Lightweight",
+    "last_weigh_in": "154.5 lbs",
+    "team": "Fightspirit Team"
+  },
+  "result": "<h3>Fight Analysis: Ilia Topuria vs. Islam Makhachev</h3>\n\n<h4>Fighter Profiles</h4>\n<p>\n    <strong>Ilia Topuria</strong>: \n    <a href=\"https://www.espn.com/mma/fighter/_/id/4350812/ilia-topuria\">\n        ![Ilia Topuria](https://a.espncdn.com/i/headshots/mma/players/full/4350812.png)\n    </a>\n    <br>\n    Record: 17-0-0<br>\n    Height: 5'7\" (170cm)<br>\n    Reach: 69.0\" (175cm)<br>\n    Weight Class: Lightweight<br>\n    Last Weigh-In: 155.0 lbs<br>\n    Team: Climent Club\n</p>\n\n<p>\n    <strong>Islam Makhachev</strong>: \n    <a href=\"https://www.espn.com/mma/fighter/_/id/3332412/islam-makhachev\">\n        ![Islam Makhachev](https://a.espncdn.com/i/headshots/mma/players/full/3332412.png)\n    </a>\n    <br>\n    Record: 27-1-0<br>\n    Height: 5'10\" (178cm)<br>\n    Reach: 70.5\" (179cm)<br>\n    Weight Class: Lightweight<br>\n    Last Weigh-In: 154.5 lbs<br>\n    Team: Fightspirit Team\n</p>\n\n<h4>Striking</h4>\n<p>\n    In striking exchanges, Islam Makhachev has shown improved boxing and kicks, utilizing his height and reach advantage effectively. He averages a higher significant strike rate and has demonstrated the ability to maintain distance while targeting his opponents with precision. Ilia Topuria, a powerful striker with knockout power, tends to engage in brawling exchanges, making him a dangerous opponent at close range. However, Makhachev's ability to mix striking with wrestling creates more challenges for Topuria.\n</p>\n\n<h4>Grappling</h4>\n<p>\n    Makhachev is known for his wrestling pedigree, holding a strong background in combat sambo, which has translated into effective takedowns and top control. He averages over 3 takedowns per 15 minutes and has outstanding grappling defense, often dictating where the fight takes place. On the other hand, Topuria has shown solid grappling skills and submission ability, but he may find it difficult to fend off Makhachev's relentless pressure and takedown attempts. This is a key area where Makhachev could potentially dominate the fight.\n</p>\n\n<h4>Fight IQ</h4>\n<p>\n    Makhachev displays high fight IQ, adjusting his strategies mid-fight and maintaining a tactical approach that favors his strengths. He calculates risks effectively and can adapt to unexpected scenarios. Topuria, while intelligent and fierce, often engages in aggressive exchanges, which could lead to him taking unnecessary risks against a fighter like Makhachev, who can capitalize on mistakes.\n</p>\n\n<h4>Current Form</h4>\n<p>\n    Ilia Topuria is undefeated and in peak form, showcasing a blend of striking and grappling skills while consistently improving. However, Makhachev, with his long history of high-level competition and championship experience, recently defeated Charles Oliveira, which solidified his status as a top contender. Makhachev's current form reflects stability and confidence, particularly after his title defenses.\n</p>\n\n<h3>Prediction</h3>\n<p>\n    Based on the analysis of striking, grappling, fight IQ, and current form, the most likely winner of the fight between Ilia Topuria and Islam Makhachev is <strong>Islam Makhachev</strong>. His superior wrestling, experience in high-stakes fights, and ability to control the pace of a match give him a significant edge in this matchup.\n</p>",
+  "confidence": 79,
+  "height1_pct": 49,
+  "height2_pct": 51,
+  "reach1_pct": 49,
+  "reach2_pct": 51
+}

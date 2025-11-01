@@ -1,0 +1,13 @@
+{
+  "name": "Jon Jones",
+  "fighterId": "2335639",
+  "link": "https://www.espn.com/mma/fighter/_/id/2335639/jon-jones",
+  "image": "https://a.espncdn.com/i/headshots/mma/players/full/2335639.png",
+  "sport": "mma",
+  "record": "28-1-0",
+  "height": "5'4\" (163cm)",
+  "reach": "65.5\" (166cm)",
+  "weight_class": "Strawweight",
+  "last_weigh_in": "130.4 lbs",
+  "team": "MMA Lab"
+}

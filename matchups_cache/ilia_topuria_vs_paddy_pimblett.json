@@ -1,0 +1,36 @@
+{
+  "fighter1": "ilia topuria",
+  "fighter2": "paddy pimblett",
+  "stats1": {
+    "name": "Ilia Topuria",
+    "fighterId": "4350812",
+    "link": "https://www.espn.com/mma/fighter/_/id/4350812/ilia-topuria",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/4350812.png",
+    "sport": "mma",
+    "record": "17-0-0",
+    "height": "5'7\" (170cm)",
+    "reach": "69.0\" (175cm)",
+    "weight_class": "Lightweight",
+    "last_weigh_in": "155.0 lbs",
+    "team": "Climent Club"
+  },
+  "stats2": {
+    "name": "Paddy Pimblett",
+    "fighterId": "4008549",
+    "link": "https://www.espn.com/mma/fighter/_/id/4008549/paddy-pimblett",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/4008549.png",
+    "sport": "mma",
+    "record": "23-3-0",
+    "height": "5'10\" (178cm)",
+    "reach": "73.0\" (185cm)",
+    "weight_class": "Lightweight",
+    "last_weigh_in": "156.0 lbs",
+    "team": "Next Generation MMA Liverpool"
+  },
+  "result": "<h3>Fight Analysis: Ilia Topuria vs. Paddy Pimblett</h3>\n\n<h4>Fighter Profiles</h4>\n\n<p>\n    <strong>Ilia Topuria</strong>: \n    <a href=\"https://www.espn.com/mma/fighter/_/id/4350812/ilia-topuria\">Profile</a><br>\n    Record: 17-0-0<br>\n    Height: 5'7\" (170 cm)<br>\n    Reach: 69.0\" (175 cm)<br>\n    Team: Climent Club<br>\n    ![Ilia Topuria](https://a.espncdn.com/i/headshots/mma/players/full/4350812.png)\n</p>\n\n<p>\n    <strong>Paddy Pimblett</strong>: \n    <a href=\"https://www.espn.com/mma/fighter/_/id/4008549/paddy-pimblett\">Profile</a><br>\n    Record: 23-3-0<br>\n    Height: 5'10\" (178 cm)<br>\n    Reach: 73.0\" (185 cm)<br>\n    Team: Next Generation MMA Liverpool<br>\n    ![Paddy Pimblett](https://a.espncdn.com/i/headshots/mma/players/full/4008549.png)\n</p>\n\n<h4>Striking</h4>\n<p>\n    Ilia Topuria exhibits powerful striking with a high knockout rate, showcasing diverse striking skills and an ability to end fights with both punches and kicks. His striking accuracy coupled with his aggressive style allows him to capitalize on opponents' mistakes effectively.\n</p>\n<p>\n    Paddy Pimblett, on the other hand, possesses a dynamic striking approach that combines boxing with unorthodox techniques. While he has shown the ability to be effective on his feet, his striking defense has been questioned, making him vulnerable to counter-strikes.\n</p>\n\n<h4>Grappling</h4>\n<p>\n    Topuria is notably skilled in grappling, particularly with his strong wrestling and jiu-jitsu skills, as evidenced by his successful submission victories. His ability to dictate the pace of the fight through grappling can be a key advantage.\n</p>\n<p>\n    Pimblett also has a strong grappling background, with a solid ground game and submission skills. However, his grappling may not be as polished or aggressive as Topuria’s, which could put him at a disadvantage in a grappling-heavy exchange.\n</p>\n\n<h4>Fight IQ</h4>\n<p>\n    Topuria has demonstrated superior fight IQ, being able to adjust his game plan mid-fight, capitalize on his opponents' weaknesses, and maintain composure under pressure. His undefeated record hints at his ability to avoid dangerous situations.\n</p>\n<p>\n    Pimblett has showcased creativity in his style but may lack the tactical discipline of Topuria. His willingness to engage in striking exchanges can lead to openings that experienced fighters like Topuria could exploit.\n</p>\n\n<h4>Current Form</h4>\n<p>\n    As of October 2023, Ilia Topuria remains undefeated with a record of 17-0, exhibiting consistent improvement and confidence in his performances. His momentum in the lightweight division speaks volumes about his capabilities.\n</p>\n<p>\n    Paddy Pimblett holds a solid record of 23-3, yet concerns about his striking defense and conditioning in high-paced fights have surfaced in his recent bouts, which could hinder his performance against a fighter like Topuria.\n</p>\n\n<h4>Prediction</h4>\n<p>\n    Based on the analysis of striking, grappling, fight IQ, and current form, the most likely winner of the matchup between <strong>Ilia Topuria</strong> and <strong>Paddy Pimblett</strong> is <strong>Ilia Topuria</strong>. His undefeated record, combined with superior grappling, striking power, and fight IQ, positions him as the preferred choice in this contest.\n</p>",
+  "confidence": 77,
+  "height1_pct": 49,
+  "height2_pct": 51,
+  "reach1_pct": 49,
+  "reach2_pct": 51
+}
