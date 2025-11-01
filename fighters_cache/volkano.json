@@ -1,0 +1,25 @@
+{
+  "name": "Volkano",
+  "source": [
+    "ufcstats",
+    "tapology"
+  ],
+  "height": "5' 6\"",
+  "weight": "145 lbs.",
+  "reach": "71\"",
+  "dob": "Sep 29, 1988",
+  "sig_strikes_per_min": 6.18,
+  "striking_accuracy": 56.0,
+  "sig_strikes_absorbed_per_min": 3.36,
+  "striking_defense": 58.0,
+  "takedown_avg": 1.67,
+  "takedown_accuracy": 34.0,
+  "takedown_defense": 70.0,
+  "submissions_avg": 0.2,
+  "avg_sig_strikes": 35603.71,
+  "avg_takedowns": 18.94,
+  "avg_submissions": 1.94,
+  "image": "https://images.tapology.com/letterbox_images/41705/default/Screenshot.png?1751298323",
+  "weight_class": "Featherweight",
+  "team": "N/A"
+}

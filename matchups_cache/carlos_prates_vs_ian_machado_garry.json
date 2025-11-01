@@ -1,0 +1,36 @@
+{
+  "fighter1": "Carlos prates",
+  "fighter2": "Ian machado garry",
+  "stats1": {
+    "name": "Carlos Prates",
+    "fighterId": "4294832",
+    "link": "https://www.espn.com/mma/fighter/_/id/4294832/carlos-prates",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/4294832.png",
+    "sport": "mma",
+    "record": "22-7-0",
+    "height": "6'1\" (185cm)",
+    "reach": "78.0\" (198cm)",
+    "weight_class": "Welterweight",
+    "last_weigh_in": "170.0 lbs",
+    "team": "Vale Top Team"
+  },
+  "stats2": {
+    "name": "Ian Machado Garry",
+    "fighterId": "4738092",
+    "link": "https://www.espn.com/mma/fighter/_/id/4738092/ian-machado-garry",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/4738092.png",
+    "sport": "mma",
+    "record": "16-1-0",
+    "height": "6'3\" (191cm)",
+    "reach": "74.5\" (189cm)",
+    "weight_class": "Welterweight",
+    "last_weigh_in": "171.0 lbs",
+    "team": "N/A"
+  },
+  "result": "<h3>Fight Analysis: Carlos Prates vs. Ian Machado Garry</h3>\n\n<h4>Fighter Overview</h4>\n<p>\n    <strong>Carlos Prates</strong><br>\n    Record: 22-7-0<br>\n    Height: 6'1\" (185cm)<br>\n    Reach: 78.0\" (198cm)<br>\n    Weight Class: Welterweight<br>\n    Last Weigh-in: 170.0 lbs<br>\n    Team: Vale Top Team<br>\n    <img src=\"https://a.espncdn.com/i/headshots/mma/players/full/4294832.png\" alt=\"Carlos Prates\">\n    <a href=\"https://www.espn.com/mma/fighter/_/id/4294832/carlos-prates\">Profile</a>\n</p>\n\n<p>\n    <strong>Ian Machado Garry</strong><br>\n    Record: 16-1-0<br>\n    Height: 6'3\" (191cm)<br>\n    Reach: 74.5\" (189cm)<br>\n    Weight Class: Welterweight<br>\n    Last Weigh-in: 171.0 lbs<br>\n    Team: N/A<br>\n    <img src=\"https://a.espncdn.com/i/headshots/mma/players/full/4738092.png\" alt=\"Ian Machado Garry\">\n    <a href=\"https://www.espn.com/mma/fighter/_/id/4738092/ian-machado-garry\">Profile</a>\n</p>\n\n<h4>Striking</h4>\n<p>\n    Carlos Prates brings a strong striking game, often utilizing his reach advantage effectively. With a high volume of strikes and a decent knockout rate, he is known for his ability to overwhelm opponents on the feet.\n</p>\n<p>\n    Ian Machado Garry, on the other hand, is renowned for his technical striking and precision. His ability to mix distance and angles, combined with solid footwork, allows him to evade significant damage while delivering effective counters. Garry's striking output is complemented by his striking defense, making him a formidable opponent.\n</p>\n\n<h4>Grappling</h4>\n<p>\n    In grappling exchanges, Carlos Prates has shown solid abilities, especially with his takedown and submission skills. He tends to control fights when they go to the ground, using his grappling to tire out opponents.\n</p>\n<p>\n    Ian Machado Garry possesses a grappling background that, while not his primary focus, can be quite effective. He has demonstrated good takedown defense and can capitalize on grappling opportunities when they arise. However, he prefers to keep the fight standing, relying on striking instead.\n</p>\n\n<h4>Fight IQ</h4>\n<p>\n    Carlos Prates displays a commendable level of fight IQ, often adapting his strategy mid-fight based on his opponent’s weaknesses. His experience from competing in various organizations adds to his understanding of different fight scenarios.\n</p>\n<p>\n    Ian Machado Garry is recognized for his exceptional fight IQ as well. He displays an innate ability to read his opponents and make tactical adjustments during bouts. His confidence and patience in the octagon enable him to efficiently implement his game plan.\n</p>\n\n<h4>Current Form</h4>\n<p>\n    Carlos Prates has had mixed results in recent fights, which may affect his momentum heading into this matchup. His experience level is considerable; however, any inconsistency in performance could be a concern against an opponent of Garry's caliber.\n</p>\n<p>\n    Ian Machado Garry comes into this fight with a strong recent performance record. He is riding a winning streak and demonstrating continuous improvement in his skills, positioning him as a real challenge for any fighter at Welterweight.\n</p>\n\n<h4>Prediction</h4>\n<p>\n    Based on the analysis of striking, grappling, fight IQ, and current form, <strong>Ian Machado Garry</strong> is the most likely winner in this matchup. His technical striking, solid fight IQ, and current momentum appear to give him an edge over Carlos Prates. While Prates is experienced and capable, the rising trajectory of Garry suggests he will likely find a way to secure victory.\n</p>",
+  "confidence": 75,
+  "height1_pct": 96.8586387434555,
+  "height2_pct": 100.0,
+  "reach1_pct": 100.0,
+  "reach2_pct": 95.45454545454545
+}

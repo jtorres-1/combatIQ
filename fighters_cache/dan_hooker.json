@@ -1,0 +1,25 @@
+{
+  "name": "dan hooker",
+  "source": [
+    "ufcstats",
+    "tapology"
+  ],
+  "height": "6' 0\"",
+  "weight": "155 lbs.",
+  "reach": "75\"",
+  "dob": "Feb 13, 1990",
+  "sig_strikes_per_min": 5.03,
+  "striking_accuracy": 48.0,
+  "sig_strikes_absorbed_per_min": 4.72,
+  "striking_defense": 51.0,
+  "takedown_avg": 0.73,
+  "takedown_accuracy": 34.0,
+  "takedown_defense": 78.0,
+  "submissions_avg": 0.3,
+  "avg_sig_strikes": 15.0,
+  "avg_takedowns": 5.0,
+  "avg_submissions": 2.91,
+  "image": "https://images.tapology.com/letterbox_images/18854/default/Daniel-Hooker.jpg?1401290752",
+  "weight_class": "Lightweight",
+  "team": "City Kickboxing"
+}

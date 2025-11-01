@@ -1,0 +1,58 @@
+{
+  "fighter1": "Ilia Topuria",
+  "fighter2": "Max Holloway",
+  "stats1": {
+    "name": "Ilia Topuria",
+    "source": [
+      "ufcstats",
+      "tapology"
+    ],
+    "height": "5' 7\"",
+    "weight": "155 lbs.",
+    "reach": "69\"",
+    "dob": "Jan 21, 1997",
+    "sig_strikes_per_min": 4.81,
+    "striking_accuracy": 48.0,
+    "sig_strikes_absorbed_per_min": 3.83,
+    "striking_defense": 64.0,
+    "takedown_avg": 1.96,
+    "takedown_accuracy": 61.0,
+    "takedown_defense": 93.0,
+    "submissions_avg": 1.1,
+    "avg_sig_strikes": 4325.89,
+    "avg_takedowns": 12.33,
+    "avg_submissions": 6.78,
+    "weight_class": "Lightweight",
+    "team": "Climent Club"
+  },
+  "stats2": {
+    "name": "Max Holloway",
+    "source": [
+      "ufcstats",
+      "tapology"
+    ],
+    "height": "5' 11\"",
+    "weight": "145 lbs.",
+    "reach": "69\"",
+    "dob": "Dec 04, 1991",
+    "sig_strikes_per_min": 7.2,
+    "striking_accuracy": 48.0,
+    "sig_strikes_absorbed_per_min": 4.74,
+    "striking_defense": 59.0,
+    "takedown_avg": 0.24,
+    "takedown_accuracy": 53.0,
+    "takedown_defense": 83.0,
+    "submissions_avg": 0.3,
+    "avg_sig_strikes": 66640.23,
+    "avg_takedowns": 3.42,
+    "avg_submissions": 3.35,
+    "weight_class": "Lightweight",
+    "team": "Gracie Technics"
+  },
+  "result": "<h3>Fight Analysis: Ilia Topuria vs Max Holloway</h3>\n\n<h4>Striking Analysis</h4>\n<p>\n    Ilia Topuria demonstrates solid striking potential with an average of <strong>4.81 significant strikes per minute</strong> and a striking accuracy of <strong>48.0%</strong>. He absorbs <strong>3.83 significant strikes per minute</strong>, showcasing a decent level of striking defense at <strong>64%</strong>. Conversely, Max Holloway is known for his striking volume, landing an impressive <strong>7.2 significant strikes per minute</strong> while maintaining the same striking accuracy of <strong>48.0%</strong>. However, he absorbs more strikes at <strong>4.74 per minute</strong> and has a striking defense rate of <strong>59%</strong>. \n</p>\n\n<h4>Grappling Analysis</h4>\n<p>\n    Topuria excels in grappling, averaging <strong>1.96 takedowns per fight</strong> with a remarkable takedown accuracy of <strong>61%</strong>. His takedown defense is also formidable, standing at <strong>93%</strong>. In contrast, Holloway averages only <strong>0.24 takedowns</strong> per fight with a takedown accuracy of <strong>53%</strong> and lower takedown defense at <strong>83%</strong>. This contrasting grappling proficiency could play a crucial role in the fight dynamics.\n</p>\n\n<h4>Fight IQ</h4>\n<p>\n    Both fighters exhibit strong fight IQ, but under different circumstances. Topuria's strategy revolves around tactical grappling and managing distance effectively with his striking. He tends to capitalize on his opponents' openings. Holloway, renowned for his relentless pace and boxing technique, often pressures opponents into unfavorable exchanges. Although Topuria is skilled technically, Holloway's experience in high-stakes fights could lead to better decision-making throughout the bout.\n</p>\n\n<h4>Current Form</h4>\n<p>\n    As of October 2023, Topuria is on an impressive trajectory with an undefeated record, showcasing continuous improvement in his technique and fight strategy. Meanwhile, Holloway, although still highly skilled and competitive, has faced challenges against younger, aggressive fighters, which raises some questions about his recent form. \n</p>\n\n<h4>Prediction</h4>\n<p>\n    Considering the striking capability, grappling proficiency, fight IQ, and current form, <strong>Ilia Topuria</strong> may have the edge over <strong>Max Holloway</strong>. His grappling advantage, combined with a potential strategy to mix up his striking and takedown attempts, could yield success against Holloway's volume striking. However, if Holloway can maintain distance and utilize his boxing effectively, he could turn the tide in his favor. Overall, Topuria’s grappling ability and current momentum suggest he is the likely winner in this matchup.\n</p>",
+  "confidence": 73,
+  "height1_pct": 100.0,
+  "height2_pct": 100.0,
+  "reach1_pct": 100.0,
+  "reach2_pct": 100.0
+}

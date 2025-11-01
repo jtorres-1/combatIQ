@@ -1,0 +1,48 @@
+{
+  "fighter1": "ilia topuria",
+  "fighter2": "aleksandre topuria",
+  "stats1": {
+    "name": "Ilia Topuria",
+    "source": [
+      "ufcstats",
+      "tapology"
+    ],
+    "height": "5' 7\"",
+    "weight": "155 lbs.",
+    "reach": "69\"",
+    "dob": "Jan 21, 1997",
+    "sig_strikes_per_min": 4.81,
+    "striking_accuracy": 48.0,
+    "sig_strikes_absorbed_per_min": 3.83,
+    "striking_defense": 64.0,
+    "takedown_avg": 1.96,
+    "takedown_accuracy": 61.0,
+    "takedown_defense": 93.0,
+    "submissions_avg": 1.1,
+    "avg_sig_strikes": 14.42,
+    "avg_takedowns": 6.17,
+    "avg_submissions": 3.39,
+    "image": "https://images.tapology.com/letterbox_images/129278/default/f.elconfidencial.com_original_d70_97f_0c5_d7097f0c5fa2faa6da13f7005e95997c_edit_9549835779116750.jpg?1675041526",
+    "weight_class": "Lightweight",
+    "team": "Climent Club"
+  },
+  "stats2": {
+    "name": "Aleksandre Topuria",
+    "fighterId": "5185662",
+    "link": "https://www.espn.com/mma/fighter/_/id/5185662/aleksandre-topuria",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/5185662.png",
+    "sport": "mma",
+    "record": "6-1-0",
+    "height": "5'7\" (170cm)",
+    "reach": "68.0\" (173cm)",
+    "weight_class": "Bantamweight",
+    "last_weigh_in": "135.5 lbs",
+    "team": "Climent Club"
+  },
+  "result": "<h3>Fight Analysis: Ilia Topuria vs. Aleksandre Topuria</h3>\n\n<p>In this analysis, we will evaluate the potential matchup between Ilia Topuria and Aleksandre Topuria by examining their striking, grappling, fight IQ, and current form to predict the most likely winner.</p>\n\n<h4>Striking</h4>\n<p><strong>Ilia Topuria</strong> exhibits a higher striking output with an average of <strong>4.81 significant strikes per minute</strong> and a striking accuracy of <strong>48.0%</strong>. He absorbs <strong>3.83 strikes per minute</strong>, indicating a solid striking defense rated at <strong>64.0%</strong>. On the other hand, <strong>Aleksandre Topuria</strong> has a less documented striking output and accuracy but has shown potential in his performances. Given Ilia's precise and efficient striking, he holds a slight advantage in this department.</p>\n\n<h4>Grappling</h4>\n<p>Grappling is another area where <strong>Ilia Topuria</strong> shines, with an impressive takedown average of <strong>6.17 takedowns per 15 minutes</strong> and a takedown accuracy of <strong>61.0%</strong>. His takedown defense is also formidable at <strong>93.0%</strong>. Meanwhile, <strong>Aleksandre Topuria</strong> is primarily a striker with some grappling ability but lacks the same level of output and success in takedowns. Ilia's high-level grappling would likely be a decisive factor if the fight goes to the ground.</p>\n\n<h4>Fight IQ</h4>\n<p>Both fighters train under <strong>Climent Club</strong>, which suggests they might share similar strategies and knowledge. However, Ilia's greater experience in high-stakes fights (with a proven track record in the UFC) may allow him to better adapt to in-fight situations. His fight IQ, honed through extensive competition, gives him an edge in making strategic decisions during the match.</p>\n\n<h4>Current Form</h4>\n<p>Ilia Topuria is currently considered one of the rising stars in the lightweight division, with a record that showcases both resilience and skill. Conversely, Aleksandre Topuria has a solid record of <strong>6-1-0</strong> in the bantamweight division but may not have faced competition at the same level as Ilia. This difference in marketability and experience could translate to confidence and performance in the octagon.</p>\n\n<h3>Conclusion</h3>\n<p>Based on the analysis above, <strong>Ilia Topuria</strong> is predicted to be the most likely winner if these two fighters were to face off. His superior striking metrics, exceptional grappling skills, strategic fight IQ, and current form position him well against Aleksandre Topuria.</p>",
+  "confidence": 73,
+  "height1_pct": 100.0,
+  "height2_pct": 97.14285714285714,
+  "reach1_pct": 100.0,
+  "reach2_pct": 98.85714285714286
+}

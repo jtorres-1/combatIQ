@@ -1,0 +1,42 @@
+[
+  {
+    "fighter": "tom aspinal",
+    "stat": "takedowns",
+    "line": 5.0,
+    "prediction": "Under",
+    "confidence": 89.58,
+    "timestamp": "2025-10-31 20:43:14.288959"
+  },
+  {
+    "fighter": "tom aspinal",
+    "stat": "takedowns",
+    "line": 5.0,
+    "prediction": "Under",
+    "confidence": 88.6,
+    "timestamp": "2025-10-31 20:27:16.846505"
+  },
+  {
+    "fighter": "tom aspinal",
+    "stat": "sig strikes",
+    "line": 5.0,
+    "prediction": "Over",
+    "confidence": 40,
+    "timestamp": "2025-10-31 20:25:35.792784"
+  },
+  {
+    "fighter": "ilia topuria",
+    "stat": "sig strikes",
+    "line": 3.0,
+    "prediction": "Over",
+    "confidence": 40,
+    "timestamp": "2025-10-31 03:25:24.265279"
+  },
+  {
+    "fighter": "dan hooker",
+    "stat": "sig strikes",
+    "line": 5.0,
+    "prediction": "Over",
+    "confidence": 40,
+    "timestamp": "2025-10-31 02:44:16.632965"
+  }
+]

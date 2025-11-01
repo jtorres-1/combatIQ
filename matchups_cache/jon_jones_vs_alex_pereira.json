@@ -1,0 +1,36 @@
+{
+  "fighter1": "Jon jones",
+  "fighter2": "Alex pereira",
+  "stats1": {
+    "name": "Jon Jones",
+    "fighterId": "2335639",
+    "link": "https://www.espn.com/mma/fighter/_/id/2335639/jon-jones",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/2335639.png",
+    "sport": "mma",
+    "record": "28-1-0",
+    "height": "5'4\" (163cm)",
+    "reach": "65.5\" (166cm)",
+    "weight_class": "Strawweight",
+    "last_weigh_in": "130.4 lbs",
+    "team": "MMA Lab"
+  },
+  "stats2": {
+    "name": "Alex Pereira",
+    "fighterId": "4705658",
+    "link": "https://www.espn.com/mma/fighter/_/id/4705658/alex-pereira",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/4705658.png",
+    "sport": "mma",
+    "record": "13-3-0",
+    "height": "6'0\" (183cm)",
+    "reach": "73.0\" (185cm)",
+    "weight_class": "Light Heavyweight",
+    "last_weigh_in": "191.7 lbs",
+    "team": "Dragon Fight / Nova União"
+  },
+  "result": "<h3>Fight Analysis: Jon Jones vs. Alex Pereira</h3>\n\n<h4>Fighter Profiles</h4>\n<p>\n    <strong>Jon Jones</strong> <br>\n    Record: 28-1-0 <br>\n    Height: 5'4\" (163cm) <br>\n    Reach: 65.5\" (166cm) <br>\n    Weight Class: Strawweight <br>\n    Last Weigh-In: 130.4 lbs <br>\n    Team: <a href=\"https://www.espn.com/mma/fighter/_/id/2335639/jon-jones\">MMA Lab</a> <br>\n    <img src=\"https://a.espncdn.com/i/headshots/mma/players/full/2335639.png\" alt=\"Jon Jones\">\n</p>\n\n<p>\n    <strong>Alex Pereira</strong> <br>\n    Record: 13-3-0 <br>\n    Height: 6'0\" (183cm) <br>\n    Reach: 73.0\" (185cm) <br>\n    Weight Class: Light Heavyweight <br>\n    Last Weigh-In: 191.7 lbs <br>\n    Team: <a href=\"https://www.espn.com/mma/fighter/_/id/4705658/alex-pereira\">Dragon Fight / Nova União</a> <br>\n    <img src=\"https://a.espncdn.com/i/headshots/mma/players/full/4705658.png\" alt=\"Alex Pereira\">\n</p>\n\n<h4>Striking</h4>\n<p>\n    Jon Jones is renowned for his unorthodox striking and ability to adapt during fights. He effectively uses a diverse range of strikes including kicks, elbows, and punches, which can control distance and set up grappling opportunities. \n    <br><br>\n    Alex Pereira, a former kickboxer, possesses powerful striking, particularly in his punches and kicks, contributing to many of his victories. His striking is explosive and can finish fights quickly. However, he may struggle defensively against a tactician like Jones.\n</p>\n\n<h4>Grappling</h4>\n<p>\n    Jon Jones has a distinct advantage in grappling, with a deep background in wrestling and proficiency in submissions. He has consistently utilized his grappling to neutralize opponents and earn control on the ground. \n    <br><br>\n    Alex Pereira, while capable of defending against takedowns, has not shown the same level of grappling proficiency as Jones. Should the fight go to the ground, Jones can exploit this weakness effectively.\n</p>\n\n<h4>Fight IQ</h4>\n<p>\n    Jones is often lauded for his high fight IQ, displaying the ability to read opponents and make strategic adjustments in real-time. His experienced approach allows him to dictate the pace and location of the fight. \n    <br><br>\n    Pereira has demonstrated intelligence in striking exchanges, but he has less overall experience at the highest level of MMA compared to Jones. This may impact his ability to make the necessary adjustments during the bout.\n</p>\n\n<h4>Current Form</h4>\n<p>\n    Jon Jones retains a nearly flawless record and has maintained a high level of performance regardless of time away from the sport. His recent competitive form and experience in championship fights give him a significant edge.\n    <br><br>\n    Alex Pereira is still finding his footing in MMA; while he holds noteworthy accomplishments in kickboxing, the transition to MMA can be challenging. His current form shows promise but lacks the depth of experience Jones possesses.\n</p>\n\n<h4>Prediction</h4>\n<p>\n    Based on the analysis of striking ability, grappling proficiency, fight IQ, and current form, <strong>Jon Jones</strong> is the most likely winner if they were to face each other in a match-up.\n</p>",
+  "confidence": 73,
+  "height1_pct": 47,
+  "height2_pct": 53,
+  "reach1_pct": 47,
+  "reach2_pct": 53
+}

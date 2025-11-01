@@ -1,0 +1,25 @@
+{
+  "name": "ciryl gane",
+  "source": [
+    "ufcstats",
+    "tapology"
+  ],
+  "height": "6' 4\"",
+  "weight": "247 lbs.",
+  "reach": "81\"",
+  "dob": "Apr 12, 1990",
+  "sig_strikes_per_min": 5.29,
+  "striking_accuracy": 61.0,
+  "sig_strikes_absorbed_per_min": 2.33,
+  "striking_defense": 60.0,
+  "takedown_avg": 0.68,
+  "takedown_accuracy": 25.0,
+  "takedown_defense": 47.0,
+  "submissions_avg": 0.6,
+  "avg_sig_strikes": 15.0,
+  "avg_takedowns": 5.0,
+  "avg_submissions": 2.0,
+  "image": "https://images.tapology.com/letterbox_images/187819/default/IMG_20190825_204813.jpg?1566758964",
+  "weight_class": "Heavyweight",
+  "team": "MMA Factory"
+}

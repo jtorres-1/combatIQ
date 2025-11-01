@@ -1,0 +1,25 @@
+{
+  "name": "Max Holloway",
+  "source": [
+    "ufcstats",
+    "tapology"
+  ],
+  "height": "5' 11\"",
+  "weight": "145 lbs.",
+  "reach": "69\"",
+  "dob": "Dec 04, 1991",
+  "sig_strikes_per_min": 7.2,
+  "striking_accuracy": 48.0,
+  "sig_strikes_absorbed_per_min": 4.74,
+  "striking_defense": 59.0,
+  "takedown_avg": 0.24,
+  "takedown_accuracy": 53.0,
+  "takedown_defense": 83.0,
+  "submissions_avg": 0.3,
+  "avg_sig_strikes": 15.0,
+  "avg_takedowns": 3.42,
+  "avg_submissions": 3.0,
+  "image": "https://images.tapology.com/letterbox_images/12723/default/Holloway-Max-UFC155-1.jpg?1356760787",
+  "weight_class": "Lightweight",
+  "team": "Gracie Technics"
+}

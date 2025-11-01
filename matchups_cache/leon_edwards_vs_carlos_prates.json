@@ -1,0 +1,36 @@
+{
+  "fighter1": "Leon Edwards",
+  "fighter2": "Carlos prates",
+  "stats1": {
+    "name": "Leon Edwards",
+    "fighterId": "3152929",
+    "link": "https://www.espn.com/mma/fighter/_/id/3152929/leon-edwards",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/3152929.png",
+    "sport": "mma",
+    "record": "22-5-0",
+    "height": "6'2\" (188cm)",
+    "reach": "74.0\" (188cm)",
+    "weight_class": "Welterweight",
+    "last_weigh_in": "171.0 lbs",
+    "team": "Ultimate Training Centre"
+  },
+  "stats2": {
+    "name": "Carlos Prates",
+    "fighterId": "4294832",
+    "link": "https://www.espn.com/mma/fighter/_/id/4294832/carlos-prates",
+    "image": "https://a.espncdn.com/i/headshots/mma/players/full/4294832.png",
+    "sport": "mma",
+    "record": "22-7-0",
+    "height": "6'1\" (185cm)",
+    "reach": "78.0\" (198cm)",
+    "weight_class": "Welterweight",
+    "last_weigh_in": "170.0 lbs",
+    "team": "Vale Top Team"
+  },
+  "result": "<h3>Fight Analysis: Leon Edwards vs. Carlos Prates</h3>\n\n<h4>Fighter Profiles</h4>\n<p>\n    <strong>Leon Edwards</strong><br>\n    - Record: 22-5-0<br>\n    - Height: 6'2\" (188cm)<br>\n    - Reach: 74.0\" (188cm)<br>\n    - Weight Class: Welterweight<br>\n    - Last Weigh-in: 171.0 lbs<br>\n    - Team: <a href=\"https://www.espn.com/mma/fighter/_/id/3152929/leon-edwards\">Ultimate Training Centre</a><br>\n    <img src=\"https://a.espncdn.com/i/headshots/mma/players/full/3152929.png\" alt=\"Leon Edwards\" />\n</p>\n\n<p>\n    <strong>Carlos Prates</strong><br>\n    - Record: 22-7-0<br>\n    - Height: 6'1\" (185cm)<br>\n    - Reach: 78.0\" (198cm)<br>\n    - Weight Class: Welterweight<br>\n    - Last Weigh-in: 170.0 lbs<br>\n    - Team: <a href=\"https://www.espn.com/mma/fighter/_/id/4294832/carlos-prates\">Vale Top Team</a><br>\n    <img src=\"https://a.espncdn.com/i/headshots/mma/players/full/4294832.png\" alt=\"Carlos Prates\" />\n</p>\n\n<h4>Striking</h4>\n<p>\n    Leon Edwards is known for his effective striking and sharp technical skills. He possesses a strong Muay Thai background, allowing him to mix punches, kicks, and knees effectively, utilizing his reach and height advantage. His recent performances reflect a striking accuracy of approximately 48%, demonstrating his ability to land significant strikes consistently.\n</p>\n<p>\n    On the other hand, Carlos Prates has a solid striking foundation but tends to rely more on volume over precision, which can get him into trouble against more technical fighters. His striking accuracy is usually lower than Edwards, which could be a disadvantage in a high-level matchup.\n</p>\n\n<h4>Grappling</h4>\n<p>\n    Edwards has shown strong grappling skills, particularly in takedown defense and his ability to manage distance. He averages over 1.5 takedowns per fight with an effective takedown defense rate of around 61%. This capability allows him to control the pace of the fight and dictate where the combat takes place.\n</p>\n<p>\n    Prates has a well-rounded grappling game; however, he may struggle to impose it against a fighter with the defensive capabilities of Edwards. He has shown resilience on the ground but won’t find it easy to secure takedowns against a seasoned competitor like Edwards.\n</p>\n\n<h4>Fight IQ</h4>\n<p>\n    Edwards exhibits a high level of fight IQ, understanding when to engage and when to pull back. He adapts his strategy mid-fight, effectively reading his opponent's movements and tendencies. This adaptability was clearly displayed during his title fight where he managed to adjust his game plan to secure the victory.\n</p>\n<p>\n    Prates, while tactical, has shown moments of inexperience against top-tier fighters, occasionally making decisions that cost him in crucial moments. His performance can be sporadic against elite opponents, which may hinder his ability to deal with the seasoned Edwards.\n</p>\n\n<h4>Current Form</h4>\n<p>\n    Leon Edwards is riding a wave of momentum after his recent title defenses and has continued to evolve. He has faced and defeated some of the best in the welterweight division, which greatly enhances his confidence and form leading into this matchup.\n</p>\n<p>\n    Carlos Prates has been competitive, but with 7 losses on his record, some of which came against top competition, he may lack the same level of confidence and form heading into a fight against a champion. His recent performances do not indicate the same upward trajectory that Edwards is currently on.\n</p>\n\n<h4>Prediction</h4>\n<p>\n    Based on the analysis of striking, grappling, fight IQ, and current form, the most likely winner of this matchup is <strong>Leon Edwards</strong>. His superior striking, defensive grappling, and high fight IQ give him the edge over Carlos Prates, who will struggle to overcome these hurdles.\n</p>",
+  "confidence": 77,
+  "height1_pct": 100.0,
+  "height2_pct": 98.40425531914893,
+  "reach1_pct": 94.94949494949495,
+  "reach2_pct": 100.0
+}
