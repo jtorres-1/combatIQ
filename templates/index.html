@@ -80,6 +80,18 @@
 </head>
 
 <body class="min-h-screen flex flex-col items-center p-6">
+  <!-- User Login Display -->
+  <div class="w-full max-w-5xl text-right mb-3">
+    {% if user %}
+      <p class="text-sm text-gray-400">
+        Signed in as <span class="text-yellow-400 font-medium">{{ user['email'] }}</span>
+        <a href="{{ url_for('logout') }}" class="ml-3 text-red-400 hover:text-red-300">Logout</a>
+      </p>
+    {% else %}
+      <a href="{{ url_for('login') }}" class="text-sm text-gray-400 hover:text-white">Sign in with Google</a>
+    {% endif %}
+  </div>
+
   <h1 class="text-4xl font-bold text-red-500 mb-6">⚔️ Combat IQ</h1>
 
   <!-- Search Form -->
@@ -99,14 +111,23 @@
     </button>
   </form>
 
-  <!-- Betting Mode Button -->
-  <div class="mb-8">
+  <!-- Betting Mode + History Buttons -->
+  <div class="flex flex-col sm:flex-row gap-4 mb-8">
     <a
       href="/betting"
       class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-3 rounded-lg transition inline-flex items-center justify-center"
     >
       🎯 Betting Mode
     </a>
+
+    {% if user %}
+    <a
+      href="/history"
+      class="bg-neutral-800 hover:bg-neutral-700 text-white font-semibold px-6 py-3 rounded-lg border border-neutral-600 transition inline-flex items-center justify-center"
+    >
+      📜 View History
+    </a>
+    {% endif %}
   </div>
 
   {% if result %}

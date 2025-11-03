@@ -1,5 +1,13 @@
 [
   {
+    "fighter": "ilia topuria",
+    "stat": "sig strikes",
+    "line": 5.0,
+    "prediction": "Over",
+    "confidence": 40,
+    "timestamp": "2025-11-03 13:21:07.521169"
+  },
+  {
     "fighter": "tom aspinal",
     "stat": "takedowns",
     "line": 5.0,
@@ -30,13 +38,5 @@
     "prediction": "Over",
     "confidence": 40,
     "timestamp": "2025-10-31 03:25:24.265279"
-  },
-  {
-    "fighter": "dan hooker",
-    "stat": "sig strikes",
-    "line": 5.0,
-    "prediction": "Over",
-    "confidence": 40,
-    "timestamp": "2025-10-31 02:44:16.632965"
   }
 ]

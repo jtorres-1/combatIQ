@@ -1,5 +1,5 @@
-# app.py — CombatIQ Fight Predictor + Betting Mode (UFCStats + Tapology Enhanced + SQLite Integration)
-from flask import Flask, render_template, request, jsonify
+# app.py — CombatIQ Fight Predictor + Betting Mode + User History
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, abort
 from openai import OpenAI
 import os, re, json, random, sys, logging, sqlite3
 from datetime import datetime
@@ -7,6 +7,9 @@ from dotenv import load_dotenv
 from fighter_scraper import scrape_fighter_stats
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+from google_auth_oauthlib.flow import Flow
+from google.oauth2 import id_token
+import google.auth.transport.requests
 
 # ---------------------------
 # Confidence scoring heuristic
@@ -43,7 +46,7 @@ def parse_numeric(value):
 def safe_stat_value(stat, fallback=175):
     """Fallback for invalid or missing numeric stats."""
     num = parse_numeric(stat)
-    if not num or num < 100 or num > 250:  # sanity check for heights/reach
+    if not num or num < 100 or num > 250:
         return fallback
     return num
 
@@ -52,12 +55,13 @@ def safe_stat_value(stat, fallback=175):
 # ---------------------------
 load_dotenv()
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY", "supersecretkey")
 
 # ---------------------------
 # Init Limiter + Logging
 # ---------------------------
 limiter = Limiter(get_remote_address, app=app, default_limits=["5 per minute"])
-logging.basicConfig(filename='usage.log', level=logging.INFO, format='%(asctime)s %(message)s')
+logging.basicConfig(filename="usage.log", level=logging.INFO, format="%(asctime)s %(message)s")
 
 # ---------------------------
 # Init OpenAI Client
@@ -77,6 +81,62 @@ def get_db():
     return conn
 
 # =====================================================
+# GOOGLE OAUTH LOGIN SYSTEM
+# =====================================================
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_SECRET_PATH = os.getenv("GOOGLE_CLIENT_SECRET_PATH", "client_secret.json")
+
+flow = Flow.from_client_secrets_file(
+    GOOGLE_SECRET_PATH,
+    scopes=[
+        "https://www.googleapis.com/auth/userinfo.profile",
+        "https://www.googleapis.com/auth/userinfo.email",
+        "openid",
+    ],
+    redirect_uri="http://127.0.0.1:5050/callback",
+)
+
+@app.route("/login")
+def login():
+    authorization_url, state = flow.authorization_url()
+    session["state"] = state
+    return redirect(authorization_url)
+
+@app.route("/callback")
+def callback():
+    flow.fetch_token(authorization_response=request.url)
+    credentials = flow.credentials
+    request_session = google.auth.transport.requests.Request()
+    id_info = id_token.verify_oauth2_token(
+        id_token=credentials.id_token,
+        request=request_session,
+        audience=GOOGLE_CLIENT_ID,
+    )
+    session["user"] = id_info
+
+    # Save user in DB if not exists
+    try:
+        conn = get_db()
+        c = conn.cursor()
+        c.execute(
+            "INSERT OR IGNORE INTO users (email, name, picture) VALUES (?, ?, ?)",
+            (id_info.get("email"), id_info.get("name"), id_info.get("picture")),
+        )
+        conn.commit()
+        conn.close()
+    except Exception as e:
+        print(f"[DB ERROR] Failed to insert user: {e}")
+
+    return redirect(url_for("index"))
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))
+
+# =====================================================
 # HOME — Fight Prediction Mode
 # =====================================================
 @app.route("/", methods=["GET", "POST"])
@@ -87,30 +147,27 @@ def index():
     stats1 = stats2 = {}
     confidence = None
     height1_pct = height2_pct = reach1_pct = reach2_pct = 50
+    user = session.get("user")
 
     if request.method == "POST":
         matchup = request.form.get("matchup", "").strip()
         force_refresh = "force_refresh" in request.form
 
-        # Fixed flexible splitting for "vs" detection
         fighters = [p.strip() for p in re.split(r"\s*vs\s*|\s*VS\s*|\s*Vs\s*", matchup) if p.strip()]
         if len(fighters) < 2:
-            return render_template("index.html", result="<p>Please enter matchup as 'Fighter A vs Fighter B'</p>")
+            return render_template("index.html", result="<p>Please enter matchup as 'Fighter A vs Fighter B'</p>", user=user)
 
         fighter1, fighter2 = fighters[0], fighters[1]
-        print(f"[DEBUG] Parsed fighters: {fighter1} vs {fighter2}")
         matchup_key = f"{fighter1.lower().replace(' ', '_')}_vs_{fighter2.lower().replace(' ', '_')}.json"
         cache_path = os.path.join(CACHE_DIR, matchup_key)
 
         logging.info(f"Request from {request.remote_addr} for matchup: {matchup}")
 
-        # --- Cache Load ---
         if not force_refresh and os.path.exists(cache_path):
             with open(cache_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-            return render_template("index.html", **data)
+            return render_template("index.html", **data, user=user)
 
-        # --- Fresh Scrape ---
         print(f"[SCRAPE] Fetching stats for {fighter1} and {fighter2}")
         stats1 = scrape_fighter_stats(fighter1, force_refresh=force_refresh)
         stats2 = scrape_fighter_stats(fighter2, force_refresh=force_refresh)
@@ -127,13 +184,11 @@ def index():
         height1_pct, height2_pct = normalize_bar(h1, h2)
         reach1_pct, reach2_pct = normalize_bar(r1, r2)
 
-        # --- GPT Fight Report ---
         summary = f"Fighter 1 - {fighter1}: {stats1}\n\nFighter 2 - {fighter2}: {stats2}\n\n"
         prompt = (
             f"Analyze the fight between {fighter1} and {fighter2}. "
             "Predict the most likely winner and explain using striking, grappling, fight IQ, and current form. "
-            "Base it only on reliable fight data — no fantasy scenarios. "
-            "Return a clean HTML response using <h3>, <h4>, <p>, and <strong> tags."
+            "Base it only on reliable fight data. Return a clean HTML response with <h3>, <p>, and <strong>."
         )
 
         try:
@@ -152,7 +207,6 @@ def index():
             result = "<p>Unable to generate analysis. Using stat-based fallback.</p>"
             confidence = 70
 
-        # --- Save Matchup Cache ---
         cache_data = {
             "fighter1": fighter1,
             "fighter2": fighter2,
@@ -172,13 +226,19 @@ def index():
         try:
             conn = get_db()
             c = conn.cursor()
+            user_id = None
+            if user:
+                c.execute("SELECT id FROM users WHERE email=?", (user["email"],))
+                row = c.fetchone()
+                if row:
+                    user_id = row["id"]
+
             c.execute(
-                "INSERT INTO predictions (mode, fighter1, fighter2, result, confidence) VALUES (?, ?, ?, ?, ?)",
-                ("fight", fighter1, fighter2, result, confidence)
+                "INSERT INTO predictions (user_id, mode, fighter1, fighter2, result, confidence, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                (user_id, "fight", fighter1, fighter2, result, confidence, datetime.now()),
             )
             conn.commit()
             conn.close()
-            print(f"[DB] Logged fight: {fighter1} vs {fighter2} ({confidence}%)")
         except Exception as e:
             print(f"[DB ERROR] Failed to log prediction: {e}")
 
@@ -194,28 +254,11 @@ def index():
         height2_pct=height2_pct,
         reach1_pct=reach1_pct,
         reach2_pct=reach2_pct,
+        user=user,
     )
 
 # =====================================================
-# Fighter Stats Page
-# =====================================================
-@app.route("/fighter/<name>")
-@limiter.limit("10 per minute")
-def fighter_profile(name):
-    stats = scrape_fighter_stats(name, force_refresh=False)
-    return render_template("fighter_profile.html", fighter=name, stats=stats)
-
-# =====================================================
-# Fighter Stats API (JSON)
-# =====================================================
-@app.route("/api/fighter/<name>")
-@limiter.limit("10 per minute")
-def api_fighter(name):
-    stats = scrape_fighter_stats(name, force_refresh=False)
-    return jsonify(stats)
-
-# =====================================================
-# Betting Mode
+# BETTING MODE
 # =====================================================
 @app.route("/betting", methods=["GET", "POST"])
 @limiter.limit("5 per minute")
@@ -224,6 +267,7 @@ def betting():
     fighter = stat = ""
     line = 0.0
     confidence = None
+    user = session.get("user")
     RECENT_PATH = "recent_predictions.json"
 
     STAT_MAP = {
@@ -293,7 +337,7 @@ def betting():
                         model=GPT_MODEL,
                         messages=[
                             {"role": "system", "content": "You are an MMA betting analyst writing concise predictions."},
-                            {"role": "user", "content": prompt}
+                            {"role": "user", "content": prompt},
                         ],
                     )
                     breakdown = response.choices[0].message.content.strip()
@@ -314,8 +358,28 @@ def betting():
                     "line": line,
                     "prediction": pick,
                     "confidence": confidence,
-                    "timestamp": str(datetime.now())
+                    "timestamp": str(datetime.now()),
                 })
+
+                # --- Save to Database ---
+                try:
+                    conn = get_db()
+                    c = conn.cursor()
+                    user_id = None
+                    if user:
+                        c.execute("SELECT id FROM users WHERE email=?", (user["email"],))
+                        row = c.fetchone()
+                        if row:
+                            user_id = row["id"]
+
+                    c.execute(
+                        "INSERT INTO predictions (user_id, mode, fighter1, fighter2, result, confidence, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        (user_id, "betting", fighter, stat, pick, confidence, datetime.now()),
+                    )
+                    conn.commit()
+                    conn.close()
+                except Exception as e:
+                    print(f"[DB ERROR] Failed to log betting prediction: {e}")
 
     recent_predictions = []
     if os.path.exists(RECENT_PATH):
@@ -329,8 +393,39 @@ def betting():
         stat=stat,
         line=line,
         confidence=confidence,
-        recent_predictions=recent_predictions
+        recent_predictions=recent_predictions,
+        user=user,
     )
+
+# =====================================================
+# USER HISTORY PAGE
+# =====================================================
+@app.route("/history")
+def history():
+    user = session.get("user")
+    if not user:
+        return redirect(url_for("login"))
+
+    try:
+        conn = get_db()
+        c = conn.cursor()
+        c.execute("SELECT id FROM users WHERE email=?", (user["email"],))
+        row = c.fetchone()
+        if not row:
+            return render_template("history.html", predictions=[], user=user)
+        user_id = row["id"]
+
+        c.execute(
+            "SELECT * FROM predictions WHERE user_id=? ORDER BY created_at DESC LIMIT 20",
+            (user_id,),
+        )
+        predictions = c.fetchall()
+        conn.close()
+    except Exception as e:
+        print(f"[DB ERROR] History fetch failed: {e}")
+        predictions = []
+
+    return render_template("history.html", predictions=predictions, user=user)
 
 # =====================================================
 # Run App
@@ -339,4 +434,4 @@ if __name__ == "__main__":
     port = 5050
     if len(sys.argv) > 2 and sys.argv[1] == "--port":
         port = int(sys.argv[2])
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=port, debug=True)
