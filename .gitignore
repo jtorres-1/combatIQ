@@ -213,3 +213,4 @@ __pycache__/
 .env
 venv311/
 .env
+client_secret.json
