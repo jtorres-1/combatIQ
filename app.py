@@ -1,8 +1,8 @@
-# app.py — CombatIQ Fight Predictor + Betting Mode + User History
+# app.py — CombatIQ Fight Predictor + Betting Mode + User History + Free/Pro Paywall System + Stripe
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, abort
 from openai import OpenAI
 import os, re, json, random, sys, logging, sqlite3
-from datetime import datetime
+from datetime import datetime, date
 from dotenv import load_dotenv
 from fighter_scraper import scrape_fighter_stats
 from flask_limiter import Limiter
@@ -10,6 +10,7 @@ from flask_limiter.util import get_remote_address
 from google_auth_oauthlib.flow import Flow
 from google.oauth2 import id_token
 import google.auth.transport.requests
+import stripe
 
 # ---------------------------
 # Confidence scoring heuristic
@@ -56,6 +57,14 @@ def safe_stat_value(stat, fallback=175):
 load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "supersecretkey")
+
+# ---------------------------
+# Stripe Setup
+# ---------------------------
+stripe.api_key = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY")
+STRIPE_PRICE_ID = os.getenv("STRIPE_PRICE_ID")
+DOMAIN = os.getenv("DOMAIN", "http://127.0.0.1:5050")
 
 # ---------------------------
 # Init Limiter + Logging
@@ -137,6 +146,43 @@ def logout():
     return redirect(url_for("index"))
 
 # =====================================================
+# PAYWALL HELPER FUNCTION
+# =====================================================
+def check_user_limit(email):
+    """Check if a free user has exceeded 3 predictions today."""
+    if not email:
+        return False, "login_required"
+
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("SELECT id, plan FROM users WHERE email=?", (email,))
+    row = c.fetchone()
+    if not row:
+        conn.close()
+        return False, "no_user"
+
+    user_id = row["id"]
+    plan = row["plan"]
+
+    # Pro users always pass
+    if plan == "pro":
+        conn.close()
+        return True, "pro"
+
+    # Count today's predictions
+    today_start = datetime.combine(date.today(), datetime.min.time())
+    c.execute(
+        "SELECT COUNT(*) FROM predictions WHERE user_id=? AND created_at >= ?",
+        (user_id, today_start),
+    )
+    count = c.fetchone()[0]
+    conn.close()
+
+    if count >= 3:
+        return False, "limit_reached"
+    return True, "ok"
+
+# =====================================================
 # HOME — Fight Prediction Mode
 # =====================================================
 @app.route("/", methods=["GET", "POST"])
@@ -150,6 +196,29 @@ def index():
     user = session.get("user")
 
     if request.method == "POST":
+        # --- Paywall enforcement ---
+        if user:
+            allowed, reason = check_user_limit(user["email"])
+            if not allowed and reason == "limit_reached":
+                upgrade_message = "<p style='color:gold;text-align:center;'><strong>Free Tier Limit Reached:</strong> Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a> for unlimited daily predictions.</p>"
+                return render_template(
+                    "index.html",
+                    result=upgrade_message,
+                    fighter1="",
+                    fighter2="",
+                    stats1={},
+                    stats2={},
+                    confidence=None,
+                    height1_pct=50,
+                    height2_pct=50,
+                    reach1_pct=50,
+                    reach2_pct=50,
+                    user=user,
+                )
+
+        else:
+            return redirect(url_for("login"))
+
         matchup = request.form.get("matchup", "").strip()
         force_refresh = "force_refresh" in request.form
 
@@ -291,6 +360,15 @@ def betting():
             print("[WARN] Failed to save recent prediction:", e)
 
     if request.method == "POST":
+        # --- Paywall enforcement ---
+        if user:
+            allowed, reason = check_user_limit(user["email"])
+            if not allowed and reason == "limit_reached":
+                upgrade_message = "<p style='color:gold;text-align:center;'><strong>Free Tier Limit Reached:</strong> Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a> for unlimited daily predictions.</p>"
+                return render_template("betting.html", prediction=upgrade_message, user=user)
+        else:
+            return redirect(url_for("login"))
+
         fighter = request.form.get("fighter", "").strip()
         stat = request.form.get("stat", "").lower().strip()
         try:
@@ -428,7 +506,125 @@ def history():
     return render_template("history.html", predictions=predictions, user=user)
 
 # =====================================================
-# Run App
+# STRIPE CHECKOUT + UPGRADE FLOW
+# =====================================================
+@app.route("/upgrade")
+def upgrade():
+    user = session.get("user")
+    if not user:
+        return redirect(url_for("login"))
+
+    # Fetch plan for display
+    conn = get_db()
+    c = conn.cursor()
+    c.execute("SELECT plan FROM users WHERE email=?", (user["email"],))
+    row = c.fetchone()
+    plan = row["plan"] if row else "free"
+    conn.close()
+
+    return render_template(
+        "upgrade.html",
+        user=user,
+        plan=plan,
+        stripe_public_key=STRIPE_PUBLIC_KEY
+    )
+
+@app.route("/create-checkout-session", methods=["POST"])
+def create_checkout_session():
+    user = session.get("user")
+    if not user:
+        return redirect(url_for("login"))
+
+    if not STRIPE_PRICE_ID or not stripe.api_key:
+        return "Stripe is not configured correctly.", 500
+
+    try:
+        checkout_session = stripe.checkout.Session.create(
+            mode="subscription",
+            line_items=[{"price": STRIPE_PRICE_ID, "quantity": 1}],
+            success_url=f"{DOMAIN}/success?session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{DOMAIN}/cancel",
+            customer_email=user.get("email"),
+        )
+        return redirect(checkout_session.url)
+    except Exception as e:
+        print(f"[STRIPE ERROR] Failed to create checkout session: {e}")
+        return "Unable to start checkout session.", 500
+
+@app.route("/success")
+def success():
+    user = session.get("user")
+    session_id = request.args.get("session_id")
+
+    if session_id and stripe.api_key:
+        try:
+            checkout_session = stripe.checkout.Session.retrieve(session_id)
+            email = None
+            if checkout_session and checkout_session.get("customer_details"):
+                email = checkout_session["customer_details"].get("email")
+            if not email and user:
+                email = user.get("email")
+
+            if email:
+                conn = get_db()
+                c = conn.cursor()
+                c.execute("UPDATE users SET plan='pro' WHERE email=?", (email,))
+                conn.commit()
+                conn.close()
+        except Exception as e:
+            print(f"[STRIPE ERROR] Failed to mark user as pro: {e}")
+
+    return render_template("success.html", user=user)
+
+@app.route("/cancel")
+def cancel():
+    user = session.get("user")
+    return render_template("cancel.html", user=user)
+
+
+# =====================================================
+# STRIPE WEBHOOK ENDPOINT
+# =====================================================
+@app.route("/webhook", methods=["POST"])
+@limiter.exempt
+def stripe_webhook():
+    payload = request.data
+    sig_header = request.headers.get("Stripe-Signature")
+    webhook_secret = os.getenv("STRIPE_WEBHOOK_SECRET")
+
+    try:
+        event = stripe.Webhook.construct_event(
+            payload, sig_header, webhook_secret
+        )
+    except ValueError:
+        return "Invalid payload", 400
+    except stripe.error.SignatureVerificationError:
+        return "Invalid signature", 400
+
+    if event["type"] == "checkout.session.completed":
+        session_data = event["data"]["object"]
+
+        email = (
+            session_data.get("customer_email")
+            or (session_data.get("customer_details") or {}).get("email")
+        )
+
+
+        if email:
+            try:
+                conn = get_db()
+                c = conn.cursor()
+                c.execute("UPDATE users SET plan='pro' WHERE email=?", (email,))
+                conn.commit()
+                conn.close()
+                print(f"[WEBHOOK] User {email} upgraded to Pro.")
+            except Exception as e:
+                print(f"[DB ERROR] Failed to upgrade user: {e}")
+
+    return "Success", 200
+
+# =====================================================
+# RUN APP
 # =====================================================
 if __name__ == "__main__":
     port = 5050

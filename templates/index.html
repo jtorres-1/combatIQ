@@ -10,7 +10,14 @@
       color: #f5f5f5;
       font-family: 'Inter', sans-serif;
     }
-
+    .nav-link {
+      color: #bbb;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+    .nav-link:hover {
+      color: #ffd700;
+    }
     .card {
       background: #111;
       border: 1px solid #222;
@@ -20,11 +27,9 @@
       text-align: center;
       transition: transform 0.2s ease;
     }
-
     .card:hover {
       transform: scale(1.03);
     }
-
     .fighter-img {
       width: 100%;
       height: 220px;
@@ -32,7 +37,6 @@
       border-radius: 0.5rem;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
     }
-
     .result {
       background: #111;
       border-radius: 1rem;
@@ -40,22 +44,18 @@
       padding: 1.5rem;
       margin-top: 2rem;
     }
-
     .prose h3, .prose h4 {
       color: #ff4d4d;
       margin-top: 1.5rem;
       margin-bottom: 0.5rem;
     }
-
     .prose p {
       margin-bottom: 1rem;
       line-height: 1.75;
     }
-
     .prose strong {
       color: #ffd700;
     }
-
     .bar-wrap {
       display: flex;
       width: 100%;
@@ -64,38 +64,34 @@
       overflow: hidden;
       background: #1f1f1f;
     }
-
-    .bar-left {
-      height: 100%;
-      background: #ef4444;
-      transition: width 0.4s ease-in-out;
-    }
-
-    .bar-right {
-      height: 100%;
-      background: #3b82f6;
-      transition: width 0.4s ease-in-out;
-    }
+    .bar-left { background: #ef4444; transition: width 0.4s ease-in-out; }
+    .bar-right { background: #3b82f6; transition: width 0.4s ease-in-out; }
   </style>
 </head>
 
 <body class="min-h-screen flex flex-col items-center p-6">
-  <!-- User Login Display -->
-  <div class="w-full max-w-5xl text-right mb-3">
-    {% if user %}
-      <p class="text-sm text-gray-400">
-        Signed in as <span class="text-yellow-400 font-medium">{{ user['email'] }}</span>
-        <a href="{{ url_for('logout') }}" class="ml-3 text-red-400 hover:text-red-300">Logout</a>
-      </p>
-    {% else %}
-      <a href="{{ url_for('login') }}" class="text-sm text-gray-400 hover:text-white">Sign in with Google</a>
-    {% endif %}
-  </div>
 
-  <h1 class="text-4xl font-bold text-red-500 mb-6">⚔️ Combat IQ</h1>
+  <!-- NAVIGATION BAR -->
+  <nav class="w-full max-w-5xl flex justify-between items-center mb-6 border-b border-neutral-800 pb-3">
+    <h1 class="text-3xl font-bold text-red-500 tracking-tight">⚔️ Combat IQ</h1>
+    <div class="flex items-center gap-6 text-sm">
+      <a href="/" class="nav-link">Home</a>
+      <a href="/betting" class="nav-link">Betting Mode</a>
+      {% if user %}
+        <a href="/history" class="nav-link">History</a>
+      {% endif %}
+      <a href="/upgrade" class="nav-link text-yellow-400 hover:text-yellow-300">Upgrade</a>
+      {% if user %}
+        <span class="text-gray-400 text-xs">Signed in as <span class="text-yellow-400">{{ user['email'] }}</span></span>
+        <a href="{{ url_for('logout') }}" class="text-red-400 hover:text-red-300 text-xs ml-2">Logout</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="text-gray-400 hover:text-white text-xs">Sign in</a>
+      {% endif %}
+    </div>
+  </nav>
 
-  <!-- Search Form -->
-  <form method="POST" class="flex flex-col sm:flex-row gap-3 mb-4 w-full max-w-2xl">
+  <!-- SEARCH -->
+  <form method="POST" class="flex flex-col sm:flex-row gap-3 mb-6 w-full max-w-2xl">
     <input
       type="text"
       name="matchup"
@@ -111,36 +107,11 @@
     </button>
   </form>
 
-  <!-- Betting Mode + History Buttons -->
-  <div class="flex flex-col sm:flex-row gap-4 mb-8">
-    <a
-      href="/betting"
-      class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-3 rounded-lg transition inline-flex items-center justify-center"
-    >
-      🎯 Betting Mode
-    </a>
-
-    {% if user %}
-    <a
-      href="/history"
-      class="bg-neutral-800 hover:bg-neutral-700 text-white font-semibold px-6 py-3 rounded-lg border border-neutral-600 transition inline-flex items-center justify-center"
-    >
-      📜 View History
-    </a>
-    {% endif %}
-  </div>
-
   {% if result %}
-  <!-- Fighter Cards -->
+  <!-- FIGHTER CARDS -->
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl w-full">
-    <!-- Fighter 1 -->
     <div class="card">
-      <img
-        class="fighter-img"
-        src="{{ (stats1.get('image') or url_for('static', filename='fighters/fighter_placeholder.jpg')) | safe }}"
-        alt="{{ fighter1 }}"
-        onerror="this.onerror=null;this.src='{{ url_for('static', filename='fighters/fighter_placeholder.jpg') }}';"
-      />
+      <img class="fighter-img" src="{{ (stats1.get('image') or url_for('static', filename='fighters/fighter_placeholder.jpg')) | safe }}" alt="{{ fighter1 }}" />
       <h3 class="text-xl font-semibold mt-3 text-red-400">{{ fighter1 }}</h3>
       <p><strong class="text-yellow-400">Record:</strong> {{ stats1.record }}</p>
       <p><strong class="text-yellow-400">Height:</strong> {{ stats1.height }}</p>
@@ -148,14 +119,8 @@
       <p><strong class="text-yellow-400">Stance:</strong> {{ stats1.stance }}</p>
     </div>
 
-    <!-- Fighter 2 -->
     <div class="card">
-      <img
-        class="fighter-img"
-        src="{{ (stats2.get('image') or url_for('static', filename='fighters/fighter_placeholder.jpg')) | safe }}"
-        alt="{{ fighter2 }}"
-        onerror="this.onerror=null;this.src='{{ url_for('static', filename='fighters/fighter_placeholder.jpg') }}';"
-      />
+      <img class="fighter-img" src="{{ (stats2.get('image') or url_for('static', filename='fighters/fighter_placeholder.jpg')) | safe }}" alt="{{ fighter2 }}" />
       <h3 class="text-xl font-semibold mt-3 text-red-400">{{ fighter2 }}</h3>
       <p><strong class="text-yellow-400">Record:</strong> {{ stats2.record }}</p>
       <p><strong class="text-yellow-400">Height:</strong> {{ stats2.height }}</p>
@@ -164,13 +129,9 @@
     </div>
   </div>
 
-  <!-- Stat Comparison -->
+  <!-- STAT COMPARISON -->
   <div class="max-w-2xl mt-10 w-full">
-    <h2 class="text-2xl text-red-400 font-bold mb-3 border-b border-red-600 pb-2">
-      Stat Comparison
-    </h2>
-
-    <!-- HEIGHT -->
+    <h2 class="text-2xl text-red-400 font-bold mb-3 border-b border-red-600 pb-2">Stat Comparison</h2>
     <div class="mb-5">
       <div class="flex justify-between text-xs text-neutral-400 mb-1">
         <span>Height Comparison</span>
@@ -181,8 +142,6 @@
         <div class="bar-right" style="width: {{ height2_pct }}%;"></div>
       </div>
     </div>
-
-    <!-- REACH -->
     <div>
       <div class="flex justify-between text-xs text-neutral-400 mb-1">
         <span>Reach Comparison</span>
@@ -195,24 +154,18 @@
     </div>
   </div>
 
-  <!-- AI Confidence Score -->
   {% if confidence %}
   <div class="max-w-4xl w-full mt-10 mb-6 bg-neutral-900 border border-neutral-700 rounded-lg p-4 text-center">
     <p class="text-yellow-400 text-lg font-semibold">
-      🧠 AI Confidence Score:
-      <span class="text-white">{{ confidence }}%</span>
+      🧠 AI Confidence Score: <span class="text-white">{{ confidence }}%</span>
     </p>
   </div>
   {% endif %}
 
-  <!-- Fight IQ Report -->
+  <!-- RESULT -->
   <div class="result max-w-4xl w-full">
-    <h2 class="text-2xl font-bold text-red-400 mb-3 border-b border-red-600 pb-2">
-      Fight IQ Report
-    </h2>
-    <article class="prose prose-invert prose-red max-w-none leading-relaxed">
-      {{ result|safe }}
-    </article>
+    <h2 class="text-2xl font-bold text-red-400 mb-3 border-b border-red-600 pb-2">Fight IQ Report</h2>
+    <article class="prose prose-invert prose-red max-w-none leading-relaxed">{{ result|safe }}</article>
   </div>
   {% endif %}
 </body>
