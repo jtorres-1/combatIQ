@@ -104,7 +104,7 @@ flow = Flow.from_client_secrets_file(
         "https://www.googleapis.com/auth/userinfo.email",
         "openid",
     ],
-    redirect_uri="http://127.0.0.1:5050/callback",
+    redirect_uri="https://combatiq.app/callback",
 )
 
 @app.route("/login")
