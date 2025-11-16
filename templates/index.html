@@ -31,9 +31,7 @@
       text-align: center;
       transition: transform 0.2s ease;
     }
-    .card:hover {
-      transform: scale(1.03);
-    }
+    .card:hover { transform: scale(1.03); }
 
     .fighter-img {
       width: 100%;
@@ -77,59 +75,30 @@
 
     /* MOBILE FIXES */
     @media (max-width: 640px) {
-
-      .card {
-        padding: 1rem;
-      }
-
-      .fighter-img {
-        height: 160px;
-      }
-
-      input[type="text"] {
+      .card { padding: 1rem; }
+      .fighter-img { height: 160px; }
+      input[type="text"], button[type="submit"] {
         padding: 0.65rem 1rem;
         font-size: 0.9rem;
       }
-
-      button[type="submit"] {
-        padding: 0.65rem 1rem;
-        font-size: 0.9rem;
-      }
-
-      .prose p {
-        font-size: 0.9rem;
-        line-height: 1.6;
-      }
-
-      .bar-wrap {
-        height: 10px;
-      }
-
-      .grid {
-        gap: 1rem;
-      }
+      .prose p { font-size: 0.9rem; line-height: 1.6; }
+      .bar-wrap { height: 10px; }
+      .grid { gap: 1rem; }
     }
 
     @media (max-width: 480px) {
-      h1 {
-        font-size: 1.6rem;
-      }
+      h1 { font-size: 1.6rem; }
     }
   </style>
-
 </head>
 
 <body class="min-h-screen flex flex-col items-center sm:p-6">
 
-  <!-- MOBILE FIXED NAVIGATION -->
+  <!-- NAVIGATION -->
   <nav class="w-full max-w-5xl flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 border-b border-neutral-800 pb-3 gap-3">
-
-    <h1 class="text-3xl font-bold text-red-500 tracking-tight">
-      ⚔️ Combat IQ
-    </h1>
+    <h1 class="text-3xl font-bold text-red-500 tracking-tight">⚔️ Combat IQ</h1>
 
     <div class="flex flex-wrap justify-center sm:justify-end items-center gap-4 text-sm">
-
       <a href="/" class="nav-link">Home</a>
       <a href="/betting" class="nav-link">Betting Mode</a>
 
@@ -139,17 +108,14 @@
 
       <a href="/upgrade" class="nav-link text-yellow-400 hover:text-yellow-300">Upgrade</a>
 
-      {% if user %}
+      {% if user and user.email %}
         <span class="text-gray-400 text-xs">
-          Signed in as <span class="text-yellow-400">{{ user['email'] }}</span>
+          Signed in as <span class="text-yellow-400">{{ user.email }}</span>
         </span>
-        <a href="{{ url_for('logout') }}" class="text-red-400 hover:text-red-300 text-xs">
-          Logout
-        </a>
+        <a href="{{ url_for('logout') }}" class="text-red-400 hover:text-red-300 text-xs">Logout</a>
       {% else %}
         <a href="{{ url_for('login') }}" class="text-gray-400 hover:text-white text-xs">Sign in</a>
       {% endif %}
-
     </div>
   </nav>
 
@@ -196,6 +162,7 @@
   <!-- STAT COMPARISON -->
   <div class="max-w-2xl mt-10 w-full">
     <h2 class="text-2xl text-red-400 font-bold mb-3 border-b border-red-600 pb-2">Stat Comparison</h2>
+
     <div class="mb-5">
       <div class="flex justify-between text-xs text-neutral-400 mb-1">
         <span>Height Comparison</span>
@@ -206,6 +173,7 @@
         <div class="bar-right" style="width: {{ height2_pct }}%;"></div>
       </div>
     </div>
+
     <div>
       <div class="flex justify-between text-xs text-neutral-400 mb-1">
         <span>Reach Comparison</span>
