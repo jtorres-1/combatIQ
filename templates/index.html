@@ -4,12 +4,15 @@
   <meta charset="UTF-8" />
   <title>⚔️ Combat IQ • Fight Predictor</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
     body {
       background-color: #0a0a0a;
       color: #f5f5f5;
       font-family: 'Inter', sans-serif;
+      padding: 1rem;
     }
+
     .nav-link {
       color: #bbb;
       font-weight: 500;
@@ -18,6 +21,7 @@
     .nav-link:hover {
       color: #ffd700;
     }
+
     .card {
       background: #111;
       border: 1px solid #222;
@@ -30,6 +34,7 @@
     .card:hover {
       transform: scale(1.03);
     }
+
     .fighter-img {
       width: 100%;
       height: 220px;
@@ -37,6 +42,7 @@
       border-radius: 0.5rem;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
     }
+
     .result {
       background: #111;
       border-radius: 1rem;
@@ -44,6 +50,7 @@
       padding: 1.5rem;
       margin-top: 2rem;
     }
+
     .prose h3, .prose h4 {
       color: #ff4d4d;
       margin-top: 1.5rem;
@@ -56,6 +63,7 @@
     .prose strong {
       color: #ffd700;
     }
+
     .bar-wrap {
       display: flex;
       width: 100%;
@@ -66,10 +74,52 @@
     }
     .bar-left { background: #ef4444; transition: width 0.4s ease-in-out; }
     .bar-right { background: #3b82f6; transition: width 0.4s ease-in-out; }
+
+    /* Mobile Tweaks */
+    @media (max-width: 640px) {
+
+      .card {
+        padding: 1rem;
+      }
+
+      .fighter-img {
+        height: 160px;
+      }
+
+      input[type="text"] {
+        padding: 0.65rem 1rem;
+        font-size: 0.9rem;
+      }
+
+      button[type="submit"] {
+        padding: 0.65rem 1rem;
+        font-size: 0.9rem;
+      }
+
+      .prose p {
+        font-size: 0.9rem;
+        line-height: 1.6;
+      }
+
+      .bar-wrap {
+        height: 10px;
+      }
+
+      .grid {
+        gap: 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.6rem;
+      }
+    }
   </style>
+
 </head>
 
-<body class="min-h-screen flex flex-col items-center p-6">
+<body class="min-h-screen flex flex-col items-center sm:p-6">
 
   <!-- NAVIGATION BAR -->
   <nav class="w-full max-w-5xl flex justify-between items-center mb-6 border-b border-neutral-800 pb-3">
