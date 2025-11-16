@@ -18,9 +18,7 @@
       font-weight: 500;
       transition: 0.2s;
     }
-    .nav-link:hover {
-      color: #ffd700;
-    }
+    .nav-link:hover { color: #ffd700; }
 
     .card {
       background: #111;
@@ -29,15 +27,13 @@
       box-shadow: 0 0 20px rgba(255, 0, 0, 0.15);
       padding: 1.5rem;
       text-align: center;
-      transition: transform 0.2s ease;
     }
-    .card:hover { transform: scale(1.03); }
 
     .fighter-img {
       width: 100%;
-      height: 220px;
+      height: 260px;
       object-fit: cover;
-      border-radius: 0.5rem;
+      border-radius: 0.7rem;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
     }
 
@@ -49,46 +45,53 @@
       margin-top: 2rem;
     }
 
-    .prose h3, .prose h4 {
-      color: #ff4d4d;
-      margin-top: 1.5rem;
-      margin-bottom: 0.5rem;
-    }
-    .prose p {
-      margin-bottom: 1rem;
-      line-height: 1.75;
-    }
-    .prose strong {
-      color: #ffd700;
-    }
+    .prose p { line-height: 1.75; }
 
-    .bar-wrap {
-      display: flex;
-      width: 100%;
-      height: 12px;
-      border-radius: 9999px;
-      overflow: hidden;
-      background: #1f1f1f;
-    }
-    .bar-left { background: #ef4444; transition: width 0.4s ease-in-out; }
-    .bar-right { background: #3b82f6; transition: width 0.4s ease-in-out; }
-
-    /* MOBILE FIXES */
+    /* MOBILE SCALING FIXES */
     @media (max-width: 640px) {
-      .card { padding: 1rem; }
-      .fighter-img { height: 160px; }
-      input[type="text"], button[type="submit"] {
-        padding: 0.65rem 1rem;
-        font-size: 0.9rem;
+
+      .hero-title {
+        font-size: 1.8rem;
+        text-align: center;
+        line-height: 1.3;
       }
-      .prose p { font-size: 0.9rem; line-height: 1.6; }
-      .bar-wrap { height: 10px; }
-      .grid { gap: 1rem; }
+
+      .hero-sub {
+        font-size: 1rem;
+        text-align: center;
+        margin-top: 0.3rem;
+        color: #ccc;
+      }
+
+      .fighter-img {
+        height: 200px;
+      }
+
+      .card {
+        padding: 1rem;
+      }
+
+      input[type="text"] {
+        font-size: 1rem;
+        padding: 0.9rem 1rem;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: 1rem;
+        font-size: 1.1rem;
+      }
+
+      .prose p {
+        font-size: 1rem;
+        line-height: 1.65;
+      }
+
+      .bar-wrap {
+        height: 12px;
+      }
     }
 
-    @media (max-width: 480px) {
-      h1 { font-size: 1.6rem; }
-    }
   </style>
 </head>
 
@@ -119,7 +122,15 @@
     </div>
   </nav>
 
-  <!-- SEARCH -->
+  <!-- HERO SECTION -->
+  {% if not result %}
+  <section class="w-full max-w-3xl mb-10 mt-6">
+    <h2 class="hero-title font-bold text-red-400">AI Powered UFC Fight Predictor</h2>
+    <p class="hero-sub">Enter any matchup and get full breakdowns, stat comparisons, and AI confidence scoring.</p>
+  </section>
+  {% endif %}
+
+  <!-- SEARCH BAR -->
   <form method="POST" class="flex flex-col sm:flex-row gap-3 mb-6 w-full max-w-2xl">
     <input
       type="text"
@@ -130,7 +141,7 @@
     />
     <button
       type="submit"
-      class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold text-white transition"
+      class="bg-red-600 hover:bg-red-700 rounded-lg font-semibold text-white transition px-6 py-3"
     >
       Analyze Fight
     </button>
@@ -197,7 +208,7 @@
   <!-- RESULT -->
   <div class="result max-w-4xl w-full">
     <h2 class="text-2xl font-bold text-red-400 mb-3 border-b border-red-600 pb-2">Fight IQ Report</h2>
-    <article class="prose prose-invert prose-red max-w-none leading-relaxed">{{ result|safe }}</article>
+    <article class="prose prose-invert prose-red max-w-none leading-relaxed">{{ result | safe }}</article>
   </div>
 
   {% endif %}
