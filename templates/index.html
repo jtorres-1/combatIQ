@@ -7,10 +7,9 @@
 
   <style>
     body {
-      background-color: #0a0a0a;
+      background: radial-gradient(circle at top, rgba(255,0,0,0.08), #000000 65%);
       color: #f5f5f5;
       font-family: 'Inter', sans-serif;
-      padding: 1rem;
     }
 
     .nav-link {
@@ -22,149 +21,120 @@
       color: #ffd700;
     }
 
+    .hero-title {
+      background: linear-gradient(to right, #ff4d4d, #ff9999);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
     .card {
       background: #111;
       border: 1px solid #222;
       border-radius: 1rem;
-      box-shadow: 0 0 20px rgba(255, 0, 0, 0.15);
       padding: 1.5rem;
       text-align: center;
-      transition: transform 0.2s ease;
     }
-    .card:hover { transform: scale(1.03); }
 
     .fighter-img {
       width: 100%;
       height: 220px;
       object-fit: cover;
       border-radius: 0.5rem;
-      box-shadow: 0 0 15px rgba(255, 0, 0, 0.2);
-    }
-
-    .result {
-      background: #111;
-      border-radius: 1rem;
-      border: 1px solid #333;
-      padding: 1.5rem;
-      margin-top: 2rem;
-    }
-
-    .prose h3, .prose h4 {
-      color: #ff4d4d;
-      margin-top: 1.5rem;
-      margin-bottom: 0.5rem;
-    }
-    .prose p {
-      margin-bottom: 1rem;
-      line-height: 1.75;
-    }
-    .prose strong {
-      color: #ffd700;
     }
 
     .bar-wrap {
-      display: flex;
       width: 100%;
       height: 12px;
       border-radius: 9999px;
       overflow: hidden;
       background: #1f1f1f;
     }
-    .bar-left { background: #ef4444; transition: width 0.4s ease-in-out; }
-    .bar-right { background: #3b82f6; transition: width 0.4s ease-in-out; }
+    .bar-left { background: #ef4444; }
+    .bar-right { background: #3b82f6; }
 
-    /* MOBILE FIXES */
+    /* MOBILE */
     @media (max-width: 640px) {
-      .card { padding: 1rem; }
-      .fighter-img { height: 160px; }
-      input[type="text"], button[type="submit"] {
-        padding: 0.75rem 1.25rem;
+      .hero-title { font-size: 1.6rem; }
+      .hero-sub { font-size: 0.9rem; }
+
+      input[type="text"] {
         font-size: 1rem;
+        padding: 0.9rem 1rem;
       }
-      .prose p { font-size: 0.95rem; line-height: 1.65; }
+
+      button[type="submit"] {
+        padding: 0.9rem;
+        font-size: 1rem;
+        width: 100%;
+      }
+
+      .fighter-img { height: 160px; }
+
+      .card { padding: 1rem; }
+
       .bar-wrap { height: 10px; }
-      .grid { gap: 1rem; }
     }
   </style>
+
 </head>
 
-<body class="min-h-screen flex flex-col items-center sm:p-6">
+<body class="min-h-screen flex flex-col items-center px-4">
 
-  <!-- NAVIGATION -->
-  <nav class="w-full max-w-5xl border-b border-neutral-800 pb-4 mb-8">
-    <div class="flex justify-between items-center px-2">
-      <h1 class="text-3xl font-bold text-red-500 tracking-tight">⚔️ Combat IQ</h1>
+  <!-- NAV -->
+  <nav class="w-full max-w-6xl flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 border-b border-neutral-800 gap-3">
+    <h1 class="text-3xl font-bold text-red-500 tracking-tight">⚔️ Combat IQ</h1>
 
-      <!-- Mobile menu button -->
-      <button id="menuBtn" class="sm:hidden text-gray-300 text-2xl">☰</button>
-    </div>
-
-    <!-- Mobile dropdown -->
-    <div id="mobileMenu" class="hidden flex-col gap-3 mt-4 sm:hidden text-center">
+    <div class="flex flex-wrap justify-center sm:justify-end items-center gap-4 text-sm">
       <a href="/" class="nav-link">Home</a>
       <a href="/betting" class="nav-link">Betting Mode</a>
-      {% if user %}<a href="/history" class="nav-link">History</a>{% endif %}
-      <a href="/upgrade" class="nav-link text-yellow-400">Upgrade</a>
-      {% if user and user.email %}
-        <span class="text-gray-400 text-xs">Signed in as <span class="text-yellow-400">{{ user.email }}</span></span>
-        <a href="{{ url_for('logout') }}" class="text-red-400 text-xs">Logout</a>
-      {% else %}
-        <a href="{{ url_for('login') }}" class="text-gray-400 text-xs">Sign In</a>
+
+      {% if user %}
+      <a href="/history" class="nav-link">History</a>
       {% endif %}
-    </div>
 
-    <!-- Desktop nav -->
-    <div class="hidden sm:flex justify-end items-center gap-4 mt-4">
-      <a href="/" class="nav-link">Home</a>
-      <a href="/betting" class="nav-link">Betting Mode</a>
-      {% if user %}<a href="/history" class="nav-link">History</a>{% endif %}
-      <a href="/upgrade" class="nav-link text-yellow-400">Upgrade</a>
+      <a href="/upgrade" class="nav-link text-yellow-400 hover:text-yellow-300">Upgrade</a>
 
       {% if user and user.email %}
-        <span class="text-gray-400 text-xs">
-          Signed in as <span class="text-yellow-400">{{ user.email }}</span>
-        </span>
-        <a href="{{ url_for('logout') }}" class="text-red-400 hover:text-red-300 text-xs">Logout</a>
+      <span class="text-gray-400 text-xs">Signed in as <span class="text-yellow-400">{{ user.email }}</span></span>
+      <a href="{{ url_for('logout') }}" class="text-red-400 hover:text-red-300 text-xs">Logout</a>
       {% else %}
-        <a href="{{ url_for('login') }}" class="text-gray-400 hover:text-white text-xs">Sign in</a>
+      <a href="{{ url_for('login') }}" class="text-gray-400 hover:text-white text-xs">Sign in</a>
       {% endif %}
     </div>
   </nav>
 
-  <!-- HERO (only when no result yet) -->
-  {% if not result %}
-  <section class="w-full max-w-3xl mb-12 mt-4 px-3 text-center">
-    <h2 class="text-3xl font-bold text-red-400 leading-snug">AI Powered UFC Fight Predictor</h2>
-
-    <p class="text-gray-300 mt-3 text-lg">
-      Breakdowns • Stat comparisons • AI scoring • Full reports
+  <!-- HERO -->
+  <section class="w-full max-w-3xl mt-10 text-center">
+    <h2 class="hero-title text-4xl font-extrabold mb-3">AI Powered UFC Fight Predictor</h2>
+    <p class="hero-sub text-neutral-300 mb-8">
+      Full breakdowns • Stat comparisons • AI scoring • Fight IQ reports
     </p>
-  </section>
-  {% endif %}
 
-  <!-- SEARCH -->
-  <form method="POST" class="flex flex-col sm:flex-row gap-3 mb-6 w-full max-w-2xl px-3">
-    <input
-      type="text"
-      name="matchup"
-      placeholder="Enter matchup (e.g., Alexander Volkanovski vs Ilia Topuria)"
-      required
-      class="flex-1 bg-neutral-900 text-white rounded-lg px-4 py-3 border border-neutral-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-    />
-    <button
-      type="submit"
-      class="bg-red-600 hover:bg-red-700 px-6 py-3 rounded-lg font-semibold text-white transition"
-    >
-      Analyze Fight
-    </button>
-  </form>
+    <!-- SEARCH -->
+    <form method="POST" class="flex flex-col sm:flex-row gap-3 justify-center w-full">
+      <input
+        type="text"
+        name="matchup"
+        placeholder="Enter matchup (e.g., Volkanovski vs Topuria)"
+        required
+        class="flex-1 bg-neutral-900 text-white rounded-lg px-4 py-3 border border-neutral-700 focus:ring-2 focus:ring-red-500"
+      />
+
+      <button
+        type="submit"
+        class="bg-red-600 hover:bg-red-700 px-8 py-3 rounded-lg font-semibold text-white transition sm:w-auto"
+      >
+        Analyze Fight
+      </button>
+    </form>
+  </section>
 
   {% if result %}
 
-  <!-- FIGHTER CARDS -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl w-full px-3">
+  <!-- FIGHTERS -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl w-full mt-12">
     <div class="card">
-      <img class="fighter-img" src="{{ (stats1.get('image') or url_for('static', filename='fighters/fighter_placeholder.jpg')) | safe }}" alt="{{ fighter1 }}" />
+      <img class="fighter-img" src="{{ (stats1.get('image') or url_for('static','fighters/fighter_placeholder.jpg')) | safe }}" alt="{{ fighter1 }}">
       <h3 class="text-xl font-semibold mt-3 text-red-400">{{ fighter1 }}</h3>
       <p><strong class="text-yellow-400">Record:</strong> {{ stats1.record }}</p>
       <p><strong class="text-yellow-400">Height:</strong> {{ stats1.height }}</p>
@@ -173,7 +143,7 @@
     </div>
 
     <div class="card">
-      <img class="fighter-img" src="{{ (stats2.get('image') or url_for('static', filename='fighters/fighter_placeholder.jpg')) | safe }}" alt="{{ fighter2 }}" />
+      <img class="fighter-img" src="{{ (stats2.get('image') or url_for('static','fighters/fighter_placeholder.jpg')) | safe }}" alt="{{ fighter2 }}">
       <h3 class="text-xl font-semibold mt-3 text-red-400">{{ fighter2 }}</h3>
       <p><strong class="text-yellow-400">Record:</strong> {{ stats2.record }}</p>
       <p><strong class="text-yellow-400">Height:</strong> {{ stats2.height }}</p>
@@ -182,8 +152,8 @@
     </div>
   </div>
 
-  <!-- STAT COMPARISON -->
-  <div class="max-w-2xl mt-10 w-full px-3">
+  <!-- STAT COMP -->
+  <div class="max-w-2xl mt-10 w-full">
     <h2 class="text-2xl text-red-400 font-bold mb-3 border-b border-red-600 pb-2">Stat Comparison</h2>
 
     <div class="mb-5">
@@ -192,8 +162,8 @@
         <span>{{ fighter1 }} vs {{ fighter2 }}</span>
       </div>
       <div class="bar-wrap">
-        <div class="bar-left" style="width: {{ height1_pct }}%;"></div>
-        <div class="bar-right" style="width: {{ height2_pct }}%;"></div>
+        <div class="bar-left" style="width: {{ height1_pct }}%"></div>
+        <div class="bar-right" style="width: {{ height2_pct }}%"></div>
       </div>
     </div>
 
@@ -203,34 +173,27 @@
         <span>{{ fighter1 }} vs {{ fighter2 }}</span>
       </div>
       <div class="bar-wrap">
-        <div class="bar-left" style="width: {{ reach1_pct }}%;"></div>
-        <div class="bar-right" style="width: {{ reach2_pct }}%;"></div>
+        <div class="bar-left" style="width: {{ reach1_pct }}%"></div>
+        <div class="bar-right" style="width: {{ reach2_pct }}%"></div>
       </div>
     </div>
   </div>
 
   {% if confidence %}
-  <div class="max-w-4xl w-full mt-10 mb-6 bg-neutral-900 border border-neutral-700 rounded-lg p-4 text-center px-3">
+  <div class="max-w-4xl w-full mt-10 mb-6 bg-neutral-900 border border-neutral-700 rounded-lg p-4 text-center">
     <p class="text-yellow-400 text-lg font-semibold">
       🧠 AI Confidence Score: <span class="text-white">{{ confidence }}%</span>
     </p>
   </div>
   {% endif %}
 
-  <!-- RESULT -->
-  <div class="result max-w-4xl w-full px-3">
-    <h2 class="text-2xl font-bold text-red-400 mb-3 border-b border-red-600 pb-2">Fight IQ Report</h2>
-    <article class="prose prose-invert prose-red max-w-none leading-relaxed">{{ result|safe }}</article>
+  <!-- REPORT -->
+  <div class="bg-neutral-900 border border-neutral-700 rounded-lg p-6 max-w-4xl w-full mb-20">
+    <h2 class="text-2xl font-bold text-red-400 mb-4 border-b border-red-600 pb-2">Fight IQ Report</h2>
+    <article class="prose prose-invert leading-relaxed">{{ result|safe }}</article>
   </div>
 
   {% endif %}
-
-<script>
-  document.getElementById("menuBtn").onclick = () => {
-    const menu = document.getElementById("mobileMenu");
-    menu.classList.toggle("hidden");
-  };
-</script>
 
 </body>
 </html>
