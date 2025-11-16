@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>CombatIQ Pro — Checkout Cancelled</title>
+
   <style>
     body {
       font-family: Inter, sans-serif;
@@ -11,28 +12,65 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
+      justify-content: flex-start;
+      min-height: 100vh;
       margin: 0;
+      padding: 3rem 1rem;
       text-align: center;
     }
+
     h1 {
       color: #ff4d4d;
+      font-size: 2rem;
+      margin-bottom: 10px;
     }
+
+    p {
+      font-size: 1rem;
+      color: #ccc;
+      max-width: 300px;
+      line-height: 1.6;
+    }
+
     a {
       color: #ffd700;
       text-decoration: none;
       margin-top: 20px;
       font-size: 16px;
+      display: inline-block;
     }
+
     a:hover {
       color: #fff;
     }
+
+    /* Mobile Tweaks */
+    @media (max-width: 640px) {
+      body {
+        padding-top: 4rem;
+      }
+      h1 {
+        font-size: 1.7rem;
+      }
+      p {
+        font-size: 0.95rem;
+      }
+      a {
+        font-size: 15px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      p {
+        font-size: 0.9rem;
+      }
+    }
   </style>
 </head>
+
 <body>
   <h1>⚠️ Checkout Cancelled</h1>
-  <p>No worries — you can upgrade to CombatIQ Pro any time.</p>
+  <p>You can upgrade to CombatIQ Pro any time.</p>
   <a href="/upgrade">Back to Upgrade Page</a>
 </body>
 </html>
