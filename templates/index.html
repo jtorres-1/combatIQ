@@ -75,7 +75,7 @@
     .bar-left { background: #ef4444; transition: width 0.4s ease-in-out; }
     .bar-right { background: #3b82f6; transition: width 0.4s ease-in-out; }
 
-    /* Mobile Tweaks */
+    /* MOBILE FIXES */
     @media (max-width: 640px) {
 
       .card {
@@ -121,22 +121,35 @@
 
 <body class="min-h-screen flex flex-col items-center sm:p-6">
 
-  <!-- NAVIGATION BAR -->
-  <nav class="w-full max-w-5xl flex justify-between items-center mb-6 border-b border-neutral-800 pb-3">
-    <h1 class="text-3xl font-bold text-red-500 tracking-tight">⚔️ Combat IQ</h1>
-    <div class="flex items-center gap-6 text-sm">
+  <!-- MOBILE FIXED NAVIGATION -->
+  <nav class="w-full max-w-5xl flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 border-b border-neutral-800 pb-3 gap-3">
+
+    <h1 class="text-3xl font-bold text-red-500 tracking-tight">
+      ⚔️ Combat IQ
+    </h1>
+
+    <div class="flex flex-wrap justify-center sm:justify-end items-center gap-4 text-sm">
+
       <a href="/" class="nav-link">Home</a>
       <a href="/betting" class="nav-link">Betting Mode</a>
+
       {% if user %}
         <a href="/history" class="nav-link">History</a>
       {% endif %}
+
       <a href="/upgrade" class="nav-link text-yellow-400 hover:text-yellow-300">Upgrade</a>
+
       {% if user %}
-        <span class="text-gray-400 text-xs">Signed in as <span class="text-yellow-400">{{ user['email'] }}</span></span>
-        <a href="{{ url_for('logout') }}" class="text-red-400 hover:text-red-300 text-xs ml-2">Logout</a>
+        <span class="text-gray-400 text-xs">
+          Signed in as <span class="text-yellow-400">{{ user['email'] }}</span>
+        </span>
+        <a href="{{ url_for('logout') }}" class="text-red-400 hover:text-red-300 text-xs">
+          Logout
+        </a>
       {% else %}
         <a href="{{ url_for('login') }}" class="text-gray-400 hover:text-white text-xs">Sign in</a>
       {% endif %}
+
     </div>
   </nav>
 
@@ -158,6 +171,7 @@
   </form>
 
   {% if result %}
+
   <!-- FIGHTER CARDS -->
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl w-full">
     <div class="card">
@@ -217,6 +231,7 @@
     <h2 class="text-2xl font-bold text-red-400 mb-3 border-b border-red-600 pb-2">Fight IQ Report</h2>
     <article class="prose prose-invert prose-red max-w-none leading-relaxed">{{ result|safe }}</article>
   </div>
+
   {% endif %}
 </body>
 </html>
