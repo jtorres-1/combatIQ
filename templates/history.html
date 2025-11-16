@@ -4,12 +4,14 @@
   <meta charset="UTF-8" />
   <title>📜 CombatIQ • My History</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
   <style>
     body {
       background-color: #0a0a0a;
       color: #f5f5f5;
       font-family: 'Inter', sans-serif;
     }
+
     .card {
       background: #111;
       border: 1px solid #222;
@@ -17,41 +19,80 @@
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.15);
       padding: 1rem;
       transition: transform 0.2s ease;
+      word-break: break-word;
     }
+
     .card:hover { transform: scale(1.02); }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 1.2rem;
+      }
+      h1 {
+        font-size: 1.9rem;
+        text-align: center;
+      }
+      .card {
+        padding: 0.9rem;
+      }
+      .card h3 {
+        font-size: 1.1rem;
+      }
+      .card p {
+        font-size: 0.85rem;
+      }
+      .history-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.8rem;
+      }
+      .grid {
+        gap: 1rem !important;
+      }
+    }
   </style>
 </head>
 
 <body class="min-h-screen flex flex-col items-center p-6">
+
   <h1 class="text-3xl font-bold text-red-500 mb-4">📜 My CombatIQ History</h1>
 
   {% if user %}
-  <div class="flex items-center gap-3 mb-6">
+  <div class="history-header flex items-center gap-3 mb-6 w-full max-w-6xl">
     <img src="{{ user.picture }}" alt="pfp" class="w-10 h-10 rounded-full border border-red-400" />
     <div>
       <p class="text-lg font-semibold">{{ user.name }}</p>
       <p class="text-sm text-neutral-400">{{ user.email }}</p>
     </div>
-    <a href="/logout" class="ml-4 text-sm text-yellow-400 hover:underline">Logout</a>
+    <a href="/logout" class="ml-auto text-sm text-yellow-400 hover:underline">Logout</a>
   </div>
   {% endif %}
 
   {% if predictions %}
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full max-w-6xl">
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full max-w-6xl mt-2">
     {% for p in predictions %}
     <div class="card">
       <p class="text-sm text-neutral-400">{{ p.created_at }}</p>
       <p class="text-yellow-400 font-semibold mt-1 uppercase">{{ p.mode }}</p>
-      <h3 class="text-xl font-bold mt-2">{{ p.fighter1 }}{% if p.fighter2 %} vs {{ p.fighter2 }}{% endif %}</h3>
-      <p class="mt-2 text-neutral-300">{{ p.result|safe }}</p>
-      <p class="mt-2 text-yellow-400">Confidence: {{ p.confidence }}%</p>
+
+      <h3 class="text-xl font-bold mt-2">
+        {{ p.fighter1 }}
+        {% if p.fighter2 %} vs {{ p.fighter2 }}{% endif %}
+      </h3>
+
+      <p class="mt-2 text-neutral-300 leading-relaxed">{{ p.result|safe }}</p>
+
+      <p class="mt-2 text-yellow-400 font-semibold">
+        Confidence: {{ p.confidence }}%
+      </p>
     </div>
     {% endfor %}
   </div>
   {% else %}
-  <p class="text-neutral-400 mt-10">No predictions logged yet.</p>
+  <p class="text-neutral-400 mt-10 text-center">No predictions logged yet.</p>
   {% endif %}
 
   <a href="/" class="mt-10 text-red-400 hover:text-red-300 font-semibold">⬅ Back to Predictor</a>
+
 </body>
 </html>
