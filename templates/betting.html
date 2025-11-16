@@ -4,9 +4,43 @@
   <meta charset="UTF-8" />
   <title>Betting Mode • CombatIQ</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    @media (max-width: 640px) {
+      body {
+        padding: 1rem;
+      }
+      h1 {
+        font-size: 1.9rem;
+      }
+      form {
+        padding: 1rem !important;
+      }
+      input,
+      select {
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.9rem;
+      }
+      button {
+        padding: 0.6rem 1rem !important;
+        font-size: 0.95rem;
+      }
+      .prediction-box {
+        padding: 1rem !important;
+      }
+      .recent-item {
+        padding: 0.7rem !important;
+      }
+      .recent-item p {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
 </head>
+
 <body class="min-h-screen bg-neutral-950 text-neutral-100 p-6">
   <div class="max-w-2xl mx-auto">
+
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-3xl font-bold text-yellow-400">Betting Mode</h1>
@@ -67,7 +101,7 @@
 
     <!-- Results -->
     {% if prediction %}
-    <div class="mt-6 bg-neutral-900 border border-neutral-700 rounded-xl p-5 text-center">
+    <div class="prediction-box mt-6 bg-neutral-900 border border-neutral-700 rounded-xl p-5 text-center">
       <h2 class="text-xl font-semibold text-yellow-400 mb-2">📊 Prediction Result</h2>
       <div class="prose prose-invert max-w-none">
         {{ prediction|safe }}
@@ -93,7 +127,7 @@
       <h2 class="text-lg font-semibold text-yellow-400 mb-3">🕓 Recent Predictions</h2>
       <div class="space-y-3">
         {% for item in recent_predictions %}
-        <div class="bg-neutral-800 p-3 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center">
+        <div class="recent-item bg-neutral-800 p-3 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center">
           <div>
             <p class="text-sm text-white">
               <strong>{{ item.fighter }}</strong> — {{ item.stat|title }} (Line: <span class="text-yellow-400">{{ item.line }}</span>)
@@ -121,12 +155,12 @@
       if (!res.ok) return;
       const data = await res.json();
       console.log("Normalized stats:", data.normalized || data);
-      // Future: auto-fill line suggestions or preview averages
     } catch (err) {
       console.error("Error fetching fighter stats:", err);
     }
   }
   document.querySelector('input[name="fighter"]').addEventListener('blur', loadStats);
   </script>
+
 </body>
 </html>
