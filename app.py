@@ -58,6 +58,9 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "supersecretkey")
 
+GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "https://combatiq.app/callback")
+
+
 # ---------------------------
 # Stripe Setup
 # ---------------------------
@@ -92,7 +95,7 @@ def get_db():
 # =====================================================
 # GOOGLE OAUTH LOGIN SYSTEM
 # =====================================================
-os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_SECRET_PATH = os.getenv("GOOGLE_CLIENT_SECRET_PATH", "client_secret.json")
@@ -103,12 +106,13 @@ def build_flow():
     return Flow.from_client_secrets_file(
         GOOGLE_SECRET_PATH,
         scopes=[
+            "openid",
             "https://www.googleapis.com/auth/userinfo.profile",
             "https://www.googleapis.com/auth/userinfo.email",
-            "openid",
         ],
-        redirect_uri="https://combatiq.app/callback",
+        redirect_uri=os.getenv("GOOGLE_REDIRECT_URI", "https://combatiq.app/callback"),
     )
+
 
 
 @app.route("/login")
@@ -123,16 +127,20 @@ def login():
 @app.route("/callback")
 def callback():
     flow = build_flow()
+        if "state" not in session or session["state"] != request.args.get("state"):
+            return "Invalid state parameter", 400
+
     flow.fetch_token(authorization_response=request.url)
 
-    credentials = flow.credentials
     request_session = google.auth.transport.requests.Request()
+    credentials = flow.credentials
 
     id_info = id_token.verify_oauth2_token(
-        credentials.id_token,
+        credentials._id_token,
         request_session,
         GOOGLE_CLIENT_ID
     )
+
 
     session["user"] = id_info
 
