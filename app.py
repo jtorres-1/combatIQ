@@ -109,20 +109,27 @@ flow = Flow.from_client_secrets_file(
 
 @app.route("/login")
 def login():
+    flow = build_flow()
     authorization_url, state = flow.authorization_url()
     session["state"] = state
+    session["flow"] = flow
     return redirect(authorization_url)
+
 
 @app.route("/callback")
 def callback():
+    flow = build_flow()
     flow.fetch_token(authorization_response=request.url)
+
     credentials = flow.credentials
     request_session = google.auth.transport.requests.Request()
+
     id_info = id_token.verify_oauth2_token(
-        id_token=credentials.id_token,
-        request=request_session,
-        audience=GOOGLE_CLIENT_ID,
+        credentials.id_token,
+        request_session,
+        GOOGLE_CLIENT_ID,
     )
+
     session["user"] = id_info
 
     # Save user in DB if not exists
