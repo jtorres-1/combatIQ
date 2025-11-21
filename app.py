@@ -141,7 +141,7 @@ def callback():
     credentials = flow.credentials
 
     id_info = id_token.verify_oauth2_token(
-        credentials._id_token,
+        credentials.id_token,
         request_session,
         GOOGLE_CLIENT_ID
     )
