@@ -58,6 +58,10 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "supersecretkey")
 
+app.config["SESSION_COOKIE_SAMESITE"] = "None"
+app.config["SESSION_COOKIE_SECURE"] = True
+
+
 GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "https://combatiq.app/callback")
 
 
@@ -110,7 +114,7 @@ def build_flow():
             "https://www.googleapis.com/auth/userinfo.profile",
             "https://www.googleapis.com/auth/userinfo.email",
         ],
-        redirect_uri=os.getenv("GOOGLE_REDIRECT_URI", "https://combatiq.app/callback"),
+        redirect_uri=GOOGLE_REDIRECT_URI,
     )
 
 
@@ -127,8 +131,9 @@ def login():
 @app.route("/callback")
 def callback():
     flow = build_flow()
-        if "state" not in session or session["state"] != request.args.get("state"):
-            return "Invalid state parameter", 400
+
+    if "state" not in session or session["state"] != request.args.get("state"):
+        return "Invalid state parameter", 400
 
     flow.fetch_token(authorization_response=request.url)
 
@@ -140,6 +145,7 @@ def callback():
         request_session,
         GOOGLE_CLIENT_ID
     )
+
 
 
     session["user"] = id_info
