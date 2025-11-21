@@ -97,23 +97,27 @@ os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_SECRET_PATH = os.getenv("GOOGLE_CLIENT_SECRET_PATH", "client_secret.json")
 
-flow = Flow.from_client_secrets_file(
-    GOOGLE_SECRET_PATH,
-    scopes=[
-        "https://www.googleapis.com/auth/userinfo.profile",
-        "https://www.googleapis.com/auth/userinfo.email",
-        "openid",
-    ],
-    redirect_uri="https://combatiq.app/callback",
-)
+
+
+def build_flow():
+    return Flow.from_client_secrets_file(
+        GOOGLE_SECRET_PATH,
+        scopes=[
+            "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/userinfo.email",
+            "openid",
+        ],
+        redirect_uri="https://combatiq.app/callback",
+    )
+
 
 @app.route("/login")
 def login():
     flow = build_flow()
     authorization_url, state = flow.authorization_url()
     session["state"] = state
-    session["flow"] = flow
     return redirect(authorization_url)
+
 
 
 @app.route("/callback")
@@ -127,10 +131,11 @@ def callback():
     id_info = id_token.verify_oauth2_token(
         credentials.id_token,
         request_session,
-        GOOGLE_CLIENT_ID,
+        GOOGLE_CLIENT_ID
     )
 
     session["user"] = id_info
+
 
     # Save user in DB if not exists
     try:
