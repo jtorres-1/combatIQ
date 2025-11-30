@@ -3,186 +3,95 @@
 <head>
   <meta charset="UTF-8" />
   <title>Betting Mode • CombatIQ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    /* ================================ */
-    /* MOBILE NAV (same as index.html) */
-    /* ================================ */
-    @media (max-width: 640px) {
-      .mobile-nav-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        padding: 1rem 1rem;
-        border-bottom: 1px solid #222;
-      }
-
-      .mobile-logo {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #ff4d4d;
-      }
-
-      .mobile-menu-btn {
-        font-size: 1.8rem;
-        color: white;
-        cursor: pointer;
-      }
-
-      .mobile-menu {
-        display: none;
-        flex-direction: column;
-        background: #111;
-        padding: 1rem;
-        border-bottom: 1px solid #222;
-      }
-
-      .mobile-menu a {
-        color: #ddd;
-        padding: 0.5rem 0;
-        font-size: 1rem;
-      }
-
-      .mobile-menu a:hover {
-        color: #fff;
-      }
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Inter, sans-serif;
     }
 
-    /* ========================== */
-    /* FULL MOBILE LAYOUT PATCH   */
-    /* Matches index.html design */
-    /* ========================== */
+    /* Mobile scaling (same as index) */
     @media (max-width: 640px) {
-
-      body {
-        overflow-x: hidden;
-        margin: 0;
-        padding: 0.75rem;
-      }
-
-      .page-wrapper {
-        width: 100%;
-        max-width: 640px;
-        margin: 0 auto;
-        padding-top: 1.5rem;
-      }
-
-      h1 {
-        font-size: 2rem !important;
-        font-weight: 800 !important;
-        text-align: center !important;
-        color: #ffd700 !important;
-        margin-bottom: 1rem !important;
-      }
-
-      /* Form block */
-      form {
-        padding: 1.25rem !important;
-        border-radius: 0.75rem !important;
-        margin-top: 1rem !important;
-      }
-
-      label {
-        font-size: 1rem !important;
-      }
-
-      input, select {
-        width: 100% !important;
-        padding: 1rem !important;
-        font-size: 1.1rem !important;
-      }
-
-      button[type="submit"] {
-        width: 100%;
-        padding: 1rem !important;
-        font-size: 1.2rem !important;
-        margin-top: 0.5rem;
-      }
-
-      /* Results */
-      .prediction-box {
-        padding: 1.5rem !important;
-        border-radius: 0.75rem !important;
-        margin-top: 1.5rem !important;
-      }
-
-      .prediction-box h2 {
-        font-size: 1.3rem !important;
-      }
-
-      .prediction-box .prose {
-        font-size: 1rem !important;
-        line-height: 1.6rem !important;
-      }
-
-      .prediction-box .w-full {
-        height: 12px !important;
-      }
-
-      /* Recent predictions */
-      .recent-item {
-        padding: 1rem !important;
-        border-radius: 0.75rem !important;
-      }
-
-      .recent-item strong {
-        font-size: 1rem !important;
-      }
-
-      .recent-item p {
-        font-size: 0.9rem !important;
-      }
-
-      .timestamp {
-        font-size: 0.75rem !important;
-      }
+      .hero-title { font-size: 2rem; }
+      .mobile-input { font-size: 1.05rem !important; padding: 1rem !important; }
+      .mobile-button { font-size: 1.05rem !important; padding: 1rem !important; }
     }
   </style>
 </head>
 
-<body class="min-h-screen bg-neutral-950 text-neutral-100">
+<body class="min-h-screen flex flex-col items-center px-4">
 
-  <!-- ========================= -->
-  <!-- MOBILE NAV -->
-  <!-- ========================= -->
-  <div class="mobile-nav-bar sm:hidden">
-    <div class="mobile-logo">⚔️ Combat IQ</div>
-    <div class="mobile-menu-btn" onclick="toggleMenu()">☰</div>
-  </div>
+  <!-- NAVIGATION (IDENTICAL TO INDEX) -->
+  <nav class="w-full max-w-6xl border-b border-neutral-800 py-4 flex justify-between items-center">
 
-  <div id="mobileMenu" class="mobile-menu sm:hidden">
-    <a href="/">Home</a>
-    <a href="/betting">Betting Mode</a>
+    <!-- Logo -->
+    <h1 class="text-3xl font-bold text-red-500">⚔️ Combat IQ</h1>
+
+    <!-- Desktop Menu -->
+    <div class="hidden sm:flex gap-6 text-sm items-center">
+      <a class="text-gray-300 hover:text-yellow-400" href="/">Home</a>
+      <a class="text-yellow-400 hover:text-yellow-300" href="/betting">Betting Mode</a>
+
+      {% if user %}
+      <a class="text-gray-300 hover:text-yellow-400" href="/history">History</a>
+      {% endif %}
+
+      <a class="text-yellow-400 hover:text-yellow-300" href="/upgrade">Upgrade</a>
+
+      {% if user and user.email %}
+      <span class="text-xs text-gray-400">Signed in as <span class="text-yellow-400">{{ user.email }}</span></span>
+      <a class="text-xs text-red-400 hover:text-red-300" href="{{ url_for('logout') }}">Logout</a>
+      {% else %}
+      <a class="text-xs text-gray-300 hover:text-white" href="{{ url_for('login') }}">Sign in</a>
+      {% endif %}
+    </div>
+
+    <!-- Mobile Hamburger -->
+    <button id="menuBtn" class="sm:hidden text-white text-3xl">&#9776;</button>
+  </nav>
+
+  <!-- Mobile Dropdown -->
+  <div id="mobileMenu" class="hidden w-full max-w-6xl bg-neutral-900 border-b border-neutral-800 p-4 sm:hidden flex flex-col gap-3 text-base">
+    <a href="/" class="text-gray-200">Home</a>
+    <a href="/betting" class="text-yellow-400">Betting Mode</a>
+
+    {% if user %}
+    <a href="/history" class="text-gray-200">History</a>
+    {% endif %}
+
     <a href="/upgrade" class="text-yellow-400">Upgrade</a>
-    <a href="/history">My History</a>
+
+    {% if user and user.email %}
+    <span class="text-xs text-gray-400">Signed in as <span class="text-yellow-400">{{ user.email }}</span></span>
+    <a href="{{ url_for('logout') }}" class="text-red-400 text-sm">Logout</a>
+    {% else %}
+    <a href="{{ url_for('login') }}" class="text-gray-200 text-sm">Sign in</a>
+    {% endif %}
   </div>
 
+  <!-- JS for mobile nav -->
   <script>
-    function toggleMenu() {
-      const menu = document.getElementById("mobileMenu");
-      menu.style.display = menu.style.display === "flex" ? "none" : "flex";
-    }
+    document.getElementById("menuBtn").onclick = () => {
+      const m = document.getElementById("mobileMenu");
+      m.classList.toggle("hidden");
+    };
   </script>
 
-  <!-- ========================= -->
-  <!-- PAGE CONTENT -->
-  <!-- ========================= -->
-  <div class="page-wrapper max-w-2xl mx-auto">
+  <!-- PAGE WRAPPER -->
+  <div class="w-full max-w-2xl mt-10">
 
-    <!-- Centered Mobile Header -->
-    <h1 class="text-3xl font-bold text-yellow-400 mb-6 sm:text-left sm:mb-4">
+    <!-- PAGE TITLE -->
+    <h2 class="text-yellow-400 font-extrabold mb-4 text-3xl sm:text-4xl text-center">
       Betting Mode
-    </h1>
+    </h2>
 
-    <!-- Desktop back button (hidden on mobile) -->
-    <a href="/" class="hidden sm:block text-sm text-neutral-300 hover:text-white underline mb-6">
-      ← Back to Fight Predictor
-    </a>
+    <!-- FORM -->
+    <form method="POST" class="flex flex-col gap-4 bg-neutral-900 border border-neutral-700 p-5 rounded-xl">
 
-    <!-- Form -->
-    <form method="POST" class="bg-neutral-900 border border-neutral-700 rounded-xl p-5 space-y-4">
       <div>
         <label class="block text-sm mb-1">Fighter</label>
         <input
@@ -190,36 +99,25 @@
           value="{{ fighter or '' }}"
           required
           placeholder="e.g., Ilia Topuria"
-          class="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2
-                 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+          class="mobile-input w-full bg-neutral-900 text-white border border-neutral-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-yellow-500"
         />
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
         <div>
           <label class="block text-sm mb-1">Stat</label>
           <select
             name="stat"
-            class="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2
-                   focus:outline-none focus:ring-2 focus:ring-yellow-500 text-neutral-100"
             required
+            class="mobile-input w-full bg-neutral-900 text-white border border-neutral-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-yellow-500"
           >
             <option value="">Select Stat</option>
-            <option value="sig strikes" {% if stat == 'sig strikes' %}selected{% endif %}>
-              Significant Strikes
-            </option>
-            <option value="takedowns" {% if stat == 'takedowns' %}selected{% endif %}>
-              Takedowns
-            </option>
-            <option value="striking accuracy" {% if stat == 'striking accuracy' %}selected{% endif %}>
-              Striking Accuracy
-            </option>
-            <option value="takedown accuracy" {% if stat == 'takedown accuracy' %}selected{% endif %}>
-              Takedown Accuracy
-            </option>
-            <option value="submissions" {% if stat == 'submissions' %}selected{% endif %}>
-              Submissions Attempted
-            </option>
+            <option value="sig strikes" {% if stat == 'sig strikes' %}selected{% endif %}>Significant Strikes</option>
+            <option value="takedowns" {% if stat == 'takedowns' %}selected{% endif %}>Takedowns</option>
+            <option value="striking accuracy" {% if stat == 'striking accuracy' %}selected{% endif %}>Striking Accuracy</option>
+            <option value="takedown accuracy" {% if stat == 'takedown accuracy' %}selected{% endif %}>Takedown Accuracy</option>
+            <option value="submissions" {% if stat == 'submissions' %}selected{% endif %}>Submissions Attempted</option>
           </select>
         </div>
 
@@ -232,34 +130,29 @@
             type="number"
             step="0.1"
             placeholder="e.g., 1.5"
-            class="w-full bg-neutral-800 border border-neutral-700 rounded-lg px-3 py-2
-                   focus:outline-none focus:ring-2 focus:ring-yellow-500"
+            class="mobile-input w-full bg-neutral-900 text-white border border-neutral-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-yellow-500"
           />
         </div>
+
       </div>
 
       <button
         type="submit"
-        class="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-5 py-2 rounded-lg"
-      >
+        class="mobile-button bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg">
         Analyze Line
       </button>
     </form>
 
-    <!-- Results -->
+    <!-- RESULTS -->
     {% if prediction %}
-    <div class="prediction-box bg-neutral-900 border border-neutral-700 rounded-xl p-5 mt-6 text-center">
-      <h2 class="text-xl font-semibold text-yellow-400 mb-2">📊 Prediction Result</h2>
+    <div class="mt-8 bg-neutral-900 border border-neutral-700 p-5 rounded-xl text-center">
+      <h3 class="text-xl font-semibold text-yellow-400 mb-3">📊 Prediction Result</h3>
 
-      <div class="prose prose-invert max-w-none">
-        {{ prediction|safe }}
-      </div>
+      <div class="prose prose-invert max-w-none text-left">{{ prediction|safe }}</div>
 
       {% if confidence %}
       <div class="mt-4 w-full bg-neutral-800 h-3 rounded-full overflow-hidden">
-        <div class="h-full bg-yellow-500 transition-all duration-300"
-             style="width: {{ confidence }}%;">
-        </div>
+        <div class="h-full bg-yellow-500" style="width: {{ confidence }}%;"></div>
       </div>
       <p class="text-sm text-neutral-400 mt-2">
         Confidence Level:
@@ -269,37 +162,28 @@
     </div>
     {% endif %}
 
-    <!-- Recent Predictions -->
+    <!-- RECENT PREDICTIONS -->
     {% if recent_predictions and recent_predictions|length > 0 %}
-    <div class="bg-neutral-900 border border-neutral-700 rounded-xl p-5 mt-8">
-      <h2 class="text-lg font-semibold text-yellow-400 mb-3">🕓 Recent Predictions</h2>
+    <div class="mt-10 bg-neutral-900 border border-neutral-700 p-5 rounded-xl">
+      <h3 class="text-lg font-semibold text-yellow-400 mb-4">🕓 Recent Predictions</h3>
 
       <div class="space-y-3">
         {% for item in recent_predictions %}
-        <div class="recent-item bg-neutral-800 p-3 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center">
-          <div>
-            <p class="text-sm text-white">
-              <strong>{{ item.fighter }}</strong> —
-              {{ item.stat|title }} (Line:
-              <span class="text-yellow-400">{{ item.line }}</span>)
-            </p>
-
-            <p class="text-xs text-neutral-400">
-              Result:
-              <span class="text-yellow-400 font-semibold">{{ item.prediction }}</span> •
-              Confidence: {{ item.confidence }}%
-            </p>
-          </div>
-
-          <p class="timestamp text-xs text-neutral-500 mt-1 sm:mt-0">
-            {{ item.timestamp.split('.')[0] }}
+        <div class="bg-neutral-800 p-4 rounded-lg">
+          <p class="text-white text-sm">
+            <strong>{{ item.fighter }}</strong> — {{ item.stat|title }}
+            (Line: <span class="text-yellow-400">{{ item.line }}</span>)
           </p>
+          <p class="text-xs text-neutral-400">
+            Result: <span class="text-yellow-400">{{ item.prediction }}</span>
+            • Confidence: {{ item.confidence }}%
+          </p>
+          <p class="text-xs text-neutral-500 mt-1">{{ item.timestamp.split('.')[0] }}</p>
         </div>
         {% endfor %}
       </div>
     </div>
     {% endif %}
-
   </div>
 
 </body>
