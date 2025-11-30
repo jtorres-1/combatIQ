@@ -12,42 +12,60 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: center;
       min-height: 100vh;
       margin: 0;
-      padding: 3rem 1rem;
+      padding: 1.5rem;
       text-align: center;
+    }
+
+    .card {
+      background: #141414;
+      padding: 32px;
+      border-radius: 18px;
+      box-shadow: 0 0 18px rgba(255, 77, 77, 0.25);
+      width: 100%;
+      max-width: 360px;
+      border: 1px solid #1f1f1f;
     }
 
     h1 {
       color: #ff4d4d;
       font-size: 2rem;
-      margin-bottom: 10px;
+      font-weight: 700;
+      margin-bottom: 14px;
     }
 
     p {
-      font-size: 1rem;
       color: #ccc;
-      max-width: 300px;
-      line-height: 1.6;
+      font-size: 1rem;
+      line-height: 1.5rem;
+      margin-bottom: 22px;
     }
 
     a {
-      color: #ffd700;
+      color: black;
+      background: #ffd700;
+      padding: 12px 20px;
+      border-radius: 10px;
       text-decoration: none;
-      margin-top: 20px;
-      font-size: 16px;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: 0.2s;
       display: inline-block;
     }
 
     a:hover {
-      color: #fff;
+      background: #ffe056;
     }
 
-    /* Mobile Tweaks */
+    /* ========================= */
+    /* MOBILE OPTIMIZATION       */
+    /* ========================= */
     @media (max-width: 640px) {
-      body {
-        padding-top: 4rem;
+      .card {
+        padding: 26px;
+        border-radius: 16px;
       }
       h1 {
         font-size: 1.7rem;
@@ -56,11 +74,18 @@
         font-size: 0.95rem;
       }
       a {
-        font-size: 15px;
+        font-size: 0.95rem;
+        padding: 11px 18px;
       }
     }
 
     @media (max-width: 420px) {
+      .card {
+        padding: 22px;
+      }
+      h1 {
+        font-size: 1.55rem;
+      }
       p {
         font-size: 0.9rem;
       }
@@ -69,8 +94,10 @@
 </head>
 
 <body>
-  <h1>⚠️ Checkout Cancelled</h1>
-  <p>You can upgrade to CombatIQ Pro any time.</p>
-  <a href="/upgrade">Back to Upgrade Page</a>
+  <div class="card">
+    <h1>⚠️ Checkout Cancelled</h1>
+    <p>Your upgrade was not completed. You can retry anytime.</p>
+    <a href="/upgrade">Return to Upgrade Page</a>
+  </div>
 </body>
 </html>
