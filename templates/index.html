@@ -3,224 +3,114 @@
 <head>
   <meta charset="UTF-8" />
   <title>⚔️ Combat IQ • Fight Predictor</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
     body {
       background: #000;
-      color: #ffffff;
-      font-family: 'Inter', sans-serif;
+      color: #fff;
+      font-family: Inter, sans-serif;
     }
 
-    /* NAV */
-    .nav-link {
-      color: #ddd;
-      font-weight: 500;
-    }
-    .nav-link:hover {
-      color: #ffd700;
-    }
-
-    /* HERO */
-    .hero-title {
-      font-size: 2rem;
-      font-weight: 800;
-      color: #ff4d4d;
-    }
-
-    .hero-sub {
-      color: #bbbbbb;
-      font-size: 1rem;
-    }
-
-    /* MOBILE BOOST (original) */
+    /* Mobile: Increase sizes */
     @media (max-width: 640px) {
-      .hero-title {
-        font-size: 2.4rem;
-      }
-      .hero-sub {
-        font-size: 1.1rem;
-      }
-      input[type="text"] {
-        padding: 1rem;
-        font-size: 1.15rem;
-      }
-      button[type="submit"] {
-        padding: 1rem;
-        font-size: 1.15rem;
-      }
-      nav h1 {
-        font-size: 1.8rem;
-      }
-    }
-
-    /* CARDS */
-    .card {
-      background: #111;
-      border: 1px solid #222;
-      border-radius: 1rem;
-      padding: 1.5rem;
-      text-align: center;
-    }
-
-    .fighter-img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      border-radius: 0.6rem;
-    }
-
-    /* BARS */
-    .bar-wrap {
-      height: 12px;
-      border-radius: 999px;
-      overflow: hidden;
-      background: #1f1f1f;
-    }
-    .bar-left {
-      background: #ef4444;
-    }
-    .bar-right {
-      background: #3b82f6;
-    }
-
-    /* ========================================= */
-    /* FINAL MOBILE FIX PATCH (inserted here)    */
-    /* ========================================= */
-    @media (max-width: 640px) {
-
-      body {
-        padding: 0;
-        margin: 0;
-        overflow-x: hidden;
-      }
-
-      /* NAV */
-      nav {
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-        text-align: center;
-      }
-      nav h1 {
-        font-size: 1.6rem;
-      }
-
-      /* HERO */
-      section {
-        margin-top: 2rem;
-      }
-      .hero-title {
-        font-size: 1.8rem !important;
-        line-height: 2.2rem;
-      }
-      .hero-sub {
-        font-size: 0.95rem !important;
-        line-height: 1.4rem;
-      }
-
-      /* SEARCH */
-      form input[type="text"] {
-        width: 100%;
-        font-size: 1rem;
-        padding: 0.9rem;
-      }
-      form button[type="submit"] {
-        width: 100%;
-        font-size: 1rem;
-        padding: 0.9rem;
-      }
-
-      /* GRID FIX */
-      .grid {
-        grid-template-columns: 1fr !important;
-      }
-
-      /* FIGHTER CARDS */
-      .card {
-        padding: 1rem !important;
-      }
-      .fighter-img {
-        height: 180px !important;
-      }
-
-      /* STAT SECTIONS */
-      .max-w-2xl,
-      .max-w-4xl {
-        width: 100% !important;
-        max-width: 100% !important;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
-      }
-
-      .bar-wrap {
-        height: 10px !important;
-      }
-
-      /* REPORT */
-      article {
-        font-size: 0.95rem !important;
-        line-height: 1.5rem !important;
-        word-wrap: break-word;
-      }
+      .hero-title { font-size: 2.2rem; }
+      .hero-sub { font-size: 1.1rem; }
+      .mobile-input { font-size: 1.1rem !important; padding: 1rem !important; }
+      .mobile-button { font-size: 1.1rem !important; padding: 1rem !important; }
     }
   </style>
 </head>
 
 <body class="min-h-screen flex flex-col items-center px-4">
 
-  <!-- NAV -->
-  <nav class="w-full max-w-6xl flex flex-col sm:flex-row sm:justify-between sm:items-center py-4 border-b border-neutral-800 gap-3">
-    <h1 class="text-3xl font-bold text-red-500 tracking-tight">⚔️ Combat IQ</h1>
+  <!-- NAVIGATION -->
+  <nav class="w-full max-w-6xl border-b border-neutral-800 py-4 flex justify-between items-center">
 
-    <div class="flex flex-wrap justify-center sm:justify-end items-center gap-4 text-sm">
-      <a href="/" class="nav-link">Home</a>
-      <a href="/betting" class="nav-link">Betting Mode</a>
+    <!-- Left: Logo -->
+    <h1 class="text-3xl font-bold text-red-500">⚔️ Combat IQ</h1>
+
+    <!-- Desktop links -->
+    <div class="hidden sm:flex gap-6 text-sm items-center">
+      <a class="text-gray-300 hover:text-yellow-400" href="/">Home</a>
+      <a class="text-gray-300 hover:text-yellow-400" href="/betting">Betting Mode</a>
 
       {% if user %}
-      <a href="/history" class="nav-link">History</a>
+      <a class="text-gray-300 hover:text-yellow-400" href="/history">History</a>
       {% endif %}
 
-      <a href="/upgrade" class="nav-link text-yellow-400 hover:text-yellow-300">Upgrade</a>
+      <a class="text-yellow-400 hover:text-yellow-300" href="/upgrade">Upgrade</a>
 
       {% if user and user.email %}
-      <span class="text-gray-300 text-xs">Signed in as <span class="text-yellow-400">{{ user.email }}</span></span>
-      <a href="{{ url_for('logout') }}" class="text-red-400 hover:text-red-300 text-xs">Logout</a>
+      <span class="text-xs text-gray-400">Signed in as <span class="text-yellow-400">{{ user.email }}</span></span>
+      <a class="text-xs text-red-400 hover:text-red-300" href="{{ url_for('logout') }}">Logout</a>
       {% else %}
-      <a href="{{ url_for('login') }}" class="text-gray-300 hover:text-white text-xs">Sign in</a>
+      <a class="text-xs text-gray-300 hover:text-white" href="{{ url_for('login') }}">Sign in</a>
       {% endif %}
     </div>
+
+    <!-- Mobile Hamburger -->
+    <button id="menuBtn" class="sm:hidden text-white text-3xl">&#9776;</button>
   </nav>
 
-  <!-- HERO -->
-  <section class="w-full max-w-3xl mt-10 text-center px-2">
-    <h2 class="hero-title mb-3">AI Powered UFC Fight Predictor</h2>
-    <p class="hero-sub mb-8">Full breakdowns · Stat comparisons · AI scoring · Fight IQ reports</p>
+  <!-- Mobile Dropdown -->
+  <div id="mobileMenu" class="hidden w-full max-w-6xl bg-neutral-900 border-b border-neutral-800 p-4 sm:hidden flex flex-col gap-3 text-base">
+    <a href="/" class="text-gray-200">Home</a>
+    <a href="/betting" class="text-gray-200">Betting Mode</a>
+    {% if user %}
+    <a href="/history" class="text-gray-200">History</a>
+    {% endif %}
+    <a href="/upgrade" class="text-yellow-400">Upgrade</a>
 
-    <!-- SEARCH -->
-    <form method="POST" class="flex flex-col sm:flex-row gap-3 justify-center w-full">
+    {% if user and user.email %}
+    <span class="text-xs text-gray-400">Signed in as <span class="text-yellow-400">{{ user.email }}</span></span>
+    <a href="{{ url_for('logout') }}" class="text-red-400 text-sm">Logout</a>
+    {% else %}
+    <a href="{{ url_for('login') }}" class="text-gray-200 text-sm">Sign in</a>
+    {% endif %}
+  </div>
+
+
+  <!-- HERO SECTION -->
+  <section class="mt-10 w-full max-w-2xl text-center">
+    <h2 class="hero-title text-red-400 font-extrabold mb-4 text-3xl sm:text-4xl">
+      AI Powered UFC Fight Predictor
+    </h2>
+
+    <p class="hero-sub text-neutral-400 mb-8 text-sm sm:text-base">
+      Full breakdowns • Stat comparisons • AI scoring • Fight IQ reports
+    </p>
+
+    <!-- Search -->
+    <form method="POST" class="flex flex-col sm:flex-row gap-3 w-full justify-center">
       <input
         type="text"
         name="matchup"
-        placeholder="Enter matchup (e.g., Alexander Volkanovski vs Ilia Topuria)"
+        placeholder="Enter matchup (e.g., Volk vs Topuria)"
         required
-        class="flex-1 bg-neutral-900 text-white rounded-lg px-4 py-3 border border-neutral-700 focus:ring-2 focus:ring-red-500"
+        class="mobile-input bg-neutral-900 text-white border border-neutral-700 rounded-lg flex-1 px-4 py-3 focus:ring-2 focus:ring-red-500"
       />
 
       <button
         type="submit"
-        class="bg-red-600 hover:bg-red-700 px-8 py-3 rounded-lg font-semibold text-white transition sm:w-auto"
-      >
+        class="mobile-button bg-red-600 hover:bg-red-700 px-8 py-3 rounded-lg font-semibold text-white transition">
         Analyze Fight
       </button>
     </form>
   </section>
 
+
   {% if result %}
 
   <!-- FIGHTERS -->
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl w-full mt-12">
-    <div class="card">
-      <img class="fighter-img" src="{{ (stats1.get('image') or url_for('static','fighters/fighter_placeholder.jpg')) | safe }}" alt="{{ fighter1 }}">
+
+    <div class="bg-neutral-900 p-4 rounded-xl border border-neutral-700 text-center">
+      <img class="w-full h-56 object-cover rounded-lg"
+           src="{{ (stats1.get('image') or url_for('static','fighters/fighter_placeholder.jpg')) | safe }}"
+           alt="{{ fighter1 }}">
       <h3 class="text-xl font-semibold mt-3 text-red-400">{{ fighter1 }}</h3>
       <p><strong class="text-yellow-400">Record:</strong> {{ stats1.record }}</p>
       <p><strong class="text-yellow-400">Height:</strong> {{ stats1.height }}</p>
@@ -228,28 +118,31 @@
       <p><strong class="text-yellow-400">Stance:</strong> {{ stats1.stance }}</p>
     </div>
 
-    <div class="card">
-      <img class="fighter-img" src="{{ (stats2.get('image') or url_for('static','fighters/fighter_placeholder.jpg')) | safe }}" alt="{{ fighter2 }}">
+    <div class="bg-neutral-900 p-4 rounded-xl border border-neutral-700 text-center">
+      <img class="w-full h-56 object-cover rounded-lg"
+           src="{{ (stats2.get('image') or url_for('static','fighters/fighter_placeholder.jpg')) | safe }}"
+           alt="{{ fighter2 }}">
       <h3 class="text-xl font-semibold mt-3 text-red-400">{{ fighter2 }}</h3>
       <p><strong class="text-yellow-400">Record:</strong> {{ stats2.record }}</p>
       <p><strong class="text-yellow-400">Height:</strong> {{ stats2.height }}</p>
       <p><strong class="text-yellow-400">Reach:</strong> {{ stats2.reach }}</p>
       <p><strong class="text-yellow-400">Stance:</strong> {{ stats2.stance }}</p>
     </div>
+
   </div>
 
   <!-- STAT COMPARISON -->
-  <div class="max-w-2xl mt-10 w-full">
-    <h2 class="text-2xl text-red-400 font-bold mb-3 border-b border-red-600 pb-2">Stat Comparison</h2>
+  <div class="max-w-3xl mt-10 w-full">
+
+    <h2 class="text-2xl text-red-400 font-bold mb-4 border-b border-red-600 pb-2">Stat Comparison</h2>
 
     <div class="mb-5">
       <div class="flex justify-between text-xs text-neutral-400 mb-1">
         <span>Height Comparison</span>
         <span>{{ fighter1 }} vs {{ fighter2 }}</span>
       </div>
-      <div class="bar-wrap">
-        <div class="bar-left" style="width: {{ height1_pct }}%"></div>
-        <div class="bar-right" style="width: {{ height2_pct }}%"></div>
+      <div class="h-3 bg-neutral-800 rounded-full overflow-hidden">
+        <div class="bg-red-500 h-full" style="width: {{ height1_pct }}%"></div>
       </div>
     </div>
 
@@ -258,28 +151,37 @@
         <span>Reach Comparison</span>
         <span>{{ fighter1 }} vs {{ fighter2 }}</span>
       </div>
-      <div class="bar-wrap">
-        <div class="bar-left" style="width: {{ reach1_pct }}%"></div>
-        <div class="bar-right" style="width: {{ reach2_pct }}%"></div>
+      <div class="h-3 bg-neutral-800 rounded-full overflow-hidden">
+        <div class="bg-blue-500 h-full" style="width: {{ reach1_pct }}%"></div>
       </div>
     </div>
+
   </div>
 
   {% if confidence %}
-  <div class="max-w-4xl w-full mt-10 mb-6 bg-neutral-900 border border-neutral-700 rounded-lg p-4 text-center">
+  <div class="max-w-3xl w-full mt-8 bg-neutral-900 border border-neutral-700 rounded-lg p-4 text-center">
     <p class="text-yellow-400 text-lg font-semibold">
-      🧠 AI Confidence Score: <span class="text-white">{{ confidence }}%</span>
+      🧠 AI Confidence Score:
+      <span class="text-white">{{ confidence }}%</span>
     </p>
   </div>
   {% endif %}
 
   <!-- REPORT -->
-  <div class="bg-neutral-900 border border-neutral-700 rounded-lg p-6 max-w-4xl w-full mb-20">
-    <h2 class="text-2xl font-bold text-red-400 mb-4 border-b border-red-600 pb-2">Fight IQ Report</h2>
+  <div class="max-w-3xl w-full bg-neutral-900 border border-neutral-700 rounded-lg p-6 mt-10 mb-20">
+    <h2 class="text-2xl text-red-400 font-bold mb-4">Fight IQ Report</h2>
     <article class="prose prose-invert leading-relaxed">{{ result|safe }}</article>
   </div>
 
   {% endif %}
+
+  <script>
+    // Mobile nav toggle
+    document.getElementById("menuBtn").onclick = () => {
+      const menu = document.getElementById("mobileMenu");
+      menu.classList.toggle("hidden");
+    };
+  </script>
 
 </body>
 </html>
