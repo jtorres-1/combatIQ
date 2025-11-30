@@ -6,6 +6,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
+    /* ORIGINAL MOBILE RULES */
     @media (max-width: 640px) {
       body {
         padding: 1rem;
@@ -33,6 +34,97 @@
       }
       .recent-item p {
         font-size: 0.85rem;
+      }
+    }
+
+    /* ========================================= */
+    /* FULL MOBILE PATCH (consistent with index) */
+    /* ========================================= */
+    @media (max-width: 640px) {
+
+      body {
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0.75rem;
+      }
+
+      .max-w-2xl {
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+      }
+
+      /* HEADER */
+      h1 {
+        font-size: 1.6rem !important;
+        line-height: 2rem;
+      }
+      a[href="/"] {
+        font-size: 0.75rem !important;
+      }
+
+      /* FORM */
+      form {
+        padding: 1rem !important;
+        border-radius: 0.75rem !important;
+      }
+
+      label {
+        font-size: 0.85rem !important;
+      }
+
+      input,
+      select {
+        width: 100% !important;
+        padding: 0.85rem !important;
+        font-size: 0.95rem !important;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: 0.85rem !important;
+        font-size: 1rem !important;
+      }
+
+      /* RESULTS */
+      .prediction-box {
+        padding: 1.25rem !important;
+        border-radius: 0.75rem !important;
+      }
+
+      .prediction-box h2 {
+        font-size: 1.1rem !important;
+      }
+
+      .prediction-box .prose {
+        font-size: 0.95rem !important;
+        line-height: 1.5rem !important;
+      }
+
+      /* CONFIDENCE BAR */
+      .prediction-box .w-full {
+        height: 10px !important;
+      }
+
+      /* RECENT PREDICTION LIST */
+      .recent-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        padding: 0.8rem !important;
+      }
+
+      .recent-item strong {
+        font-size: 0.95rem !important;
+      }
+
+      .recent-item p {
+        font-size: 0.8rem !important;
+        line-height: 1.2rem;
+      }
+
+      .recent-item .timestamp {
+        font-size: 0.7rem !important;
+        opacity: 0.75;
       }
     }
   </style>
@@ -137,7 +229,7 @@
               Confidence: {{ item.confidence }}%
             </p>
           </div>
-          <p class="text-xs text-neutral-500 mt-1 sm:mt-0">{{ item.timestamp.split('.')[0] }}</p>
+          <p class="timestamp text-xs text-neutral-500 mt-1 sm:mt-0">{{ item.timestamp.split('.')[0] }}</p>
         </div>
         {% endfor %}
       </div>
