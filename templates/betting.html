@@ -6,137 +6,114 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    /* ORIGINAL MOBILE RULES */
+    /* === MOBILE NAV STYLE (same as index) === */
     @media (max-width: 640px) {
-      body {
+      .mobile-nav-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        padding: 1rem 0.75rem;
+        border-bottom: 1px solid #222;
+      }
+
+      .mobile-logo {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #ff4d4d;
+      }
+
+      .mobile-menu-btn {
+        font-size: 1.8rem;
+        color: white;
+        cursor: pointer;
+      }
+
+      .mobile-menu {
+        display: none;
+        flex-direction: column;
+        background: #111;
         padding: 1rem;
+        border-bottom: 1px solid #222;
       }
-      h1 {
-        font-size: 1.9rem;
+
+      .mobile-menu a {
+        color: #ddd;
+        padding: 0.5rem 0;
+        font-size: 1rem;
       }
-      form {
-        padding: 1rem !important;
-      }
-      input,
-      select {
-        padding: 0.5rem 0.75rem !important;
-        font-size: 0.9rem;
-      }
-      button {
-        padding: 0.6rem 1rem !important;
-        font-size: 0.95rem;
-      }
-      .prediction-box {
-        padding: 1rem !important;
-      }
-      .recent-item {
-        padding: 0.7rem !important;
-      }
-      .recent-item p {
-        font-size: 0.85rem;
+
+      .mobile-menu a:hover {
+        color: #fff;
       }
     }
 
-    /* ========================================= */
-    /* FULL MOBILE PATCH (consistent with index) */
-    /* ========================================= */
+    /* ORIGINAL MOBILE RULES */
     @media (max-width: 640px) {
+      body { padding: 1rem; }
+      h1 { font-size: 1.9rem; }
+      form { padding: 1rem !important; }
+      input, select { padding: 0.5rem 0.75rem !important; font-size: 0.9rem; }
+      button { padding: 0.6rem 1rem !important; font-size: 0.95rem; }
+      .prediction-box { padding: 1rem !important; }
+      .recent-item { padding: 0.7rem !important; }
+      .recent-item p { font-size: 0.85rem; }
+    }
 
-      body {
-        overflow-x: hidden;
-        margin: 0;
-        padding: 0.75rem;
-      }
-
-      .max-w-2xl {
-        padding-left: 0.25rem;
-        padding-right: 0.25rem;
-      }
-
-      /* HEADER */
-      h1 {
-        font-size: 1.6rem !important;
-        line-height: 2rem;
-      }
-      a[href="/"] {
-        font-size: 0.75rem !important;
-      }
-
-      /* FORM */
-      form {
-        padding: 1rem !important;
-        border-radius: 0.75rem !important;
-      }
-
-      label {
-        font-size: 0.85rem !important;
-      }
-
-      input,
-      select {
-        width: 100% !important;
-        padding: 0.85rem !important;
-        font-size: 0.95rem !important;
-      }
-
-      button[type="submit"] {
-        width: 100%;
-        padding: 0.85rem !important;
-        font-size: 1rem !important;
-      }
-
-      /* RESULTS */
-      .prediction-box {
-        padding: 1.25rem !important;
-        border-radius: 0.75rem !important;
-      }
-
-      .prediction-box h2 {
-        font-size: 1.1rem !important;
-      }
-
-      .prediction-box .prose {
-        font-size: 0.95rem !important;
-        line-height: 1.5rem !important;
-      }
-
-      /* CONFIDENCE BAR */
-      .prediction-box .w-full {
-        height: 10px !important;
-      }
-
-      /* RECENT PREDICTION LIST */
-      .recent-item {
-        display: flex;
-        flex-direction: column;
-        gap: 0.2rem;
-        padding: 0.8rem !important;
-      }
-
-      .recent-item strong {
-        font-size: 0.95rem !important;
-      }
-
-      .recent-item p {
-        font-size: 0.8rem !important;
-        line-height: 1.2rem;
-      }
-
-      .recent-item .timestamp {
-        font-size: 0.7rem !important;
-        opacity: 0.75;
-      }
+    /* FULL MOBILE PATCH */
+    @media (max-width: 640px) {
+      body { overflow-x: hidden; margin: 0; padding: 0.75rem; }
+      .max-w-2xl { padding-left: 0.25rem; padding-right: 0.25rem; }
+      h1 { font-size: 1.6rem !important; line-height: 2rem; }
+      a[href="/"] { font-size: 0.75rem !important; }
+      form { padding: 1rem !important; border-radius: 0.75rem !important; }
+      label { font-size: 0.85rem !important; }
+      input, select { width: 100% !important; padding: 0.85rem !important; font-size: 0.95rem !important; }
+      button[type="submit"] { width: 100%; padding: 0.85rem !important; font-size: 1rem !important; }
+      .prediction-box { padding: 1.25rem !important; border-radius: 0.75rem !important; }
+      .prediction-box h2 { font-size: 1.1rem !important; }
+      .prediction-box .prose { font-size: 0.95rem !important; line-height: 1.5rem !important; }
+      .prediction-box .w-full { height: 10px !important; }
+      .recent-item { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.8rem !important; }
+      .recent-item strong { font-size: 0.95rem !important; }
+      .recent-item p { font-size: 0.8rem !important; line-height: 1.2rem; }
+      .recent-item .timestamp { font-size: 0.7rem !important; opacity: 0.75; }
     }
   </style>
 </head>
 
-<body class="min-h-screen bg-neutral-950 text-neutral-100 p-6">
-  <div class="max-w-2xl mx-auto">
+<body class="min-h-screen bg-neutral-950 text-neutral-100">
+
+  <!-- ========== MOBILE NAV (same as index) ========== -->
+  <div class="mobile-nav-bar sm:hidden">
+    <div class="mobile-logo">⚔️ Combat IQ</div>
+    <div class="mobile-menu-btn" onclick="toggleMenu()">☰</div>
+  </div>
+
+  <div id="mobileMenu" class="mobile-menu sm:hidden">
+    <a href="/">Home</a>
+    <a href="/betting">Betting Mode</a>
+    <a href="/upgrade" class="text-yellow-400">Upgrade</a>
+    <a href="/history">My History</a>
+  </div>
+
+  <!-- JS: toggles nav -->
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById("mobileMenu");
+      menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+    }
+  </script>
+
+  <!-- ========== PAGE CONTENT ========== -->
+  <div class="max-w-2xl mx-auto p-6">
 
     <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center justify-between mb-6 sm:mt-4">
       <h1 class="text-3xl font-bold text-yellow-400">Betting Mode</h1>
-      <a href="/" class="text-sm text-neutral-300 hover:text-white underline">← Back to Fight Predictor</a>
+      <a href="/" class="text-sm text-neutral-300 hover:text-white underline hidden sm:block">
+        ← Back to Fight Predictor
+      </a>
     </div>
 
     <!-- Form -->
@@ -195,6 +172,7 @@
     {% if prediction %}
     <div class="prediction-box mt-6 bg-neutral-900 border border-neutral-700 rounded-xl p-5 text-center">
       <h2 class="text-xl font-semibold text-yellow-400 mb-2">📊 Prediction Result</h2>
+
       <div class="prose prose-invert max-w-none">
         {{ prediction|safe }}
       </div>
@@ -206,6 +184,7 @@
           style="width: {{ confidence }}%;"
         ></div>
       </div>
+
       <p class="text-sm text-neutral-400 mt-2">
         Confidence Level: <span class="text-yellow-400 font-semibold">{{ confidence|round(2) }}%</span>
       </p>
@@ -217,6 +196,7 @@
     {% if recent_predictions and recent_predictions|length > 0 %}
     <div class="mt-8 bg-neutral-900 border border-neutral-700 rounded-xl p-5">
       <h2 class="text-lg font-semibold text-yellow-400 mb-3">🕓 Recent Predictions</h2>
+
       <div class="space-y-3">
         {% for item in recent_predictions %}
         <div class="recent-item bg-neutral-800 p-3 rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center">
@@ -236,23 +216,6 @@
     </div>
     {% endif %}
   </div>
-
-  <!-- Live Fighter Stats Fetch -->
-  <script>
-  async function loadStats() {
-    const name = document.querySelector('input[name="fighter"]').value.trim();
-    if (!name) return;
-    try {
-      const res = await fetch(`/api/fighter/${name}`);
-      if (!res.ok) return;
-      const data = await res.json();
-      console.log("Normalized stats:", data.normalized || data);
-    } catch (err) {
-      console.error("Error fetching fighter stats:", err);
-    }
-  }
-  document.querySelector('input[name="fighter"]').addEventListener('blur', loadStats);
-  </script>
 
 </body>
 </html>
