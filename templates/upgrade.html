@@ -21,44 +21,62 @@
 
     h1 {
       color: gold;
-      margin-bottom: 10px;
-      font-size: 2rem;
+      margin-bottom: 12px;
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
     }
 
     .plan {
-      background: #1a1a1a;
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: 0 0 10px rgba(255, 215, 0, 0.25);
+      background: #141414;
+      padding: 28px;
+      border-radius: 18px;
+      box-shadow: 0 0 18px rgba(255, 215, 0, 0.25);
       width: 100%;
-      max-width: 360px;
+      max-width: 380px;
+      border: 1px solid #2a2a2a;
     }
 
     .price {
-      font-size: 28px;
-      margin: 18px 0;
+      font-size: 30px;
+      margin: 20px 0 10px;
       color: gold;
+      font-weight: 700;
+    }
+
+    .features {
+      text-align: left;
+      margin: 0 auto 18px;
+      max-width: 260px;
+      color: #ccc;
+      font-size: 0.95rem;
+      line-height: 1.5rem;
+    }
+
+    .features li {
+      margin-bottom: 6px;
     }
 
     button {
-      padding: 12px 24px;
-      font-size: 16px;
+      padding: 14px 24px;
+      font-size: 17px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       background: gold;
       color: black;
       cursor: pointer;
       transition: 0.2s;
       width: 100%;
+      font-weight: 600;
     }
 
     button:hover {
-      background: #ffd700;
-      transform: scale(1.03);
+      background: #ffe55c;
+      transform: scale(1.04);
     }
 
     a {
-      color: #999;
+      color: #bbb;
       font-size: 14px;
       text-decoration: none;
     }
@@ -67,35 +85,48 @@
       color: #fff;
     }
 
-    /* Mobile Tweaks */
+    /* ======================= */
+    /* FULL MOBILE SUPPORT     */
+    /* ======================= */
     @media (max-width: 640px) {
       body {
-        padding-top: 3rem;
+        padding-top: 2.5rem;
       }
       h1 {
-        font-size: 1.7rem;
+        font-size: 1.85rem;
       }
       .plan {
-        padding: 20px;
-        border-radius: 14px;
+        padding: 22px;
+        border-radius: 16px;
       }
       .price {
-        font-size: 24px;
+        font-size: 26px;
       }
-      p {
-        font-size: 0.95rem;
+      p, li {
+        font-size: 0.9rem;
+      }
+      button {
+        padding: 12px 20px;
+        font-size: 16px;
       }
     }
 
     @media (max-width: 420px) {
       .plan {
-        padding: 16px;
+        padding: 18px;
+      }
+      h1 {
+        font-size: 1.65rem;
+      }
+      .price {
+        font-size: 24px;
       }
       button {
         font-size: 15px;
+        padding: 12px;
       }
-      .price {
-        font-size: 22px;
+      .features {
+        font-size: 0.88rem;
       }
     }
   </style>
@@ -104,18 +135,30 @@
 <body>
   <div class="plan">
     <h1>CombatIQ Pro</h1>
-    <p>Unlock unlimited predictions, faster scraping, and early access to new features.</p>
+    <p>Unlock unlimited predictions, priority processing, exclusive updates, and more.</p>
+
+    <ul class="features">
+      <li>• Unlimited fight predictions</li>
+      <li>• Unlimited Betting Mode analyses</li>
+      <li>• Faster response speeds</li>
+      <li>• Full history tracking</li>
+      <li>• Early access to new features</li>
+    </ul>
 
     <div class="price">$9.99 per month</div>
 
     {% if plan == "pro" %}
-      <p style="color: lightgreen; margin-bottom: 12px;"><strong>You are already on Pro.</strong></p>
+      <p style="color: lightgreen; margin-bottom: 14px; font-weight: 600;">
+        ✓ You are already on CombatIQ Pro.
+      </p>
       <a href="/">← Back to CombatIQ</a>
+
     {% else %}
       <form action="{{ url_for('create_checkout_session') }}" method="POST">
         <button type="submit">Upgrade Now</button>
       </form>
-      <p style="margin-top: 16px;">
+
+      <p style="margin-top: 18px;">
         <a href="/">← Keep using free tier</a>
       </p>
     {% endif %}
