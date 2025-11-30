@@ -33,7 +33,7 @@
       font-size: 1rem;
     }
 
-    /* MOBILE BOOST */
+    /* MOBILE BOOST (original) */
     @media (max-width: 640px) {
       .hero-title {
         font-size: 2.4rem;
@@ -82,6 +82,86 @@
     }
     .bar-right {
       background: #3b82f6;
+    }
+
+    /* ========================================= */
+    /* FINAL MOBILE FIX PATCH (inserted here)    */
+    /* ========================================= */
+    @media (max-width: 640px) {
+
+      body {
+        padding: 0;
+        margin: 0;
+        overflow-x: hidden;
+      }
+
+      /* NAV */
+      nav {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        text-align: center;
+      }
+      nav h1 {
+        font-size: 1.6rem;
+      }
+
+      /* HERO */
+      section {
+        margin-top: 2rem;
+      }
+      .hero-title {
+        font-size: 1.8rem !important;
+        line-height: 2.2rem;
+      }
+      .hero-sub {
+        font-size: 0.95rem !important;
+        line-height: 1.4rem;
+      }
+
+      /* SEARCH */
+      form input[type="text"] {
+        width: 100%;
+        font-size: 1rem;
+        padding: 0.9rem;
+      }
+      form button[type="submit"] {
+        width: 100%;
+        font-size: 1rem;
+        padding: 0.9rem;
+      }
+
+      /* GRID FIX */
+      .grid {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* FIGHTER CARDS */
+      .card {
+        padding: 1rem !important;
+      }
+      .fighter-img {
+        height: 180px !important;
+      }
+
+      /* STAT SECTIONS */
+      .max-w-2xl,
+      .max-w-4xl {
+        width: 100% !important;
+        max-width: 100% !important;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+      }
+
+      .bar-wrap {
+        height: 10px !important;
+      }
+
+      /* REPORT */
+      article {
+        font-size: 0.95rem !important;
+        line-height: 1.5rem !important;
+        word-wrap: break-word;
+      }
     }
   </style>
 </head>
