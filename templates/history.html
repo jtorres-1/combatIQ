@@ -10,6 +10,7 @@
       background-color: #0a0a0a;
       color: #f5f5f5;
       font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
     }
 
     .card {
@@ -17,37 +18,68 @@
       border: 1px solid #222;
       border-radius: 1rem;
       box-shadow: 0 0 15px rgba(255, 0, 0, 0.15);
-      padding: 1rem;
+      padding: 1.2rem;
       transition: transform 0.2s ease;
       word-break: break-word;
     }
 
     .card:hover { transform: scale(1.02); }
 
+    /* ======================== */
+    /* MOBILE OPTIMIZATION      */
+    /* ======================== */
     @media (max-width: 640px) {
       body {
         padding: 1.2rem;
       }
       h1 {
-        font-size: 1.9rem;
+        font-size: 1.8rem;
         text-align: center;
+        line-height: 2.2rem;
+      }
+      .history-header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.6rem;
+        width: 100%;
+      }
+      .history-header img {
+        width: 55px !important;
+        height: 55px !important;
+      }
+      .history-header p {
+        font-size: 0.95rem;
       }
       .card {
-        padding: 0.9rem;
+        padding: 1rem;
       }
       .card h3 {
         font-size: 1.1rem;
+        line-height: 1.4rem;
+      }
+      .card p {
+        font-size: 0.9rem;
+        line-height: 1.3rem;
+      }
+      .grid {
+        gap: 1rem !important;
+        padding: 0;
+      }
+      a[href="/"] {
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .card {
+        padding: 0.85rem;
       }
       .card p {
         font-size: 0.85rem;
       }
-      .history-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.8rem;
-      }
-      .grid {
-        gap: 1rem !important;
+      h1 {
+        font-size: 1.65rem;
       }
     }
   </style>
@@ -72,7 +104,7 @@
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full max-w-6xl mt-2">
     {% for p in predictions %}
     <div class="card">
-      <p class="text-sm text-neutral-400">{{ p.created_at }}</p>
+      <p class="text-xs text-neutral-500">{{ p.created_at }}</p>
       <p class="text-yellow-400 font-semibold mt-1 uppercase">{{ p.mode }}</p>
 
       <h3 class="text-xl font-bold mt-2">
@@ -80,7 +112,9 @@
         {% if p.fighter2 %} vs {{ p.fighter2 }}{% endif %}
       </h3>
 
-      <p class="mt-2 text-neutral-300 leading-relaxed">{{ p.result|safe }}</p>
+      <p class="mt-2 text-neutral-300 leading-relaxed">
+        {{ p.result|safe }}
+      </p>
 
       <p class="mt-2 text-yellow-400 font-semibold">
         Confidence: {{ p.confidence }}%
@@ -88,6 +122,7 @@
     </div>
     {% endfor %}
   </div>
+
   {% else %}
   <p class="text-neutral-400 mt-10 text-center">No predictions logged yet.</p>
   {% endif %}
