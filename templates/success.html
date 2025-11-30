@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>CombatIQ Pro — Activated</title>
+
   <style>
     body {
       font-family: Inter, sans-serif;
@@ -12,27 +13,89 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       margin: 0;
       text-align: center;
+      padding: 1.5rem;
     }
+
+    .card {
+      background: #141414;
+      padding: 32px;
+      border-radius: 18px;
+      box-shadow: 0 0 18px rgba(144, 238, 144, 0.25);
+      max-width: 360px;
+      width: 100%;
+      border: 1px solid #1f1f1f;
+    }
+
     h1 {
-      color: lightgreen;
+      color: #90ee90;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
     }
+
+    p {
+      color: #ccc;
+      font-size: 1rem;
+      margin-bottom: 24px;
+      line-height: 1.5rem;
+    }
+
     a {
-      color: #ffd700;
+      color: black;
+      background: #ffd700;
       text-decoration: none;
-      margin-top: 20px;
-      font-size: 16px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: 0.2s;
+      display: inline-block;
     }
+
     a:hover {
-      color: #fff;
+      background: #ffe056;
+    }
+
+    /* ===== MOBILE OPTIMIZATION ===== */
+    @media (max-width: 640px) {
+      .card {
+        padding: 26px;
+        border-radius: 14px;
+      }
+      h1 {
+        font-size: 1.7rem;
+      }
+      p {
+        font-size: 0.95rem;
+      }
+      a {
+        font-size: 0.95rem;
+        padding: 11px 18px;
+      }
+    }
+
+    @media (max-width: 420px) {
+      h1 {
+        font-size: 1.55rem;
+      }
+      p {
+        font-size: 0.9rem;
+      }
+      .card {
+        padding: 22px;
+      }
     }
   </style>
 </head>
+
 <body>
-  <h1>✅ CombatIQ Pro Activated</h1>
-  <p>Your subscription is live. You now have unlimited predictions.</p>
-  <a href="/">Return to CombatIQ</a>
+  <div class="card">
+    <h1>✓ CombatIQ Pro Activated</h1>
+    <p>Your subscription is now live.<br>You now have unlimited predictions and full access.</p>
+    <a href="/">Return to CombatIQ</a>
+  </div>
 </body>
 </html>
