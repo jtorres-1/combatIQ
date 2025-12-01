@@ -3,105 +3,116 @@
 <head>
   <meta charset="UTF-8" />
   <title>📜 CombatIQ • My History</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
     body {
-      background-color: #0a0a0a;
-      color: #f5f5f5;
-      font-family: 'Inter', sans-serif;
-      overflow-x: hidden;
+      background: #000;
+      color: white;
+      font-family: Inter, sans-serif;
     }
 
     .card {
       background: #111;
       border: 1px solid #222;
       border-radius: 1rem;
-      box-shadow: 0 0 15px rgba(255, 0, 0, 0.15);
       padding: 1.2rem;
-      transition: transform 0.2s ease;
+      box-shadow: 0 0 15px rgba(255, 0, 0, 0.15);
       word-break: break-word;
+      transition: transform .15s ease;
     }
 
-    .card:hover { transform: scale(1.02); }
+    .card:hover {
+      transform: scale(1.02);
+    }
 
-    /* ======================== */
-    /* MOBILE OPTIMIZATION      */
-    /* ======================== */
-    @media (max-width: 640px) {
-      body {
-        padding: 1.2rem;
-      }
-      h1 {
-        font-size: 1.8rem;
-        text-align: center;
-        line-height: 2.2rem;
-      }
+    @media(max-width: 640px) {
+      .card { padding: 1rem; }
+      .card h3 { font-size: 1.1rem; }
+      .card p { font-size: 0.9rem; }
+
       .history-header {
         flex-direction: column;
-        align-items: center;
         text-align: center;
         gap: 0.6rem;
-        width: 100%;
       }
+
       .history-header img {
         width: 55px !important;
         height: 55px !important;
-      }
-      .history-header p {
-        font-size: 0.95rem;
-      }
-      .card {
-        padding: 1rem;
-      }
-      .card h3 {
-        font-size: 1.1rem;
-        line-height: 1.4rem;
-      }
-      .card p {
-        font-size: 0.9rem;
-        line-height: 1.3rem;
-      }
-      .grid {
-        gap: 1rem !important;
-        padding: 0;
-      }
-      a[href="/"] {
-        font-size: 0.9rem;
-      }
-    }
-
-    @media (max-width: 420px) {
-      .card {
-        padding: 0.85rem;
-      }
-      .card p {
-        font-size: 0.85rem;
-      }
-      h1 {
-        font-size: 1.65rem;
       }
     }
   </style>
 </head>
 
-<body class="min-h-screen flex flex-col items-center p-6">
+<body class="min-h-screen flex flex-col items-center px-4">
 
-  <h1 class="text-3xl font-bold text-red-500 mb-4">📜 My CombatIQ History</h1>
+  <!-- NAV -->
+  <nav class="w-full max-w-6xl border-b border-neutral-800 py-4 flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-red-500">⚔️ Combat IQ</h1>
+
+    <!-- Desktop -->
+    <div class="hidden sm:flex gap-6 text-sm items-center">
+      <a class="text-gray-300 hover:text-yellow-400" href="/">Home</a>
+      <a class="text-gray-300 hover:text-yellow-400" href="/betting">Betting Mode</a>
+
+      {% if user %}
+      <a class="text-yellow-400 hover:text-yellow-300" href="/history">History</a>
+      {% endif %}
+
+      <a class="text-gray-300 hover:text-yellow-400" href="/upgrade">Upgrade</a>
+
+      {% if user and user.email %}
+        <span class="text-xs text-gray-400">Signed in as 
+          <span class="text-yellow-400">{{ user.email }}</span>
+        </span>
+        <a class="text-xs text-red-400 hover:text-red-300" href="{{ url_for('logout') }}">Logout</a>
+      {% else %}
+        <a class="text-xs text-gray-300 hover:text-white" href="{{ url_for('login') }}">Sign in</a>
+      {% endif %}
+    </div>
+
+    <!-- Mobile -->
+    <button id="menuBtn" class="sm:hidden text-white text-3xl">&#9776;</button>
+  </nav>
+
+  <!-- Mobile dropdown -->
+  <div id="mobileMenu" class="hidden w-full max-w-6xl bg-neutral-900 border-b border-neutral-800 p-4 sm:hidden flex flex-col gap-3">
+    <a href="/" class="text-gray-200">Home</a>
+    <a href="/betting" class="text-gray-200">Betting Mode</a>
+    {% if user %}<a href="/history" class="text-yellow-400">History</a>{% endif %}
+    <a href="/upgrade" class="text-gray-200">Upgrade</a>
+
+    {% if user and user.email %}
+      <span class="text-xs text-gray-400">Signed in as 
+        <span class="text-yellow-400">{{ user.email }}</span>
+      </span>
+      <a href="{{ url_for('logout') }}" class="text-red-400 text-sm">Logout</a>
+    {% else %}
+      <a href="{{ url_for('login') }}" class="text-gray-200 text-sm">Sign in</a>
+    {% endif %}
+  </div>
+
+  <!-- HEADER -->
+  <h1 class="text-3xl font-bold text-red-500 mt-10 mb-4 text-center">📜 My CombatIQ History</h1>
 
   {% if user %}
   <div class="history-header flex items-center gap-3 mb-6 w-full max-w-6xl">
-    <img src="{{ user.picture }}" alt="pfp" class="w-10 h-10 rounded-full border border-red-400" />
+    <img src="{{ user.picture }}" class="w-10 h-10 rounded-full border border-red-400" />
     <div>
       <p class="text-lg font-semibold">{{ user.name }}</p>
       <p class="text-sm text-neutral-400">{{ user.email }}</p>
     </div>
-    <a href="/logout" class="ml-auto text-sm text-yellow-400 hover:underline">Logout</a>
+    <a href="/logout" class="ml-auto text-sm text-yellow-400 hover:underline hidden sm:block">Logout</a>
   </div>
   {% endif %}
 
+  <!-- HISTORY GRID -->
   {% if predictions %}
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 w-full max-w-6xl mt-2">
+
     {% for p in predictions %}
     <div class="card">
       <p class="text-xs text-neutral-500">{{ p.created_at }}</p>
@@ -121,6 +132,7 @@
       </p>
     </div>
     {% endfor %}
+
   </div>
 
   {% else %}
@@ -128,6 +140,12 @@
   {% endif %}
 
   <a href="/" class="mt-10 text-red-400 hover:text-red-300 font-semibold">⬅ Back to Predictor</a>
+
+  <script>
+    document.getElementById("menuBtn").onclick = () => {
+      document.getElementById("mobileMenu").classList.toggle("hidden");
+    };
+  </script>
 
 </body>
 </html>
