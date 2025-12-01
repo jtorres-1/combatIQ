@@ -3,20 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <title>CombatIQ Pro — Activated</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
     body {
-      font-family: Inter, sans-serif;
-      background-color: #0d0d0d;
+      background-color: #000;
       color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      text-align: center;
-      padding: 1.5rem;
+      font-family: Inter, sans-serif;
     }
 
     .card {
@@ -27,75 +22,61 @@
       max-width: 360px;
       width: 100%;
       border: 1px solid #1f1f1f;
+      text-align: center;
     }
 
-    h1 {
-      color: #90ee90;
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-    }
-
-    p {
-      color: #ccc;
-      font-size: 1rem;
-      margin-bottom: 24px;
-      line-height: 1.5rem;
-    }
-
-    a {
-      color: black;
-      background: #ffd700;
-      text-decoration: none;
-      padding: 12px 20px;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 600;
-      transition: 0.2s;
-      display: inline-block;
-    }
-
-    a:hover {
-      background: #ffe056;
-    }
-
-    /* ===== MOBILE OPTIMIZATION ===== */
     @media (max-width: 640px) {
-      .card {
-        padding: 26px;
-        border-radius: 14px;
-      }
-      h1 {
-        font-size: 1.7rem;
-      }
-      p {
-        font-size: 0.95rem;
-      }
-      a {
-        font-size: 0.95rem;
-        padding: 11px 18px;
-      }
-    }
-
-    @media (max-width: 420px) {
-      h1 {
-        font-size: 1.55rem;
-      }
-      p {
-        font-size: 0.9rem;
-      }
-      .card {
-        padding: 22px;
-      }
+      .card { padding: 26px; border-radius: 14px; }
+      h1 { font-size: 1.7rem; }
+      p { font-size: 0.95rem; }
+      a { font-size: 0.95rem; padding: 11px 18px; }
     }
   </style>
 </head>
 
-<body>
-  <div class="card">
-    <h1>✓ CombatIQ Pro Activated</h1>
-    <p>Your subscription is now live.<br>You now have unlimited predictions and full access.</p>
-    <a href="/">Return to CombatIQ</a>
+<body class="min-h-screen flex flex-col items-center px-4">
+
+  <!-- NAVIGATION (copied from index.html exactly) -->
+  <nav class="w-full max-w-6xl border-b border-neutral-800 py-4 flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-red-500">⚔️ Combat IQ</h1>
+
+    <div class="hidden sm:flex gap-6 text-sm items-center">
+      <a class="text-gray-300 hover:text-yellow-400" href="/">Home</a>
+      <a class="text-gray-300 hover:text-yellow-400" href="/betting">Betting Mode</a>
+      <a class="text-gray-300 hover:text-yellow-400" href="/history">History</a>
+      <a class="text-yellow-400 hover:text-yellow-300" href="/upgrade">Upgrade</a>
+      <a class="text-xs text-red-400 hover:text-red-300" href="{{ url_for('logout') }}">Logout</a>
+    </div>
+
+    <button id="menuBtn" class="sm:hidden text-white text-3xl">&#9776;</button>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div id="mobileMenu" class="hidden w-full max-w-6xl bg-neutral-900 border-b border-neutral-800 p-4 sm:hidden flex flex-col gap-3 text-base">
+    <a href="/" class="text-gray-200">Home</a>
+    <a href="/betting" class="text-gray-200">Betting Mode</a>
+    <a href="/history" class="text-gray-200">History</a>
+    <a href="/upgrade" class="text-yellow-400">Upgrade</a>
+    <a href="{{ url_for('logout') }}" class="text-red-400 text-sm">Logout</a>
   </div>
+
+  <!-- Card Content -->
+  <div class="card mt-20">
+    <h1 class="text-green-400 font-bold text-2xl mb-3">✓ CombatIQ Pro Activated</h1>
+    <p class="text-neutral-300 mb-6">
+      Your subscription is now live.<br>
+      You now have unlimited predictions and full access.
+    </p>
+    <a href="/" class="bg-yellow-400 text-black px-5 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition">
+      Return to CombatIQ
+    </a>
+  </div>
+
+  <script>
+    document.getElementById("menuBtn").onclick = () => {
+      document.getElementById("mobileMenu").classList.toggle("hidden");
+    };
+  </script>
+
 </body>
 </html>
