@@ -1,143 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Upgrade to CombatIQ Pro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
     body {
-      font-family: Inter, sans-serif;
-      background-color: #0d0d0d;
+      background: #000;
       color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 2rem 1rem;
-      min-height: 100vh;
-      margin: 0;
-      text-align: center;
+      font-family: Inter, sans-serif;
     }
 
-    h1 {
-      color: gold;
-      margin-bottom: 12px;
-      font-size: 2.2rem;
-      font-weight: 800;
-      letter-spacing: 0.5px;
-    }
-
-    .plan {
-      background: #141414;
-      padding: 28px;
-      border-radius: 18px;
-      box-shadow: 0 0 18px rgba(255, 215, 0, 0.25);
-      width: 100%;
-      max-width: 380px;
-      border: 1px solid #2a2a2a;
-    }
-
-    .price {
-      font-size: 30px;
-      margin: 20px 0 10px;
-      color: gold;
-      font-weight: 700;
-    }
-
-    .features {
-      text-align: left;
-      margin: 0 auto 18px;
-      max-width: 260px;
-      color: #ccc;
-      font-size: 0.95rem;
-      line-height: 1.5rem;
-    }
-
-    .features li {
-      margin-bottom: 6px;
-    }
-
-    button {
-      padding: 14px 24px;
-      font-size: 17px;
-      border: none;
-      border-radius: 10px;
-      background: gold;
-      color: black;
-      cursor: pointer;
-      transition: 0.2s;
-      width: 100%;
-      font-weight: 600;
-    }
-
-    button:hover {
-      background: #ffe55c;
-      transform: scale(1.04);
-    }
-
-    a {
-      color: #bbb;
-      font-size: 14px;
-      text-decoration: none;
-    }
-
-    a:hover {
-      color: #fff;
-    }
-
-    /* ======================= */
-    /* FULL MOBILE SUPPORT     */
-    /* ======================= */
     @media (max-width: 640px) {
-      body {
-        padding-top: 2.5rem;
-      }
-      h1 {
-        font-size: 1.85rem;
-      }
-      .plan {
-        padding: 22px;
-        border-radius: 16px;
-      }
-      .price {
-        font-size: 26px;
-      }
-      p, li {
-        font-size: 0.9rem;
-      }
-      button {
-        padding: 12px 20px;
-        font-size: 16px;
-      }
+      .plan { padding: 22px; }
+      .title { font-size: 1.85rem; }
+      .price { font-size: 26px; }
+      .features li { font-size: 0.9rem; }
+      .btn { font-size: 1rem; padding: 12px 20px; }
     }
 
     @media (max-width: 420px) {
-      .plan {
-        padding: 18px;
-      }
-      h1 {
-        font-size: 1.65rem;
-      }
-      .price {
-        font-size: 24px;
-      }
-      button {
-        font-size: 15px;
-        padding: 12px;
-      }
-      .features {
-        font-size: 0.88rem;
-      }
+      .plan { padding: 18px; }
+      .title { font-size: 1.65rem; }
+      .price { font-size: 24px; }
+      .features li { font-size: 0.85rem; }
     }
   </style>
 </head>
 
-<body>
-  <div class="plan">
-    <h1>CombatIQ Pro</h1>
-    <p>Unlock unlimited predictions, priority processing, exclusive updates, and more.</p>
+<body class="min-h-screen flex flex-col items-center px-4">
 
-    <ul class="features">
+  <!-- NAV -->
+  <nav class="w-full max-w-6xl border-b border-neutral-800 py-4 flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-red-500">⚔️ Combat IQ</h1>
+
+    <!-- Desktop nav -->
+    <div class="hidden sm:flex gap-6 text-sm items-center">
+      <a class="text-gray-300 hover:text-yellow-400" href="/">Home</a>
+      <a class="text-gray-300 hover:text-yellow-400" href="/betting">Betting Mode</a>
+      {% if user %}
+      <a class="text-gray-300 hover:text-yellow-400" href="/history">History</a>
+      {% endif %}
+      <a class="text-yellow-400 hover:text-yellow-300" href="/upgrade">Upgrade</a>
+
+      {% if user and user.email %}
+      <span class="text-xs text-gray-400">Signed in as 
+        <span class="text-yellow-400">{{ user.email }}</span></span>
+      <a class="text-xs text-red-400 hover:text-red-300" href="{{ url_for('logout') }}">Logout</a>
+      {% else %}
+      <a class="text-xs text-gray-300 hover:text-white" href="{{ url_for('login') }}">Sign in</a>
+      {% endif %}
+    </div>
+
+    <!-- Mobile Hamburger -->
+    <button id="menuBtn" class="sm:hidden text-white text-3xl">&#9776;</button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div id="mobileMenu" class="hidden w-full max-w-6xl bg-neutral-900 border-b border-neutral-800 p-4 sm:hidden flex flex-col gap-3">
+    <a href="/" class="text-gray-200">Home</a>
+    <a href="/betting" class="text-gray-200">Betting Mode</a>
+    {% if user %}<a href="/history" class="text-gray-200">History</a>{% endif %}
+    <a href="/upgrade" class="text-yellow-400">Upgrade</a>
+
+    {% if user and user.email %}
+    <span class="text-xs text-gray-400">Signed in as 
+      <span class="text-yellow-400">{{ user.email }}</span></span>
+    <a href="{{ url_for('logout') }}" class="text-red-400 text-sm">Logout</a>
+    {% else %}
+    <a href="{{ url_for('login') }}" class="text-gray-200 text-sm">Sign in</a>
+    {% endif %}
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="plan bg-neutral-900 border border-neutral-800 rounded-2xl shadow-lg mt-16 p-8 max-w-sm w-full text-center">
+    
+    <h1 class="title text-yellow-400 text-3xl font-extrabold mb-3">CombatIQ Pro</h1>
+
+    <p class="text-neutral-300 mb-4">
+      Unlock unlimited predictions, priority processing, exclusive updates, and more.
+    </p>
+
+    <ul class="features text-left mx-auto mb-5 max-w-xs text-neutral-300 leading-relaxed">
       <li>• Unlimited fight predictions</li>
       <li>• Unlimited Betting Mode analyses</li>
       <li>• Faster response speeds</li>
@@ -145,23 +92,33 @@
       <li>• Early access to new features</li>
     </ul>
 
-    <div class="price">$9.99 per month</div>
+    <div class="price text-yellow-400 font-bold text-3xl mb-6">$9.99 per month</div>
 
     {% if plan == "pro" %}
-      <p style="color: lightgreen; margin-bottom: 14px; font-weight: 600;">
+      <p class="text-green-400 font-semibold mb-4">
         ✓ You are already on CombatIQ Pro.
       </p>
-      <a href="/">← Back to CombatIQ</a>
+      <a href="/" class="text-sm text-gray-300 hover:text-white">← Back to CombatIQ</a>
 
     {% else %}
       <form action="{{ url_for('create_checkout_session') }}" method="POST">
-        <button type="submit">Upgrade Now</button>
+        <button type="submit" 
+          class="btn bg-yellow-400 text-black w-full font-semibold rounded-lg py-3 hover:bg-yellow-300 transition">
+          Upgrade Now
+        </button>
       </form>
 
-      <p style="margin-top: 18px;">
-        <a href="/">← Keep using free tier</a>
+      <p class="mt-5">
+        <a href="/" class="text-sm text-gray-300 hover:text-white">← Keep using free tier</a>
       </p>
     {% endif %}
   </div>
+
+  <script>
+    document.getElementById("menuBtn").onclick = () => {
+      document.getElementById("mobileMenu").classList.toggle("hidden");
+    };
+  </script>
+
 </body>
 </html>
