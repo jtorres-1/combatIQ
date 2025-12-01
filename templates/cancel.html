@@ -3,101 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <title>CombatIQ Pro — Checkout Cancelled</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
-    body {
+    body { 
+      background: #000; 
+      color: white; 
       font-family: Inter, sans-serif;
-      background-color: #0d0d0d;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 1.5rem;
-      text-align: center;
     }
 
-    .card {
-      background: #141414;
-      padding: 32px;
-      border-radius: 18px;
-      box-shadow: 0 0 18px rgba(255, 77, 77, 0.25);
-      width: 100%;
-      max-width: 360px;
-      border: 1px solid #1f1f1f;
-    }
-
-    h1 {
-      color: #ff4d4d;
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 14px;
-    }
-
-    p {
-      color: #ccc;
-      font-size: 1rem;
-      line-height: 1.5rem;
-      margin-bottom: 22px;
-    }
-
-    a {
-      color: black;
-      background: #ffd700;
-      padding: 12px 20px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-size: 1rem;
-      font-weight: 600;
-      transition: 0.2s;
-      display: inline-block;
-    }
-
-    a:hover {
-      background: #ffe056;
-    }
-
-    /* ========================= */
-    /* MOBILE OPTIMIZATION       */
-    /* ========================= */
     @media (max-width: 640px) {
-      .card {
-        padding: 26px;
-        border-radius: 16px;
-      }
-      h1 {
-        font-size: 1.7rem;
-      }
-      p {
-        font-size: 0.95rem;
-      }
-      a {
-        font-size: 0.95rem;
-        padding: 11px 18px;
-      }
+      .card { padding: 26px; }
+      .title { font-size: 1.7rem; }
+      .desc { font-size: 0.95rem; }
+      .btn { font-size: 0.95rem; padding: 11px 18px; }
     }
 
     @media (max-width: 420px) {
-      .card {
-        padding: 22px;
-      }
-      h1 {
-        font-size: 1.55rem;
-      }
-      p {
-        font-size: 0.9rem;
-      }
+      .card { padding: 22px; }
+      .title { font-size: 1.55rem; }
+      .desc { font-size: 0.9rem; }
     }
   </style>
 </head>
 
-<body>
-  <div class="card">
-    <h1>⚠️ Checkout Cancelled</h1>
-    <p>Your upgrade was not completed. You can retry anytime.</p>
-    <a href="/upgrade">Return to Upgrade Page</a>
+<body class="min-h-screen flex flex-col items-center px-4">
+
+  <!-- NAV -->
+  <nav class="w-full max-w-6xl border-b border-neutral-800 py-4 flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-red-500">⚔️ Combat IQ</h1>
+
+    <!-- Desktop -->
+    <div class="hidden sm:flex gap-6 text-sm items-center">
+      <a class="text-gray-300 hover:text-yellow-400" href="/">Home</a>
+      <a class="text-gray-300 hover:text-yellow-400" href="/betting">Betting Mode</a>
+
+      {% if user %}
+      <a class="text-gray-300 hover:text-yellow-400" href="/history">History</a>
+      {% endif %}
+
+      <a class="text-yellow-400 hover:text-yellow-300" href="/upgrade">Upgrade</a>
+
+      {% if user and user.email %}
+      <span class="text-xs text-gray-400">Signed in as 
+        <span class="text-yellow-400">{{ user.email }}</span></span>
+      <a class="text-xs text-red-400 hover:text-red-300" href="{{ url_for('logout') }}">Logout</a>
+      {% else %}
+      <a class="text-xs text-gray-300 hover:text-white" href="{{ url_for('login') }}">Sign in</a>
+      {% endif %}
+    </div>
+
+    <!-- Mobile hamburger -->
+    <button id="menuBtn" class="sm:hidden text-white text-3xl">&#9776;</button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div id="mobileMenu" class="hidden w-full max-w-6xl bg-neutral-900 border-b border-neutral-800 p-4 sm:hidden flex flex-col gap-3">
+    <a href="/" class="text-gray-200">Home</a>
+    <a href="/betting" class="text-gray-200">Betting Mode</a>
+    {% if user %}<a href="/history" class="text-gray-200">History</a>{% endif %}
+    <a href="/upgrade" class="text-yellow-400">Upgrade</a>
+
+    {% if user and user.email %}
+    <span class="text-xs text-gray-400">Signed in as 
+      <span class="text-yellow-400">{{ user.email }}</span></span>
+    <a href="{{ url_for('logout') }}" class="text-red-400 text-sm">Logout</a>
+    {% else %}
+    <a href="{{ url_for('login') }}" class="text-gray-200 text-sm">Sign in</a>
+    {% endif %}
   </div>
+
+  <!-- CONTENT -->
+  <div class="card bg-neutral-900 border border-neutral-800 rounded-2xl shadow-lg mt-16 p-8 max-w-sm w-full text-center">
+    <h1 class="title text-2xl font-bold text-red-400 mb-4">⚠️ Checkout Cancelled</h1>
+    <p class="desc text-neutral-300 mb-6">Your upgrade was not completed. You can retry anytime.</p>
+
+    <a href="/upgrade" 
+       class="btn bg-yellow-400 text-black font-semibold rounded-lg px-5 py-3 inline-block hover:bg-yellow-300 transition">
+      Return to Upgrade Page
+    </a>
+  </div>
+
+  <script>
+    document.getElementById("menuBtn").onclick = () => {
+      document.getElementById("mobileMenu").classList.toggle("hidden");
+    };
+  </script>
+
 </body>
 </html>
