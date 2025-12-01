@@ -83,15 +83,21 @@
       Full breakdowns • Stat comparisons • AI scoring • Fight IQ reports
     </p>
 
-    <!-- Search -->
+    <!-- SEARCH WITH AUTOCOMPLETE -->
     <form method="POST" class="flex flex-col sm:flex-row gap-3 w-full justify-center">
-      <input
-        type="text"
-        name="matchup"
-        placeholder="Enter matchup (e.g., Alexander Volkanovski vs Ilia Topuria)"
-        required
-        class="mobile-input bg-neutral-900 text-white border border-neutral-700 rounded-lg flex-1 px-4 py-3 focus:ring-2 focus:ring-red-500"
-      />
+
+      <div class="relative w-full">
+        <input
+          id="matchupInput"
+          type="text"
+          name="matchup"
+          placeholder="Enter matchup (e.g., Alexander Volkanovski vs Ilia Topuria)"
+          required
+          class="mobile-input bg-neutral-900 text-white border border-neutral-700 rounded-lg flex-1 px-4 py-3 focus:ring-2 focus:ring-red-500 w-full"
+        />
+
+        <div id="suggestions" class="absolute left-0 right-0 mt-1 bg-neutral-900 border border-neutral-700 rounded-lg hidden z-50 max-h-60 overflow-y-auto"></div>
+      </div>
 
       <button
         type="submit"
@@ -181,62 +187,49 @@
       const menu = document.getElementById("mobileMenu");
       menu.classList.toggle("hidden");
     };
-  </script>
 
-  <!-- AUTOCOMPLETE SCRIPT -->
-  <script>
-    fetch("/static/fighters.json")
-      .then(r => r.json())
-      .then(list => {
-        const input = document.querySelector("input[name='matchup']");
+    // Fighter autocompletion
+    const fighters = [
+      "Ilia Topuria","Max Holloway","Jon Jones","Islam Makhachev","Justin Gaethje",
+      "Alexander Volkanovski","Belal Muhammad","Tom Aspinall","Merab Dvalishvili",
+      "Conor McGregor","Leon Edwards","Kamaru Usman","Petr Yan","Sean O'Malley",
+      "Beneil Dariush","Jamahal Hill","Robert Whittaker","Israel Adesanya",
+      "Alex Pereira","Charles Oliveira","Dustin Poirier"
+    ];
 
-        let box = document.createElement("div");
-        box.style.position = "absolute";
-        box.style.background = "#111";
-        box.style.border = "1px solid #333";
-        box.style.width = "100%";
-        box.style.zIndex = "9999";
-        box.style.borderRadius = "8px";
-        box.style.display = "none";
-        box.style.maxHeight = "180px";
-        box.style.overflowY = "auto";
-        input.parentNode.appendChild(box);
+    const input = document.getElementById("matchupInput");
+    const box = document.getElementById("suggestions");
 
-        input.addEventListener("input", () => {
-          const val = input.value.toLowerCase().trim();
-          if (!val) { box.style.display = "none"; return; }
+    input.addEventListener("input", () => {
+      let text = input.value.toLowerCase();
+      let parts = text.split("vs").map(s => s.trim());
 
-          const matches = list.filter(n => n.toLowerCase().includes(val)).slice(0, 6);
+      let searchTerm = parts.length === 1 ? parts[0] : parts[1];
+      if (!searchTerm) { box.classList.add("hidden"); return; }
 
-          if (!matches.length) { box.style.display = "none"; return; }
+      let matches = fighters.filter(f => f.toLowerCase().includes(searchTerm));
+      if (matches.length === 0) {
+        box.classList.add("hidden");
+        return;
+      }
 
-          box.innerHTML = matches.map(m =>
-            `<div style='padding:10px;cursor:pointer;border-bottom:1px solid #222;'>${m}</div>`
-          ).join("");
+      box.innerHTML = matches.map(m => `
+        <div class="px-3 py-2 hover:bg-neutral-800 cursor-pointer">${m}</div>
+      `).join("");
 
-          box.style.display = "block";
+      box.classList.remove("hidden");
 
-          [...box.children].forEach(div => {
-            div.onclick = () => {
-              let cur = input.value.split("vs");
-              if (cur.length === 1) {
-                input.value = div.textContent;
-              } else {
-                cur[0] = div.textContent + " ";
-                input.value = cur.join("vs ");
-              }
-              box.style.display = "none";
-              input.focus();
-            };
-          });
-        });
-
-        document.addEventListener("click", e => {
-          if (!box.contains(e.target) && e.target !== input) {
-            box.style.display = "none";
+      [...box.children].forEach(child => {
+        child.onclick = () => {
+          if (parts.length === 1) {
+            input.value = child.innerText + " vs ";
+          } else {
+            input.value = parts[0] + " vs " + child.innerText;
           }
-        });
+          box.classList.add("hidden");
+        };
       });
+    });
   </script>
 
 </body>
