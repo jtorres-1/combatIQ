@@ -183,5 +183,61 @@
     };
   </script>
 
+  <!-- AUTOCOMPLETE SCRIPT -->
+  <script>
+    fetch("/static/fighters.json")
+      .then(r => r.json())
+      .then(list => {
+        const input = document.querySelector("input[name='matchup']");
+
+        let box = document.createElement("div");
+        box.style.position = "absolute";
+        box.style.background = "#111";
+        box.style.border = "1px solid #333";
+        box.style.width = "100%";
+        box.style.zIndex = "9999";
+        box.style.borderRadius = "8px";
+        box.style.display = "none";
+        box.style.maxHeight = "180px";
+        box.style.overflowY = "auto";
+        input.parentNode.appendChild(box);
+
+        input.addEventListener("input", () => {
+          const val = input.value.toLowerCase().trim();
+          if (!val) { box.style.display = "none"; return; }
+
+          const matches = list.filter(n => n.toLowerCase().includes(val)).slice(0, 6);
+
+          if (!matches.length) { box.style.display = "none"; return; }
+
+          box.innerHTML = matches.map(m =>
+            `<div style='padding:10px;cursor:pointer;border-bottom:1px solid #222;'>${m}</div>`
+          ).join("");
+
+          box.style.display = "block";
+
+          [...box.children].forEach(div => {
+            div.onclick = () => {
+              let cur = input.value.split("vs");
+              if (cur.length === 1) {
+                input.value = div.textContent;
+              } else {
+                cur[0] = div.textContent + " ";
+                input.value = cur.join("vs ");
+              }
+              box.style.display = "none";
+              input.focus();
+            };
+          });
+        });
+
+        document.addEventListener("click", e => {
+          if (!box.contains(e.target) && e.target !== input) {
+            box.style.display = "none";
+          }
+        });
+      });
+  </script>
+
 </body>
 </html>
