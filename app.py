@@ -128,7 +128,8 @@ def login():
 
 
 
-@app.route("/callback")
+@app.route("/auth/callback")
+
 def callback():
     flow = build_flow()
 
