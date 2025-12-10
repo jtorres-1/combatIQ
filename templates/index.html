@@ -43,7 +43,9 @@
          href="/upgrade">Upgrade</a>
 
       {% if user and user.email %}
-      <span class="text-xs text-gray-400">Signed in as <span class="text-yellow-400">{{ user.email }}</span></span>
+      <span class="text-xs text-gray-400">
+        Signed in as <span class="text-yellow-400">{{ user.email }}</span>
+      </span>
       <a class="text-xs text-red-400 hover:text-red-300" href="{{ url_for('logout') }}">Logout</a>
       {% else %}
       <a class="text-xs text-gray-300 hover:text-white" href="{{ url_for('login') }}">Sign in</a>
@@ -54,7 +56,8 @@
   </nav>
 
   <!-- Mobile Dropdown -->
-  <div id="mobileMenu" class="hidden w-full max-w-6xl bg-neutral-900 border-b border-neutral-800 p-4 sm:hidden flex flex-col gap-3 text-base">
+  <div id="mobileMenu"
+       class="hidden w-full max-w-6xl bg-neutral-900 border-b border-neutral-800 p-4 sm:hidden flex flex-col gap-3 text-base">
     <a href="/" class="text-gray-200">Home</a>
     <a href="/betting" class="text-gray-200">Betting Mode</a>
 
@@ -81,7 +84,8 @@
     </h2>
 
     <p class="hero-sub text-neutral-300 mb-6 text-base sm:text-lg">
-      AI powered breakdowns, confidence scores, stat comparisons, and betting insights to help you stop guessing and start winning.
+      AI powered breakdowns, confidence scores, stat comparisons, and betting insights to help you
+      stop guessing and start winning.
     </p>
 
     <a href="/upgrade"
@@ -91,7 +95,7 @@
   </section>
 
 
-  <!-- SOCIAL PROOF / TRUST BLOCK -->
+  <!-- SOCIAL PROOF -->
   <div class="mt-4 mb-10 w-full max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
 
     <div class="bg-neutral-900 border border-neutral-800 rounded-lg p-4">
@@ -127,7 +131,8 @@
           class="mobile-input bg-neutral-900 text-white border border-neutral-700 rounded-lg flex-1 px-4 py-3 focus:ring-2 focus:ring-red-500 w-full"
         />
 
-        <div id="suggestions" class="absolute left-0 right-0 mt-1 bg-neutral-900 border border-neutral-700 rounded-lg hidden z-50 max-h-60 overflow-y-auto"></div>
+        <div id="suggestions"
+             class="absolute left-0 right-0 mt-1 bg-neutral-900 border border-neutral-700 rounded-lg hidden z-50 max-h-60 overflow-y-auto"></div>
       </div>
 
       <button
@@ -140,7 +145,7 @@
   </section>
 
 
-  <!-- EXAMPLE FIGHTS -->
+  <!-- EXAMPLE Fights -->
   <div class="mt-12 max-w-3xl w-full">
     <h3 class="text-xl font-bold text-red-400 mb-4">Example Fight Predictions</h3>
 
@@ -168,7 +173,7 @@
   </div>
 
 
-  <!-- WHY THIS WORKS -->
+  <!-- WHY CombatIQ Works -->
   <div class="mt-14 max-w-3xl w-full">
     <h3 class="text-xl font-bold text-red-400 mb-4">Why CombatIQ Beats Guessing</h3>
 
@@ -181,7 +186,7 @@
   </div>
 
 
-  <!-- RESULTS (unchanged logic) -->
+  <!-- RESULTS SECTION -->
   {% if result %}
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl w-full mt-12">
 
