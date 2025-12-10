@@ -14,7 +14,6 @@
       font-family: Inter, sans-serif;
     }
 
-    /* Mobile: Increase sizes */
     @media (max-width: 640px) {
       .hero-title { font-size: 2.2rem; }
       .hero-sub { font-size: 1.1rem; }
@@ -39,7 +38,9 @@
       <a class="text-gray-300 hover:text-yellow-400" href="/history">History</a>
       {% endif %}
 
-      <a class="text-yellow-400 hover:text-yellow-300" href="/upgrade">Upgrade</a>
+      <!-- BIG UPGRADE CTA -->
+      <a class="bg-yellow-400 text-black font-bold px-4 py-2 rounded-md hover:bg-yellow-300 transition"
+         href="/upgrade">Upgrade</a>
 
       {% if user and user.email %}
       <span class="text-xs text-gray-400">Signed in as <span class="text-yellow-400">{{ user.email }}</span></span>
@@ -61,7 +62,7 @@
     <a href="/history" class="text-gray-200">History</a>
     {% endif %}
 
-    <a href="/upgrade" class="text-yellow-400">Upgrade</a>
+    <a href="/upgrade" class="text-yellow-400 font-bold">Upgrade</a>
 
     {% if user and user.email %}
     <span class="text-xs text-gray-400">Signed in as <span class="text-yellow-400">{{ user.email }}</span></span>
@@ -72,15 +73,47 @@
   </div>
 
 
-  <!-- HERO -->
-  <section class="mt-10 w-full max-w-2xl text-center">
-    <h2 class="hero-title text-red-400 font-extrabold mb-4 text-3xl sm:text-4xl">
-      AI Powered UFC Fight Predictor
+  <!-- HERO SECTION -->
+  <section class="mt-10 w-full max-w-3xl text-center">
+
+    <h2 class="hero-title text-red-400 font-extrabold mb-4 text-3xl sm:text-5xl leading-tight">
+      Predict UFC Fights With Data Driven Accuracy
     </h2>
 
-    <p class="hero-sub text-neutral-400 mb-8 text-sm sm:text-base">
-      Full breakdowns • Stat comparisons • AI scoring • Fight IQ reports
+    <p class="hero-sub text-neutral-300 mb-6 text-base sm:text-lg">
+      AI powered breakdowns, confidence scores, stat comparisons, and betting insights to help you stop guessing and start winning.
     </p>
+
+    <a href="/upgrade"
+       class="inline-block mb-10 bg-yellow-400 hover:bg-yellow-300 text-black font-bold px-8 py-3 rounded-lg text-lg shadow-xl transition transform hover:scale-[1.03]">
+       Upgrade to Pro Access
+    </a>
+  </section>
+
+
+  <!-- SOCIAL PROOF / TRUST BLOCK -->
+  <div class="mt-4 mb-10 w-full max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+
+    <div class="bg-neutral-900 border border-neutral-800 rounded-lg p-4">
+      <p class="text-xl font-bold text-yellow-400">1,300+</p>
+      <p class="text-neutral-400 text-sm">Bettors reached</p>
+    </div>
+
+    <div class="bg-neutral-900 border border-neutral-800 rounded-lg p-4">
+      <p class="text-xl font-bold text-yellow-400">200+ fights</p>
+      <p class="text-neutral-400 text-sm">Tested predictions</p>
+    </div>
+
+    <div class="bg-neutral-900 border border-neutral-800 rounded-lg p-4">
+      <p class="text-xl font-bold text-yellow-400">Multi Source</p>
+      <p class="text-neutral-400 text-sm">Real fight data</p>
+    </div>
+
+  </div>
+
+
+  <!-- MATCHUP FORM -->
+  <section class="w-full max-w-2xl text-center">
 
     <form method="POST" class="flex flex-col sm:flex-row gap-3 w-full justify-center">
 
@@ -107,8 +140,49 @@
   </section>
 
 
+  <!-- EXAMPLE FIGHTS -->
+  <div class="mt-12 max-w-3xl w-full">
+    <h3 class="text-xl font-bold text-red-400 mb-4">Example Fight Predictions</h3>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+      <a href="/?matchup=Sean Strickland vs Khamzat Chimaev"
+         class="bg-neutral-900 border border-neutral-800 rounded-lg p-4 hover:border-red-500 transition">
+        <p class="text-white font-semibold">Strickland vs Chimaev</p>
+        <p class="text-neutral-400 text-sm">61 percent confidence</p>
+      </a>
+
+      <a href="/?matchup=Alexander Volkanovski vs Ilia Topuria"
+         class="bg-neutral-900 border border-neutral-800 rounded-lg p-4 hover:border-red-500 transition">
+        <p class="text-white font-semibold">Volk vs Topuria</p>
+        <p class="text-neutral-400 text-sm">Breakdown preview</p>
+      </a>
+
+      <a href="/?matchup=Sean O'Malley vs Marlon Vera"
+         class="bg-neutral-900 border border-neutral-800 rounded-lg p-4 hover:border-red-500 transition">
+        <p class="text-white font-semibold">O'Malley vs Vera</p>
+        <p class="text-neutral-400 text-sm">Stat comparison</p>
+      </a>
+
+    </div>
+  </div>
+
+
+  <!-- WHY THIS WORKS -->
+  <div class="mt-14 max-w-3xl w-full">
+    <h3 class="text-xl font-bold text-red-400 mb-4">Why CombatIQ Beats Guessing</h3>
+
+    <ul class="space-y-3 text-neutral-300 text-sm">
+      <li>• Scrapes real fight data from multiple sources</li>
+      <li>• AI compares styles, tendencies, and historical patterns</li>
+      <li>• Confidence scoring to remove emotion from picks</li>
+      <li>• Full breakdowns generated in seconds</li>
+    </ul>
+  </div>
+
+
+  <!-- RESULTS (unchanged logic) -->
   {% if result %}
-  <!-- FIGHTERS DISPLAY -->
   <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl w-full mt-12">
 
     <div class="bg-neutral-900 p-4 rounded-xl border border-neutral-700 text-center">
@@ -135,7 +209,6 @@
 
   </div>
 
-  <!-- STATS -->
   <div class="max-w-3xl mt-10 w-full">
     <h2 class="text-2xl text-red-400 font-bold mb-4 border-b border-red-600 pb-2">Stat Comparison</h2>
 
@@ -174,16 +247,15 @@
     <h2 class="text-2xl text-red-400 font-bold mb-4">Fight IQ Report</h2>
     <article class="prose prose-invert leading-relaxed">{{ result|safe }}</article>
   </div>
-
   {% endif %}
 
+
+  <!-- JS -->
   <script>
-    // Mobile nav toggle
     document.getElementById("menuBtn").onclick = () => {
       document.getElementById("mobileMenu").classList.toggle("hidden");
     };
 
-    // Dynamic fighter autocomplete
     let fighters = [];
     fetch("/static/fighters.json")
       .then(res => res.json())
