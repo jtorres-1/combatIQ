@@ -216,129 +216,71 @@ def check_user_limit(email):
 @app.route("/", methods=["GET", "POST"])
 @limiter.limit("5 per minute")
 def index():
+    user = session.get("user")
+
     result = None
     fighter1 = fighter2 = ""
     stats1 = stats2 = {}
     confidence = None
     height1_pct = height2_pct = reach1_pct = reach2_pct = 50
-    user = session.get("user")
 
+    # =====================================================
+    # 1. Handle GET /?matchup=...
+    # =====================================================
+    if request.method == "GET" and request.args.get("matchup"):
+        matchup = request.args.get("matchup", "").strip()
+
+        fighters = [p.strip() for p in re.split(r"\s*vs\s*|\s*VS\s*|\s*Vs\s*", matchup) if p.strip()]
+        if len(fighters) < 2:
+            return render_template(
+                "index.html",
+                result="<p>Please enter matchup as 'Fighter A vs Fighter B'</p>",
+                fighter1="",
+                fighter2="",
+                user=user
+            )
+
+        fighter1, fighter2 = fighters
+
+        # Directly run prediction flow
+        return run_prediction_flow(fighter1, fighter2, user, force_refresh=False)
+
+    # =====================================================
+    # 2. Handle POST submission
+    # =====================================================
     if request.method == "POST":
-        # --- Paywall enforcement ---
-        if user:
-            allowed, reason = check_user_limit(user["email"])
-            if not allowed and reason == "limit_reached":
-                upgrade_message = "<p style='color:gold;text-align:center;'><strong>Free Tier Limit Reached:</strong> Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a> for unlimited daily predictions.</p>"
-                return render_template(
-                    "index.html",
-                    result=upgrade_message,
-                    fighter1="",
-                    fighter2="",
-                    stats1={},
-                    stats2={},
-                    confidence=None,
-                    height1_pct=50,
-                    height2_pct=50,
-                    reach1_pct=50,
-                    reach2_pct=50,
-                    user=user,
-                )
 
-        else:
+        # Require login
+        if not user:
             return redirect(url_for("login"))
+
+        # Paywall
+        allowed, reason = check_user_limit(user["email"])
+        if not allowed and reason == "limit_reached":
+            upgrade_message = "<p style='color:gold;text-align:center;'><strong>Free Tier Limit Reached:</strong> Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a> for unlimited daily predictions.</p>"
+            return render_template("index.html", result=upgrade_message, user=user)
 
         matchup = request.form.get("matchup", "").strip()
         force_refresh = "force_refresh" in request.form
 
         fighters = [p.strip() for p in re.split(r"\s*vs\s*|\s*VS\s*|\s*Vs\s*", matchup) if p.strip()]
         if len(fighters) < 2:
-            return render_template("index.html", result="<p>Please enter matchup as 'Fighter A vs Fighter B'</p>", user=user)
-
-        fighter1, fighter2 = fighters[0], fighters[1]
-        matchup_key = f"{fighter1.lower().replace(' ', '_')}_vs_{fighter2.lower().replace(' ', '_')}.json"
-        cache_path = os.path.join(CACHE_DIR, matchup_key)
-
-        logging.info(f"Request from {request.remote_addr} for matchup: {matchup}")
-
-        if not force_refresh and os.path.exists(cache_path):
-            with open(cache_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            return render_template("index.html", **data, user=user)
-
-        print(f"[SCRAPE] Fetching stats for {fighter1} and {fighter2}")
-        stats1 = scrape_fighter_stats(fighter1, force_refresh=force_refresh)
-        stats2 = scrape_fighter_stats(fighter2, force_refresh=force_refresh)
-
-        h1 = safe_stat_value(stats1.get("height"))
-        h2 = safe_stat_value(stats2.get("height"))
-        r1 = safe_stat_value(stats1.get("reach"))
-        r2 = safe_stat_value(stats2.get("reach"))
-
-        def normalize_bar(stat1, stat2):
-            max_val = max(stat1, stat2, 1)
-            return (stat1 / max_val) * 100, (stat2 / max_val) * 100
-
-        height1_pct, height2_pct = normalize_bar(h1, h2)
-        reach1_pct, reach2_pct = normalize_bar(r1, r2)
-
-        summary = f"Fighter 1 - {fighter1}: {stats1}\n\nFighter 2 - {fighter2}: {stats2}\n\n"
-        prompt = (
-            f"Analyze the fight between {fighter1} and {fighter2}. "
-            "Predict the most likely winner and explain using striking, grappling, fight IQ, and current form. "
-            "Base it only on reliable fight data. Return a clean HTML response with <h3>, <p>, and <strong>."
-        )
-
-        try:
-            response = client.chat.completions.create(
-                model=GPT_MODEL,
-                messages=[
-                    {"role": "system", "content": "You are an elite MMA analyst."},
-                    {"role": "user", "content": prompt + "\n\n" + summary},
-                ],
+            return render_template(
+                "index.html",
+                result="<p>Please enter matchup as 'Fighter A vs Fighter B'</p>",
+                fighter1="",
+                fighter2="",
+                user=user
             )
-            raw_result = response.choices[0].message.content
-            result = raw_result.replace("```html", "").replace("```", "").strip()
-            confidence = estimate_confidence(result)
-        except Exception as e:
-            print(f"[ERROR] GPT request failed: {e}")
-            result = "<p>Unable to generate analysis. Using stat-based fallback.</p>"
-            confidence = 70
 
-        cache_data = {
-            "fighter1": fighter1,
-            "fighter2": fighter2,
-            "stats1": stats1,
-            "stats2": stats2,
-            "result": result,
-            "confidence": confidence,
-            "height1_pct": height1_pct,
-            "height2_pct": height2_pct,
-            "reach1_pct": reach1_pct,
-            "reach2_pct": reach2_pct,
-        }
-        with open(cache_path, "w", encoding="utf-8") as f:
-            json.dump(cache_data, f, indent=2, ensure_ascii=False)
+        fighter1, fighter2 = fighters
 
-        # --- Save to Database ---
-        try:
-            conn = get_db()
-            c = conn.cursor()
-            user_id = None
-            if user:
-                c.execute("SELECT id FROM users WHERE email=?", (user["email"],))
-                row = c.fetchone()
-                if row:
-                    user_id = row["id"]
+        # Use same prediction flow
+        return run_prediction_flow(fighter1, fighter2, user, force_refresh)
 
-            c.execute(
-                "INSERT INTO predictions (user_id, mode, fighter1, fighter2, result, confidence, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                (user_id, "fight", fighter1, fighter2, result, confidence, datetime.now()),
-            )
-            conn.commit()
-            conn.close()
-        except Exception as e:
-            print(f"[DB ERROR] Failed to log prediction: {e}")
-
+    # =====================================================
+    # Default render
+    # =====================================================
     return render_template(
         "index.html",
         result=result,
@@ -353,6 +295,83 @@ def index():
         reach2_pct=reach2_pct,
         user=user,
     )
+
+def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
+    matchup_key = f"{fighter1.lower().replace(' ', '_')}_vs_{fighter2.lower().replace(' ', '_')}.json"
+    cache_path = os.path.join(CACHE_DIR, matchup_key)
+
+    # Use cache if available
+    if not force_refresh and os.path.exists(cache_path):
+        with open(cache_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return render_template("index.html", **data, user=user)
+
+    # Scrape stats
+    stats1 = scrape_fighter_stats(fighter1, force_refresh=force_refresh)
+    stats2 = scrape_fighter_stats(fighter2, force_refresh=force_refresh)
+
+    h1 = safe_stat_value(stats1.get("height"))
+    h2 = safe_stat_value(stats2.get("height"))
+    r1 = safe_stat_value(stats1.get("reach"))
+    r2 = safe_stat_value(stats2.get("reach"))
+
+    def normalize_bar(a, b):
+        max_val = max(a, b, 1)
+        return (a / max_val) * 100, (b / max_val) * 100
+
+    height1_pct, height2_pct = normalize_bar(h1, h2)
+    reach1_pct, reach2_pct = normalize_bar(r1, r2)
+
+    # Better structured formatting prompt
+    prompt = f"""
+Analyze the fight between {fighter1} and {fighter2}.
+Write a clean HTML breakdown with spacing and sections.
+Use <h3> for headers and <p> for paragraphs.
+Include sections:
+- Striking
+- Grappling
+- Fight IQ
+- Recent Form
+- Prediction
+
+Do not use code blocks.
+"""
+
+    try:
+        response = client.chat.completions.create(
+            model=GPT_MODEL,
+            messages=[
+                {"role": "system", "content": "You are an elite MMA analyst writing clear structured breakdowns."},
+                {"role": "user", "content": prompt},
+            ],
+        )
+        raw = response.choices[0].message.content
+        result = raw.replace("```html", "").replace("```", "").strip()
+        confidence = estimate_confidence(result)
+
+    except Exception as e:
+        result = "<p>Analysis unavailable. Showing stat based summary instead.</p>"
+        confidence = 70
+
+    # Cache save
+    cache_data = {
+        "fighter1": fighter1,
+        "fighter2": fighter2,
+        "stats1": stats1,
+        "stats2": stats2,
+        "result": result,
+        "confidence": confidence,
+        "height1_pct": height1_pct,
+        "height2_pct": height2_pct,
+        "reach1_pct": reach1_pct,
+        "reach2_pct": reach2_pct,
+    }
+
+    with open(cache_path, "w", encoding="utf-8") as f:
+        json.dump(cache_data, f, indent=2, ensure_ascii=False)
+
+    return render_template("index.html", **cache_data, user=user)
+
 
 # =====================================================
 # BETTING MODE
