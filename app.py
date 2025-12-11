@@ -325,17 +325,28 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
     # Better structured formatting prompt
     prompt = f"""
 Analyze the fight between {fighter1} and {fighter2}.
-Write a clean HTML breakdown with spacing and sections.
-Use <h3> for headers and <p> for paragraphs.
-Include sections:
-- Striking
-- Grappling
-- Fight IQ
-- Recent Form
-- Prediction
 
-Do not use code blocks.
+Return BEAUTIFULLY FORMATTED HTML that displays cleanly inside a narrow content box.  
+Use clear structure, spacing, and readable formatting.
+
+Formatting rules:
+• Use <h3> section headers using this style: <h3 class='section-title'>Title</h3>
+• Use <p> for paragraphs, but keep paragraphs short (2 to 3 sentences).
+• Add spacing between sections using: <div class='spacer'></div>
+• Use bullet points (<ul><li>) where helpful.
+• NO code blocks, no markdown.
+
+Required sections:
+1. <h3 class='section-title'>Striking</h3>
+2. <h3 class='section-title'>Grappling</h3>
+3. <h3 class='section-title'>Fight IQ</h3>
+4. <h3 class='section-title'>Recent Form</h3>
+5. <h3 class='section-title'>Prediction</h3>
+
+Write clean, concise analysis with natural spacing.
 """
+
+
 
     try:
         response = client.chat.completions.create(
