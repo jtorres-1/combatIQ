@@ -159,50 +159,106 @@ def normalize_stats(stats):
 # UFCSTATS SCRAPER — FIXED WITH NAME MATCHING
 # ------------------------------------------------------------
 def scrape_ufcstats(name):
+    """Scrape fighter profile, career stats, and per-fight data from UFCStats, with exact matching and letter-index fallback."""
     print(f"[UFCSTATS] Searching for {name}...")
     stats = {}
 
-    try:
-        last = name.split()[-1].lower()
-        search_url = f"http://ufcstats.com/statistics/fighters/search?query={last}"
-        r = safe_get(search_url)
+    def load_letter_page(nm):
+        """Fallback: load the alphabetical index page (e.g., Y for Yan)."""
+        last = nm.strip().split()[-1].lower()
+        letter = last[0]
+        url = f"http://ufcstats.com/statistics/fighters?char={letter}&page=all"
+        print(f"[UFCSTATS] Fallback letter search: {url}")
+        r = safe_get(url)
         if not r:
-            return stats
-
+            return []
         soup = BeautifulSoup(r.text, "html.parser")
-
-        # GET ALL RESULTS
         rows = soup.select("tr.b-statistics__table-row")
-        target = name.lower()
-
-        matched_url = None
-
+        out = []
         for row in rows:
             cols = row.find_all("td")
             if len(cols) < 2:
                 continue
+            first = cols[0].get_text(strip=True).lower()
+            last = cols[1].get_text(strip=True).lower()
+            fullname = f"{first} {last}".strip()
+            link = cols[0].find("a") or cols[1].find("a")
+            if not link:
+                continue
+            out.append((fullname, link.get("href", "").strip()))
+        return out
 
-            fighter_name = cols[0].get_text(strip=True).lower()
+    try:
+        q = name.lower()
+        search_url = f"http://ufcstats.com/statistics/fighters/search?query={q.replace(' ', '+')}"
+        r = safe_get(search_url)
 
-            # EXACT MATCH ONLY
-            if fighter_name == target:
-                link = cols[0].find("a")
-                if link and link.get("href"):
-                    matched_url = link["href"]
-                    break
+        candidates = []
 
-        if not matched_url:
-            print("[UFCSTATS] No exact name match found.")
+        # ------------------------------------------
+        # PRIMARY SEARCH
+        # ------------------------------------------
+        if r:
+            soup = BeautifulSoup(r.text, "html.parser")
+            rows = soup.select("tr.b-statistics__table-row")
+            for row in rows:
+                cols = row.find_all("td")
+                if len(cols) < 2:
+                    continue
+
+                first = cols[0].get_text(strip=True).lower()
+                last = cols[1].get_text(strip=True).lower()
+                fullname = f"{first} {last}".strip()
+
+                link = cols[0].find("a") or cols[1].find("a")
+                if not link:
+                    continue
+
+                candidates.append((fullname, link.get("href", "").strip()))
+
+        # ------------------------------------------
+        # FALLBACK TO LETTER INDEX IF NO RESULTS
+        # ------------------------------------------
+        if not candidates:
+            print("[UFCSTATS] No search results, using fallback...")
+            candidates = load_letter_page(q)
+
+        if not candidates:
+            print("[UFCSTATS] No candidates found at all.")
             return stats
 
-        print(f"[UFCSTATS] Exact match profile: {matched_url}")
-        prof = safe_get(matched_url)
+        # ------------------------------------------
+        # EXACT MATCH
+        # ------------------------------------------
+        exact = None
+        for fullname, url in candidates:
+            if fullname == q:
+                exact = (fullname, url)
+                break
+
+        # Partial match fallback
+        if not exact:
+            for fullname, url in candidates:
+                if q in fullname:
+                    exact = (fullname, url)
+                    break
+
+        if not exact:
+            print("[UFCSTATS] No exact or close match found.")
+            return stats
+
+        _, fighter_url = exact
+        print(f"[UFCSTATS] Fetching profile: {fighter_url}")
+
+        prof = safe_get(fighter_url)
         if not prof:
             return stats
 
         psoup = BeautifulSoup(prof.text, "html.parser")
 
+        # -------------------------------------------------
         # BASIC INFO
+        # -------------------------------------------------
         for li in psoup.select("li.b-list__box-list-item.b-list__box-list-item_type_block"):
             t = li.get_text(" ", strip=True)
             if "Height:" in t:
@@ -216,7 +272,9 @@ def scrape_ufcstats(name):
             elif "DOB:" in t:
                 stats["dob"] = t.split("DOB:")[-1].strip()
 
-        # CAREER STATS
+        # -------------------------------------------------
+        # CAREER STATISTICS
+        # -------------------------------------------------
         career_items = psoup.select(".b-list__info-box-left li, .b-list__info-box-right li")
         for li in career_items:
             label_el = li.select_one(".b-list__box-item-title")
@@ -225,6 +283,7 @@ def scrape_ufcstats(name):
 
             label = label_el.get_text(strip=True).replace(":", "")
             value_text = li.get_text(strip=True).replace(label_el.get_text(strip=True), "").strip()
+
             if not value_text:
                 continue
 
@@ -253,21 +312,30 @@ def scrape_ufcstats(name):
             elif "sub. avg" in clean_label:
                 stats["submissions_avg"] = clean_value
 
-        # FIGHT LOG
+        # -------------------------------------------------
+        # FIGHT-BY-FIGHT
+        # -------------------------------------------------
         fights = psoup.select(
             "tr.b-fight-details__table-row.b-fight-details__table-row__hover.js-fight-details-click"
         )
 
-        total_strikes = total_tds = total_subs = total_fights = 0
+        total_strikes = 0
+        total_tds = 0
+        total_subs = 0
+        total_fights = 0
 
         for row in fights:
             cols = [c.get_text(strip=True) for c in row.find_all("td")]
-            if len(cols) < 7 or not re.search(r"win|loss", cols[0], re.I):
+            if len(cols) < 7:
                 continue
+            if not re.search(r"win|loss", cols[0], re.I):
+                continue
+
             try:
                 strikes = int(re.sub(r"\D", "", cols[3])) if re.search(r"\d", cols[3]) else 0
                 tds = int(re.sub(r"\D", "", cols[4])) if re.search(r"\d", cols[4]) else 0
                 subs = int(re.sub(r"\D", "", cols[5])) if re.search(r"\d", cols[5]) else 0
+
                 if strikes + tds + subs == 0:
                     continue
 
@@ -282,12 +350,17 @@ def scrape_ufcstats(name):
             stats["avg_sig_strikes"] = round(total_strikes / total_fights, 2)
             stats["avg_takedowns"] = round(total_tds / total_fights, 2)
             stats["avg_submissions"] = round(total_subs / total_fights, 2)
+        else:
+            stats["avg_sig_strikes"] = stats.get("sig_strikes_per_min", 0)
+            stats["avg_takedowns"] = stats.get("takedown_avg", 0)
+            stats["avg_submissions"] = stats.get("submissions_avg", 0)
 
         return normalize_stats(stats)
 
     except Exception as e:
         print(f"[UFCSTATS ERROR] {e}")
         return stats
+
 
 
 # ------------------------------------------------------------
