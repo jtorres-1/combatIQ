@@ -159,12 +159,11 @@ def normalize_stats(stats):
 # UFCSTATS SCRAPER — FIXED WITH NAME MATCHING
 # ------------------------------------------------------------
 def scrape_ufcstats(name):
-    """Scrape fighter profile, career stats, and per-fight data from UFCStats, with exact matching and letter-index fallback."""
+    """Scrape fighter profile, career stats, record, and per-fight data from UFCStats, with exact matching + fallback."""
     print(f"[UFCSTATS] Searching for {name}...")
     stats = {}
 
     def load_letter_page(nm):
-        """Fallback: load the alphabetical index page (e.g., Y for Yan)."""
         last = nm.strip().split()[-1].lower()
         letter = last[0]
         url = f"http://ufcstats.com/statistics/fighters?char={letter}&page=all"
@@ -195,9 +194,7 @@ def scrape_ufcstats(name):
 
         candidates = []
 
-        # ------------------------------------------
         # PRIMARY SEARCH
-        # ------------------------------------------
         if r:
             soup = BeautifulSoup(r.text, "html.parser")
             rows = soup.select("tr.b-statistics__table-row")
@@ -205,20 +202,15 @@ def scrape_ufcstats(name):
                 cols = row.find_all("td")
                 if len(cols) < 2:
                     continue
-
                 first = cols[0].get_text(strip=True).lower()
                 last = cols[1].get_text(strip=True).lower()
                 fullname = f"{first} {last}".strip()
-
                 link = cols[0].find("a") or cols[1].find("a")
                 if not link:
                     continue
-
                 candidates.append((fullname, link.get("href", "").strip()))
 
-        # ------------------------------------------
-        # FALLBACK TO LETTER INDEX IF NO RESULTS
-        # ------------------------------------------
+        # FALLBACK LETTER INDEX
         if not candidates:
             print("[UFCSTATS] No search results, using fallback...")
             candidates = load_letter_page(q)
@@ -227,16 +219,14 @@ def scrape_ufcstats(name):
             print("[UFCSTATS] No candidates found at all.")
             return stats
 
-        # ------------------------------------------
         # EXACT MATCH
-        # ------------------------------------------
         exact = None
         for fullname, url in candidates:
             if fullname == q:
                 exact = (fullname, url)
                 break
 
-        # Partial match fallback
+        # PARTIAL MATCH
         if not exact:
             for fullname, url in candidates:
                 if q in fullname:
@@ -255,6 +245,15 @@ def scrape_ufcstats(name):
             return stats
 
         psoup = BeautifulSoup(prof.text, "html.parser")
+
+        # -------------------------------------------------
+        # EXTRACT RECORD  ← INSERTED HERE
+        # -------------------------------------------------
+        record_el = psoup.select_one("span.b-content__title-record")
+        if record_el:
+            rec = record_el.get_text(strip=True)
+            rec = rec.replace("Record:", "").strip()
+            stats["record"] = rec
 
         # -------------------------------------------------
         # BASIC INFO
@@ -313,7 +312,7 @@ def scrape_ufcstats(name):
                 stats["submissions_avg"] = clean_value
 
         # -------------------------------------------------
-        # FIGHT-BY-FIGHT
+        # FIGHT-BY-FIGHT STATS
         # -------------------------------------------------
         fights = psoup.select(
             "tr.b-fight-details__table-row.b-fight-details__table-row__hover.js-fight-details-click"
