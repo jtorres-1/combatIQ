@@ -22,7 +22,6 @@ RETRY_DELAY = 2
 
 
 def safe_get(url):
-    """Wrapper for requests.get with retry and error handling."""
     for _ in range(2):
         try:
             resp = requests.get(url, headers=BROWSER_HEADERS, timeout=REQUEST_TIMEOUT)
@@ -37,7 +36,6 @@ def safe_get(url):
 # TAPOLOGY SCRAPER
 # ------------------------------------------------------------
 def scrape_tapology(name):
-    """Get weight class, team, and fighter image from Tapology."""
     print(f"[TAPOLOGY] Searching for {name}...")
     data = {}
     try:
@@ -86,7 +84,6 @@ def scrape_tapology(name):
 # ESPN SCRAPER
 # ------------------------------------------------------------
 def scrape_espn(name):
-    """Fetch bio details like height, weight, reach if available."""
     print(f"[ESPN] Searching {name}")
     bio = {}
     try:
@@ -94,10 +91,12 @@ def scrape_espn(name):
         resp = safe_get(url)
         if not resp:
             return bio
+
         soup = BeautifulSoup(resp.text, "html.parser")
         bio_ul = soup.find("ul", class_=re.compile("AthleteHeader__Bio_List"))
         if not bio_ul:
             return bio
+
         for li in bio_ul.find_all("li"):
             key = li.find("span", class_=re.compile("Label"))
             val = li.find("span", class_=re.compile("Value"))
@@ -123,7 +122,6 @@ def scrape_espn(name):
 # NORMALIZATION FUNCTION
 # ------------------------------------------------------------
 def normalize_stats(stats):
-    """Clamp and scale fighter averages into realistic MMA ranges."""
     def clamp(val, low, high):
         try:
             return max(low, min(high, float(val)))
@@ -158,12 +156,12 @@ def normalize_stats(stats):
 
 
 # ------------------------------------------------------------
-# UFCSTATS SCRAPER
+# UFCSTATS SCRAPER — FIXED WITH NAME MATCHING
 # ------------------------------------------------------------
 def scrape_ufcstats(name):
-    """Scrape fighter profile, career stats, and per-fight data from UFCStats."""
     print(f"[UFCSTATS] Searching for {name}...")
     stats = {}
+
     try:
         last = name.split()[-1].lower()
         search_url = f"http://ufcstats.com/statistics/fighters/search?query={last}"
@@ -172,20 +170,39 @@ def scrape_ufcstats(name):
             return stats
 
         soup = BeautifulSoup(r.text, "html.parser")
-        fighter_link = soup.select_one("a[href*='/fighter-details/']")
-        if not fighter_link:
-            print("[UFCSTATS] No fighter found.")
+
+        # GET ALL RESULTS
+        rows = soup.select("tr.b-statistics__table-row")
+        target = name.lower()
+
+        matched_url = None
+
+        for row in rows:
+            cols = row.find_all("td")
+            if len(cols) < 2:
+                continue
+
+            fighter_name = cols[0].get_text(strip=True).lower()
+
+            # EXACT MATCH ONLY
+            if fighter_name == target:
+                link = cols[0].find("a")
+                if link and link.get("href"):
+                    matched_url = link["href"]
+                    break
+
+        if not matched_url:
+            print("[UFCSTATS] No exact name match found.")
             return stats
 
-        fighter_url = fighter_link["href"]
-        print(f"[UFCSTATS] Fetching profile: {fighter_url}")
-        prof = safe_get(fighter_url)
+        print(f"[UFCSTATS] Exact match profile: {matched_url}")
+        prof = safe_get(matched_url)
         if not prof:
             return stats
 
         psoup = BeautifulSoup(prof.text, "html.parser")
 
-        # Basic info
+        # BASIC INFO
         for li in psoup.select("li.b-list__box-list-item.b-list__box-list-item_type_block"):
             t = li.get_text(" ", strip=True)
             if "Height:" in t:
@@ -199,22 +216,26 @@ def scrape_ufcstats(name):
             elif "DOB:" in t:
                 stats["dob"] = t.split("DOB:")[-1].strip()
 
-        # Career statistics
+        # CAREER STATS
         career_items = psoup.select(".b-list__info-box-left li, .b-list__info-box-right li")
         for li in career_items:
             label_el = li.select_one(".b-list__box-item-title")
             if not label_el:
                 continue
+
             label = label_el.get_text(strip=True).replace(":", "")
             value_text = li.get_text(strip=True).replace(label_el.get_text(strip=True), "").strip()
             if not value_text:
                 continue
+
             clean_label = label.lower()
             clean_value = value_text.replace("%", "").strip()
+
             try:
                 clean_value = float(clean_value)
-            except ValueError:
+            except:
                 pass
+
             if "slpm" in clean_label:
                 stats["sig_strikes_per_min"] = clean_value
             elif "str. acc" in clean_label:
@@ -232,12 +253,13 @@ def scrape_ufcstats(name):
             elif "sub. avg" in clean_label:
                 stats["submissions_avg"] = clean_value
 
-        # Fight-by-fight stats
+        # FIGHT LOG
         fights = psoup.select(
             "tr.b-fight-details__table-row.b-fight-details__table-row__hover.js-fight-details-click"
         )
 
         total_strikes = total_tds = total_subs = total_fights = 0
+
         for row in fights:
             cols = [c.get_text(strip=True) for c in row.find_all("td")]
             if len(cols) < 7 or not re.search(r"win|loss", cols[0], re.I):
@@ -248,23 +270,21 @@ def scrape_ufcstats(name):
                 subs = int(re.sub(r"\D", "", cols[5])) if re.search(r"\d", cols[5]) else 0
                 if strikes + tds + subs == 0:
                     continue
+
                 total_fights += 1
                 total_strikes += strikes
                 total_tds += tds
                 total_subs += subs
-            except Exception:
+            except:
                 continue
 
         if total_fights > 0:
             stats["avg_sig_strikes"] = round(total_strikes / total_fights, 2)
             stats["avg_takedowns"] = round(total_tds / total_fights, 2)
             stats["avg_submissions"] = round(total_subs / total_fights, 2)
-        else:
-            stats["avg_sig_strikes"] = stats.get("sig_strikes_per_min", 0)
-            stats["avg_takedowns"] = stats.get("takedown_avg", 0)
-            stats["avg_submissions"] = stats.get("submissions_avg", 0)
 
         return normalize_stats(stats)
+
     except Exception as e:
         print(f"[UFCSTATS ERROR] {e}")
         return stats
@@ -282,7 +302,12 @@ def scrape_fighter_stats(name: str, force_refresh: bool = False):
             return json.load(f)
 
     result = {"name": name, "source": []}
-    for scraper, tag in [(scrape_ufcstats, "ufcstats"), (scrape_tapology, "tapology"), (scrape_espn, "espn")]:
+
+    for scraper, tag in [
+        (scrape_ufcstats, "ufcstats"),
+        (scrape_tapology, "tapology"),
+        (scrape_espn, "espn")
+    ]:
         data = scraper(name)
         if data:
             result.update(data)
@@ -293,6 +318,7 @@ def scrape_fighter_stats(name: str, force_refresh: bool = False):
 
     with open(cache_path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
+
     print(f"[CACHE] Saved {name}")
     return result
 
