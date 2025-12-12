@@ -296,8 +296,12 @@ def index():
         user=user,
     )
 
+def clean_name(name):
+    return re.sub(r"[^a-z0-9_]+", "", name.lower().replace(" ", "_"))
+
 def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
-    matchup_key = f"{fighter1.lower().replace(' ', '_')}_vs_{fighter2.lower().replace(' ', '_')}.json"
+    matchup_key = f"{clean_name(fighter1)}_vs_{clean_name(fighter2)}.json"
+
     cache_path = os.path.join(CACHE_DIR, matchup_key)
 
     # Use cache if available
