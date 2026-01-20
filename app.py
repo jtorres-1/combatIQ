@@ -250,6 +250,17 @@ def index():
         if not allowed and reason == "limit_reached":
             upgrade_message = "<p style='color:gold;text-align:center;'><strong>Daily free limit reached.</strong><br><a href='/upgrade' style='color:deepskyblue;font-weight:bold;'>Upgrade to Pro</a></p>"
             return render_template("index.html", result=upgrade_message, user=user)
+
+        try:
+            return run_prediction_flow(fighter1, fighter2, user, force_refresh)
+        except Exception as e:
+            print("[PREDICTION ERROR]", e)
+            return render_template(
+                "index.html",
+                result="<p>Prediction failed. Please try again or refresh.</p>",
+                user=user
+            )
+
         
         return run_prediction_flow(fighter1, fighter2, user, force_refresh=False)
 
