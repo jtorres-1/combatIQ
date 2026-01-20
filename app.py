@@ -257,7 +257,27 @@ def index():
         # Paywall
         allowed, reason = check_user_limit(user["email"])
         if not allowed and reason == "limit_reached":
-            upgrade_message = "<p style='color:gold;text-align:center;'><strong>Free Tier Limit Reached:</strong> Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a> for unlimited daily predictions.</p>"
+            upgrade_message = """
+            <div style='text-align:center; padding:16px;'>
+              <p style='color:#facc15; font-weight:700; font-size:18px;'>
+                You’ve used your free prediction for today
+              </p>
+              <p style='color:#d1d5db; margin-top:8px;'>
+                CombatIQ Pro unlocks <strong>unlimited fight predictions</strong> and
+                <strong>unlimited betting stat analysis</strong>.
+              </p>
+              <p style='color:#9ca3af; margin-top:6px; font-size:14px;'>
+                Built for bettors who don’t guess.
+              </p>
+              <a href='/upgrade'
+                 style='display:inline-block; margin-top:14px; background:#facc15;
+                        color:black; padding:10px 18px; border-radius:8px;
+                        font-weight:700; text-decoration:none;'>
+                 Unlock Pro for $9.99/month
+              </a>
+            </div>
+            """
+
             return render_template("index.html", result=upgrade_message, user=user)
 
         matchup = request.form.get("matchup", "").strip()
@@ -426,7 +446,27 @@ def betting():
         if user:
             allowed, reason = check_user_limit(user["email"])
             if not allowed and reason == "limit_reached":
-                upgrade_message = "<p style='color:gold;text-align:center;'><strong>Free Tier Limit Reached:</strong> Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a> for unlimited daily predictions.</p>"
+                upgrade_message = """
+                <div style='text-align:center; padding:16px;'>
+                  <p style='color:#facc15; font-weight:700; font-size:18px;'>
+                    You’ve used your free prediction for today
+                  </p>
+                  <p style='color:#d1d5db; margin-top:8px;'>
+                    CombatIQ Pro unlocks <strong>unlimited fight predictions</strong> and
+                    <strong>unlimited betting stat analysis</strong>.
+                  </p>
+                  <p style='color:#9ca3af; margin-top:6px; font-size:14px;'>
+                    Built for bettors who don’t guess.
+                  </p>
+                  <a href='/upgrade'
+                     style='display:inline-block; margin-top:14px; background:#facc15;
+                            color:black; padding:10px 18px; border-radius:8px;
+                            font-weight:700; text-decoration:none;'>
+                     Unlock Pro for $9.99/month
+                  </a>
+                </div>
+                """
+
                 return render_template("betting.html", prediction=upgrade_message, user=user)
         else:
             return redirect(url_for("login"))
