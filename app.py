@@ -174,7 +174,7 @@ def logout():
     return redirect(url_for("index"))
 
 # =====================================================
-# PAYWALL HELPER FUNCTION
+# PAYWALL HELPER FUNCTION 1 prediction free dail
 # =====================================================
 def check_user_limit(email):
     """Check if a free user has exceeded 3 predictions today."""
@@ -206,7 +206,7 @@ def check_user_limit(email):
     count = c.fetchone()[0]
     conn.close()
 
-    if count >= 3:
+    if count >= 1:
         return False, "limit_reached"
     return True, "ok"
 
