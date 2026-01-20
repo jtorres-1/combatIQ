@@ -364,9 +364,9 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
                     data.get("result"),
                     data.get("confidence"),
                     datetime.now(),
-                ),
-
+                )
             )
+
         
             conn.commit()
             conn.close()
