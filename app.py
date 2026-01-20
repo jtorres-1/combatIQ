@@ -243,7 +243,16 @@ def index():
         fighter1, fighter2 = fighters
 
         # Directly run prediction flow
+        if not user:
+            return redirect(url_for("login"))
+        
+        allowed, reason = check_user_limit(user["email"])
+        if not allowed and reason == "limit_reached":
+            upgrade_message = "<p style='color:gold;text-align:center;'><strong>Daily free limit reached.</strong><br><a href='/upgrade' style='color:deepskyblue;font-weight:bold;'>Upgrade to Pro</a></p>"
+            return render_template("index.html", result=upgrade_message, user=user)
+        
         return run_prediction_flow(fighter1, fighter2, user, force_refresh=False)
+
 
     # =====================================================
     # 2. Handle POST submission
