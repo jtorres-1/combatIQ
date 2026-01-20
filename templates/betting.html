@@ -146,7 +146,15 @@
     <!-- RESULTS -->
     {% if prediction %}
     <div class="mt-8 bg-neutral-900 border border-neutral-700 p-5 rounded-xl text-center">
-      <h3 class="text-xl font-semibold text-yellow-400 mb-3">📊 Prediction Result</h3>
+      <h3 class="text-xl font-semibold text-yellow-400 mb-3">
+        {% if 'Unlock Pro' in prediction %}
+          🔒 Pro Required
+        {% else %}
+          📊 Prediction Result
+        {% endif %}
+      </h3>
+      
+
 
       <div class="prose prose-invert max-w-none text-left">{{ prediction|safe }}</div>
 
