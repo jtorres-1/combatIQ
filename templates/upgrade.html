@@ -81,7 +81,8 @@
     <h1 class="title text-yellow-400 text-3xl font-extrabold mb-3">CombatIQ Pro</h1>
 
     <p class="text-neutral-300 mb-4">
-      Unlock unlimited predictions, priority processing, exclusive updates, and more.
+      Unlimited UFC fight predictions and betting stat analysis — no daily limits, no guessing.
+
     </p>
 
     <ul class="features text-left mx-auto mb-5 max-w-xs text-neutral-300 leading-relaxed">
@@ -94,6 +95,11 @@
 
     <div class="price text-yellow-400 font-bold text-3xl mb-6">$9.99 per month</div>
 
+    <p class="text-sm text-neutral-400 mb-4">
+      Free users are limited to <span class="text-yellow-400 font-semibold">1 prediction per day</span>.
+    </p>
+
+
     {% if plan == "pro" %}
       <p class="text-green-400 font-semibold mb-4">
         ✓ You are already on CombatIQ Pro.
@@ -104,7 +110,7 @@
       <form action="{{ url_for('create_checkout_session') }}" method="POST">
         <button type="submit" 
           class="btn bg-yellow-400 text-black w-full font-semibold rounded-lg py-3 hover:bg-yellow-300 transition">
-          Upgrade Now
+          Unlock Unlimited Predictions
         </button>
       </form>
 
