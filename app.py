@@ -391,6 +391,10 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
     stats1 = scrape_fighter_stats(fighter1, force_refresh=force_refresh)
     stats2 = scrape_fighter_stats(fighter2, force_refresh=force_refresh)
 
+    stats1 = stats1 if isinstance(stats1, dict) else {}
+    stats2 = stats2 if isinstance(stats2, dict) else {}
+
+
     h1 = safe_stat_value(stats1.get("height"))
     h2 = safe_stat_value(stats2.get("height"))
     r1 = safe_stat_value(stats1.get("reach"))
