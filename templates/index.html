@@ -98,8 +98,10 @@
     {% endif %}
   </div>
 
+
   <!-- HERO SECTION -->
   <section class="mt-10 w-full max-w-3xl text-center">
+
     <h2 class="hero-title text-red-400 font-extrabold mb-4 text-3xl sm:text-5xl leading-tight">
       Predict UFC Fights With Data Driven Accuracy
     </h2>
@@ -115,8 +117,10 @@
     </a>
   </section>
 
+
   <!-- SOCIAL PROOF -->
   <div class="mt-4 mb-10 w-full max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
+
     <div class="bg-neutral-900 border border-neutral-800 rounded-lg p-4">
       <p class="text-xl font-bold text-yellow-400">1,300+</p>
       <p class="text-neutral-400 text-sm">Bettors reached</p>
@@ -131,16 +135,21 @@
       <p class="text-xl font-bold text-yellow-400">Multi Source</p>
       <p class="text-neutral-400 text-sm">Real fight data</p>
     </div>
+
   </div>
+
 
   <!-- MATCHUP FORM -->
   <section class="w-full max-w-2xl text-center">
+
     <p class="text-sm text-neutral-400 mb-3">
       Free tier: <span class="text-yellow-400 font-semibold">1 prediction per day</span>.
       <a href="/upgrade" class="text-red-400 underline">Upgrade for unlimited.</a>
     </p>
 
+
     <form method="POST" class="flex flex-col sm:flex-row gap-3 w-full justify-center">
+
       <div class="relative w-full">
         <input
           id="matchupInput"
@@ -150,6 +159,7 @@
           required
           class="mobile-input bg-neutral-900 text-white border border-neutral-700 rounded-lg flex-1 px-4 py-3 focus:ring-2 focus:ring-red-500 w-full"
         />
+
         <div id="suggestions"
              class="absolute left-0 right-0 mt-1 bg-neutral-900 border border-neutral-700 rounded-lg hidden z-50 max-h-60 overflow-y-auto"></div>
       </div>
@@ -159,8 +169,51 @@
         class="mobile-button bg-red-600 hover:bg-red-700 px-8 py-3 rounded-lg font-semibold text-white transition">
         Analyze Fight
       </button>
+
     </form>
   </section>
+
+
+  <!-- EXAMPLE Fights -->
+  <div class="mt-12 max-w-3xl w-full">
+    <h3 class="text-xl font-bold text-red-400 mb-4">Example Fight Predictions</h3>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+      <a href="/?matchup=Sean Strickland vs Khamzat Chimaev"
+         class="bg-neutral-900 border border-neutral-800 rounded-lg p-4 hover:border-red-500 transition">
+        <p class="text-white font-semibold">Strickland vs Chimaev</p>
+        <p class="text-neutral-400 text-sm">61 percent confidence</p>
+      </a>
+
+      <a href="/?matchup=Petr Yan vs Cory Sandhagen"
+         class="bg-neutral-900 border border-neutral-800 rounded-lg p-4 hover:border-red-500 transition">
+        <p class="text-white font-semibold">Yan vs Sandhagen</p>
+        <p class="text-neutral-400 text-sm">High level striking battle</p>
+      </a>
+
+      <a href="/?matchup=Max Holloway vs Charles Oliveira"
+         class="bg-neutral-900 border border-neutral-800 rounded-lg p-4 hover:border-red-500 transition">
+        <p class="text-white font-semibold">Holloway vs Oliveira</p>
+        <p class="text-neutral-400 text-sm">Elite pace vs submission danger</p>
+      </a>
+
+    </div>
+  </div>
+
+
+  <!-- WHY CombatIQ Works -->
+  <div class="mt-14 max-w-3xl w-full">
+    <h3 class="text-xl font-bold text-red-400 mb-4">Why CombatIQ Beats Guessing</h3>
+
+    <ul class="space-y-3 text-neutral-300 text-sm">
+      <li>• Scrapes real fight data from multiple sources</li>
+      <li>• AI compares styles, tendencies, and historical patterns</li>
+      <li>• Confidence scoring to remove emotion from picks</li>
+      <li>• Full breakdowns generated in seconds</li>
+    </ul>
+  </div>
+
 
   <!-- RESULTS SECTION -->
   {% if result %}
@@ -171,10 +224,10 @@
            src="{{ (stats1.get('image') or url_for('static','fighters/fighter_placeholder.jpg')) | safe }}"
            alt="{{ fighter1 }}">
       <h3 class="text-xl font-semibold mt-3 text-red-400">{{ fighter1 }}</h3>
-      <p><strong class="text-yellow-400">Record:</strong> {{ stats1.get('record','N/A') }}</p>
-      <p><strong class="text-yellow-400">Height:</strong> {{ stats1.get('height','N/A') }}</p>
-      <p><strong class="text-yellow-400">Reach:</strong> {{ stats1.get('reach','N/A') }}</p>
-      <p><strong class="text-yellow-400">Stance:</strong> {{ stats1.get('stance','N/A') }}</p>
+      <p><strong class="text-yellow-400">Record:</strong> {{ stats1.record }}</p>
+      <p><strong class="text-yellow-400">Height:</strong> {{ stats1.height }}</p>
+      <p><strong class="text-yellow-400">Reach:</strong> {{ stats1.reach }}</p>
+      <p><strong class="text-yellow-400">Stance:</strong> {{ stats1.stance }}</p>
     </div>
 
     <div class="bg-neutral-900 p-4 rounded-xl border border-neutral-700 text-center">
@@ -182,13 +235,47 @@
            src="{{ (stats2.get('image') or url_for('static','fighters/fighter_placeholder.jpg')) | safe }}"
            alt="{{ fighter2 }}">
       <h3 class="text-xl font-semibold mt-3 text-red-400">{{ fighter2 }}</h3>
-      <p><strong class="text-yellow-400">Record:</strong> {{ stats2.get('record','N/A') }}</p>
-      <p><strong class="text-yellow-400">Height:</strong> {{ stats2.get('height','N/A') }}</p>
-      <p><strong class="text-yellow-400">Reach:</strong> {{ stats2.get('reach','N/A') }}</p>
-      <p><strong class="text-yellow-400">Stance:</strong> {{ stats2.get('stance','N/A') }}</p>
+      <p><strong class="text-yellow-400">Record:</strong> {{ stats2.record }}</p>
+      <p><strong class="text-yellow-400">Height:</strong> {{ stats2.height }}</p>
+      <p><strong class="text-yellow-400">Reach:</strong> {{ stats2.reach }}</p>
+      <p><strong class="text-yellow-400">Stance:</strong> {{ stats2.stance }}</p>
     </div>
 
   </div>
+
+  <div class="max-w-3xl mt-10 w-full">
+    <h2 class="text-2xl text-red-400 font-bold mb-4 border-b border-red-600 pb-2">Stat Comparison</h2>
+
+    <div class="mb-5">
+      <div class="flex justify-between text-xs text-neutral-400 mb-1">
+        <span>Height Comparison</span>
+        <span>{{ fighter1 }} vs {{ fighter2 }}</span>
+      </div>
+      <div class="h-3 bg-neutral-800 rounded-full overflow-hidden">
+        <div class="bg-red-500 h-full" style="width: {{ height1_pct }}%"></div>
+      </div>
+    </div>
+
+    <div>
+      <div class="flex justify-between text-xs text-neutral-400 mb-1">
+        <span>Reach Comparison</span>
+        <span>{{ fighter1 }} vs {{ fighter2 }}</span>
+      </div>
+      <div class="h-3 bg-neutral-800 rounded-full overflow-hidden">
+        <div class="bg-blue-500 h-full" style="width: {{ reach1_pct }}%"></div>
+      </div>
+    </div>
+
+  </div>
+
+  {% if confidence %}
+  <div class="max-w-3xl w-full mt-8 bg-neutral-900 border border-neutral-700 rounded-lg p-4 text-center">
+    <p class="text-yellow-400 text-lg font-semibold">
+      🧠 AI Confidence Score:
+      <span class="text-white">{{ confidence }}%</span>
+    </p>
+  </div>
+  {% endif %}
 
   <div class="max-w-3xl w-full bg-neutral-900 border border-neutral-700 rounded-lg p-6 mt-10 mb-20">
     <h2 class="text-2xl text-red-400 font-bold mb-4">Fight IQ Report</h2>
@@ -196,11 +283,54 @@
   </div>
   {% endif %}
 
+
   <!-- JS -->
   <script>
     document.getElementById("menuBtn").onclick = () => {
       document.getElementById("mobileMenu").classList.toggle("hidden");
     };
+
+    let fighters = [];
+    fetch("/static/fighters.json")
+      .then(res => res.json())
+      .then(data => fighters = data);
+
+    const input = document.getElementById("matchupInput");
+    const box = document.getElementById("suggestions");
+
+    input.addEventListener("input", () => {
+      let text = input.value.toLowerCase();
+      let parts = text.split("vs").map(s => s.trim());
+
+      let searchTerm = parts.length === 1 ? parts[0] : parts[1];
+      if (!searchTerm) { box.classList.add("hidden"); return; }
+
+      let matches = fighters
+        .filter(f => f.toLowerCase().includes(searchTerm))
+        .slice(0, 20);
+
+      if (matches.length === 0) {
+        box.classList.add("hidden");
+        return;
+      }
+
+      box.innerHTML = matches.map(m => `
+        <div class="px-3 py-2 hover:bg-neutral-800 cursor-pointer">${m}</div>
+      `).join("");
+
+      box.classList.remove("hidden");
+
+      [...box.children].forEach(child => {
+        child.onclick = () => {
+          if (parts.length === 1) {
+            input.value = child.innerText + " vs ";
+          } else {
+            input.value = parts[0] + " vs " + child.innerText;
+          }
+          box.classList.add("hidden");
+        };
+      });
+    });
   </script>
 
 </body>
