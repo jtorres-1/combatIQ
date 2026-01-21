@@ -249,7 +249,21 @@ def index():
         allowed, reason = check_user_limit(user["email"])
         if not allowed and reason == "limit_reached":
             upgrade_message = "<p style='color:gold;text-align:center;'><strong>Daily free limit reached.</strong><br><a href='/upgrade' style='color:deepskyblue;font-weight:bold;'>Upgrade to Pro</a></p>"
-            return render_template("index.html", result=upgrade_message, user=user)
+            return render_template(
+                "index.html",
+                result=upgrade_message,
+                fighter1="",
+                fighter2="",
+                stats1={},
+                stats2={},
+                confidence=None,
+                height1_pct=50,
+                height2_pct=50,
+                reach1_pct=50,
+                reach2_pct=50,
+                user=user,
+            )
+
 
         try:
             return run_prediction_flow(fighter1, fighter2, user, force_refresh)
@@ -298,7 +312,21 @@ def index():
             </div>
             """
 
-            return render_template("index.html", result=upgrade_message, user=user)
+            return render_template(
+                "index.html",
+                result=upgrade_message,
+                fighter1="",
+                fighter2="",
+                stats1={},
+                stats2={},
+                confidence=None,
+                height1_pct=50,
+                height2_pct=50,
+                reach1_pct=50,
+                reach2_pct=50,
+                user=user,
+            )
+
 
         matchup = request.form.get("matchup", "").strip()
         force_refresh = "force_refresh" in request.form
