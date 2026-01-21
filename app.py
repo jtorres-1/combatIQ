@@ -368,14 +368,7 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
 
     if not allowed:
         print(f"[LIMIT REACHED] User {email} hit free tier limit")
-        upgrade_message = (
-            "<p style='color:gold;text-align:center;'>"
-            "<strong>Free Tier Limit Reached:</strong> "
-            "Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a> "
-            "for unlimited daily predictions."
-            "</p>"
-        )
-        return render_template("index.html", result=upgrade_message, user=user)
+        return redirect(url_for("upgrade"))
 
     # =====================================================
     # STEP 3: GENERATE NEW PREDICTION
@@ -543,7 +536,7 @@ def betting():
                 "for unlimited daily predictions."
                 "</p>"
             )
-            return render_template("betting.html", prediction=upgrade_message, user=user)
+            return redirect(url_for("upgrade"))
 
         fighter = request.form.get("fighter", "").strip()
         stat = request.form.get("stat", "").lower().strip()
