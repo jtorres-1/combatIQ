@@ -269,12 +269,12 @@ def index():
         fighter1, fighter2 = fighters
 
         # Directly run prediction flow# GET should only prefill the form, NOT run prediction
-    return render_template(
-        "index.html",
-        fighter1=fighter1,
-        fighter2=fighter2,
-        user=user
-    )
+        return render_template(
+            "index.html",
+            fighter1=fighter1,
+            fighter2=fighter2,
+            user=user
+        )
 
 
 
