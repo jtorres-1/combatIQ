@@ -214,7 +214,7 @@ def check_user_limit(email):
 # HOME — Fight Prediction Mode
 # =====================================================
 @app.route("/", methods=["GET", "POST"])
-@limiter.limit("5 per minute")
+# @limiter.limit("5 per minute")
 def index():
     user = session.get("user")
 
@@ -310,6 +310,7 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
             data = json.load(f)
         return render_template("index.html", **data, user=user)
 
+
     # Scrape stats
     stats1 = scrape_fighter_stats(fighter1, force_refresh=force_refresh)
     stats2 = scrape_fighter_stats(fighter2, force_refresh=force_refresh)
@@ -384,6 +385,27 @@ Write clean, concise analysis with natural spacing.
 
     with open(cache_path, "w", encoding="utf-8") as f:
         json.dump(cache_data, f, indent=2, ensure_ascii=False)
+
+    # --- Save fight prediction to DB ---
+    try:
+        if user:
+            conn = get_db()
+            c = conn.cursor()
+            c.execute("SELECT id FROM users WHERE email=?", (user["email"],))
+            row = c.fetchone()
+            if row:
+                c.execute(
+                    """
+                    INSERT INTO predictions (user_id, mode, fighter1, fighter2, result, confidence)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    (row["id"], "fight", fighter1, fighter2, result, confidence),
+                )
+                conn.commit()
+            conn.close()
+    except Exception as e:
+        print(f"[DB ERROR] Failed to save fight prediction: {e}")
+
 
     return render_template("index.html", **cache_data, user=user)
 
