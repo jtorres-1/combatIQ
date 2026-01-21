@@ -306,9 +306,31 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
 
     # Use cache if available
     if not force_refresh and os.path.exists(cache_path):
-        with open(cache_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        return render_template("index.html", **data, user=user)
+    with open(cache_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    # still count prediction usage
+    try:
+        if user:
+            conn = get_db()
+            c = conn.cursor()
+            c.execute("SELECT id FROM users WHERE email=?", (user["email"],))
+            row = c.fetchone()
+            if row:
+                c.execute(
+                    """
+                    INSERT INTO predictions (user_id, mode, fighter1, fighter2, result, confidence)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    (row[0], "fight", data["fighter1"], data["fighter2"], data["result"], data["confidence"]),
+                )
+                conn.commit()
+            conn.close()
+    except Exception as e:
+        print(f"[DB ERROR] Cache prediction log failed: {e}")
+
+    return render_template("index.html", **data, user=user)
+
 
 
     # Scrape stats
