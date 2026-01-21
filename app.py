@@ -413,7 +413,21 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
         except Exception as e:
             print(f"[DB ERROR] Failed to log fight prediction: {e}")
 
-        return render_template("index.html", **data, user=user)
+        return render_template(
+            "index.html",
+            fighter1=data.get("fighter1", ""),
+            fighter2=data.get("fighter2", ""),
+            stats1=data.get("stats1", {}),
+            stats2=data.get("stats2", {}),
+            result=data.get("result"),
+            confidence=data.get("confidence"),
+            height1_pct=data.get("height1_pct", 50),
+            height2_pct=data.get("height2_pct", 50),
+            reach1_pct=data.get("reach1_pct", 50),
+            reach2_pct=data.get("reach2_pct", 50),
+            user=user,
+        )
+
 
     # Scrape stats
     stats1 = scrape_fighter_stats(fighter1, force_refresh=force_refresh)
