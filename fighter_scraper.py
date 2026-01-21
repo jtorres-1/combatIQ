@@ -404,8 +404,11 @@ def scrape_fighter_stats(name: str, force_refresh: bool = False):
         result.setdefault(k, v)
 
 
-    with open(cache_path, "w", encoding="utf-8") as f:
+    tmp = cache_path + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
+    os.replace(tmp, cache_path)
+
 
     print(f"[CACHE] Saved {name}")
     return result
