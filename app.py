@@ -266,7 +266,7 @@ def index():
 
 
         try:
-            return run_prediction_flow(fighter1, fighter2, user, force_refresh)
+            return run_prediction_flow(fighter1, fighter2, user, force_refresh=False)
         except Exception as e:
             print("[PREDICTION ERROR]", e)
             return render_template(
