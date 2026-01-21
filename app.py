@@ -234,7 +234,30 @@ def index():
     # 1. Handle GET /?matchup=...
     # =====================================================
     if request.method == "GET" and request.args.get("matchup"):
-        matchup = request.args.get("matchup", "").strip()
+        try:
+            matchup = request.form.get("matchup", "")
+        except Exception:
+            matchup = ""
+        
+        matchup = matchup.strip()
+
+        if not matchup:
+            return render_template(
+                "index.html",
+                result="<p>Please enter a matchup.</p>",
+                fighter1="",
+                fighter2="",
+                stats1={},
+                stats2={},
+                confidence=None,
+                height1_pct=50,
+                height2_pct=50,
+                reach1_pct=50,
+                reach2_pct=50,
+                user=user,
+            )
+
+
 
         fighters = [p.strip() for p in re.split(r"\s*vs\s*|\s*VS\s*|\s*Vs\s*", matchup) if p.strip()]
         if len(fighters) < 2:
