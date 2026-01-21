@@ -166,12 +166,15 @@ def logout():
 # =====================================================
 # FIXED PAYWALL HELPER - NULL-SAFE + CLEANER LOGIC
 # =====================================================
-def can_user_predict(email):
+def can_user_predict(email, fighter1=None, fighter2=None):
     """
     Returns (allowed: bool, user_id: int|None, plan: str)
     - allowed=True means user can proceed with prediction
     - user_id is needed for DB logging after generation
     - plan indicates 'pro' or 'free'
+    
+    NEW: If fighter1 and fighter2 are provided, checks if THIS specific matchup
+    was already generated today. Allows refreshes of the same matchup.
     """
     if not email:
         return False, None, "none"
@@ -193,17 +196,53 @@ def can_user_predict(email):
         if plan == "pro":
             return True, user_id, plan
 
-        # Free users: check today's count
+        # Free users: check if THIS specific matchup exists today
         today_start = datetime.combine(date.today(), datetime.min.time())
+        
+        if fighter1 and fighter2:
+            # Normalize fighter names for comparison
+            f1_lower = fighter1.lower().strip()
+            f2_lower = fighter2.lower().strip()
+            
+            # Check if this exact matchup (either direction) was generated today
+            c.execute(
+                """
+                SELECT COUNT(*) FROM predictions 
+                WHERE user_id=? 
+                AND created_at >= ? 
+                AND (
+                    (LOWER(TRIM(fighter1))=? AND LOWER(TRIM(fighter2))=?) OR 
+                    (LOWER(TRIM(fighter1))=? AND LOWER(TRIM(fighter2))=?)
+                )
+                """,
+                (user_id, today_start, f1_lower, f2_lower, f2_lower, f1_lower)
+            )
+            result = c.fetchone()
+            matchup_exists = (result[0] if result else 0) > 0
+            
+            if matchup_exists:
+                # They already generated this matchup today - allow refresh
+                print(f"[MATCHUP EXISTS] Allowing refresh for {fighter1} vs {fighter2}")
+                return True, user_id, plan
+        
+        # Count UNIQUE matchups today (case-insensitive)
         c.execute(
-            "SELECT COUNT(*) FROM predictions WHERE user_id=? AND created_at >= ?",
-            (user_id, today_start),
+            """
+            SELECT COUNT(DISTINCT LOWER(TRIM(fighter1)) || ' vs ' || LOWER(TRIM(fighter2))) 
+            FROM predictions 
+            WHERE user_id=? AND created_at >= ?
+            """,
+            (user_id, today_start)
         )
         result = c.fetchone()
-        count = result[0] if result else 0
+        unique_matchups = result[0] if result else 0
 
-        # Free tier: 1 prediction per day
-        allowed = count < 1
+        # Free tier: 1 unique matchup per day
+        allowed = unique_matchups < 1
+        
+        if not allowed:
+            print(f"[LIMIT] User has {unique_matchups} unique matchup(s) today")
+        
         return allowed, user_id, plan
 
     except Exception as e:
@@ -364,7 +403,7 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
     # STEP 2: CACHE MISS - CHECK IF USER CAN GENERATE NEW PREDICTION
     # =====================================================
     email = user.get("email") if user else None
-    allowed, user_id, plan = can_user_predict(email)
+    allowed, user_id, plan = can_user_predict(email, fighter1, fighter2)
 
     if not allowed:
         print(f"[LIMIT REACHED] User {email} hit free tier limit")
@@ -526,7 +565,8 @@ def betting():
 
         # Check limit BEFORE processing
         email = user.get("email")
-        allowed, user_id, plan = can_user_predict(email)
+        # For betting mode, we don't have fighter names, so pass None
+        allowed, user_id, plan = can_user_predict(email, None, None)
 
         if not allowed:
             upgrade_message = (
