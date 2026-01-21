@@ -219,7 +219,8 @@ def check_user_limit(email):
 # HOME — Fight Prediction Mode
 # =====================================================
 @app.route("/", methods=["GET", "POST"])
-@limiter.limit("5 per minute")
+@limiter.limit("2 per minute", methods=["POST"])
+
 def index():
     user = session.get("user")
 
