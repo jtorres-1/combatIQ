@@ -423,24 +423,21 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
 
     # Use cache if available
     if not force_refresh and os.path.exists(cache_path):
-        tmp = cache_path + ".tmp"
-        with open(tmp, "w", encoding="utf-8") as f:
-            json.dump(cache_data, f, indent=2, ensure_ascii=False)
-        os.replace(tmp, cache_path)
-
-
-        # --- Save fight prediction to DB ---
+        with open(cache_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    
+        # log prediction
         try:
             conn = get_db()
             c = conn.cursor()
-        
+    
             user_id = None
             if user:
                 c.execute("SELECT id FROM users WHERE email=?", (user["email"],))
                 row = c.fetchone()
                 if row:
                     user_id = row["id"]
-        
+    
             c.execute(
                 """
                 INSERT INTO predictions
@@ -457,14 +454,12 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
                     datetime.now(),
                 )
             )
-
-        
+    
             conn.commit()
             conn.close()
-        
         except Exception as e:
             print(f"[DB ERROR] Failed to log fight prediction: {e}")
-
+    
         return render_template(
             "index.html",
             fighter1=data.get("fighter1", ""),
@@ -479,7 +474,8 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
             reach2_pct=data.get("reach2_pct", 50),
             user=user,
         )
-
+    
+    
 
     # Scrape stats
     stats1 = scrape_fighter_stats(fighter1, force_refresh=force_refresh)
