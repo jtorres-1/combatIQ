@@ -423,8 +423,11 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
 
     # Use cache if available
     if not force_refresh and os.path.exists(cache_path):
-        with open(cache_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        tmp = cache_path + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f:
+            json.dump(cache_data, f, indent=2, ensure_ascii=False)
+        os.replace(tmp, cache_path)
+
 
         # --- Save fight prediction to DB ---
         try:
