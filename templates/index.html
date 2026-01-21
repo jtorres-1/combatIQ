@@ -49,6 +49,17 @@
 
 <body class="min-h-screen flex flex-col items-center px-4">
 
+  {% set stats1 = stats1 or {} %}
+  {% set stats2 = stats2 or {} %}
+  {% set fighter1 = fighter1 or "" %}
+  {% set fighter2 = fighter2 or "" %}
+  {% set confidence = confidence or None %}
+  {% set height1_pct = height1_pct or 50 %}
+  {% set height2_pct = height2_pct or 50 %}
+  {% set reach1_pct = reach1_pct or 50 %}
+  {% set reach2_pct = reach2_pct or 50 %}
+
+
   <!-- NAVIGATION -->
   <nav class="w-full max-w-6xl border-b border-neutral-800 py-4 flex justify-between items-center">
     <h1 class="text-3xl font-bold text-red-500">⚔️ Combat IQ</h1>
