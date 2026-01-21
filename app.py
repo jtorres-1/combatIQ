@@ -370,15 +370,29 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
     # STEP 3: GENERATE NEW PREDICTION
     # =====================================================
     print(f"[GENERATING] New prediction for {fighter1} vs {fighter2}")
+    print(f"[DEBUG] About to scrape. fighter1={fighter1}, fighter2={fighter2}, user_email={user.get('email') if user else 'None'}")
 
-    # Scrape stats
-    stats1 = scrape_fighter_stats(fighter1, force_refresh=force_refresh)
-    stats2 = scrape_fighter_stats(fighter2, force_refresh=force_refresh)
+    # Scrape stats with fallback
+    try:
+        stats1 = scrape_fighter_stats(fighter1, force_refresh=force_refresh)
+        if not stats1 or not isinstance(stats1, dict):
+            stats1 = {}
+    except Exception as e:
+        print(f"[SCRAPER ERROR] Failed to scrape {fighter1}: {e}")
+        stats1 = {}
 
-    h1 = safe_stat_value(stats1.get("height"))
-    h2 = safe_stat_value(stats2.get("height"))
-    r1 = safe_stat_value(stats1.get("reach"))
-    r2 = safe_stat_value(stats2.get("reach"))
+    try:
+        stats2 = scrape_fighter_stats(fighter2, force_refresh=force_refresh)
+        if not stats2 or not isinstance(stats2, dict):
+            stats2 = {}
+    except Exception as e:
+        print(f"[SCRAPER ERROR] Failed to scrape {fighter2}: {e}")
+        stats2 = {}
+
+    h1 = safe_stat_value(stats1.get("height") if stats1 else None)
+    h2 = safe_stat_value(stats2.get("height") if stats2 else None)
+    r1 = safe_stat_value(stats1.get("reach") if stats1 else None)
+    r2 = safe_stat_value(stats2.get("reach") if stats2 else None)
 
     def normalize_bar(a, b):
         max_val = max(a, b, 1)
@@ -610,7 +624,7 @@ def history():
     try:
         conn = get_db()
         c = conn.cursor()
-        c.execute("SELECT id FROM users WHERE email=?", (user["email"],))
+        c.execute("SELECT id FROM users WHERE email=?", (user.get("email"),))
         row = c.fetchone()
         if not row:
             return render_template("history.html", predictions=[], user=user)
@@ -641,7 +655,7 @@ def upgrade():
     try:
         conn = get_db()
         c = conn.cursor()
-        c.execute("SELECT plan FROM users WHERE email=?", (user["email"],))
+        c.execute("SELECT plan FROM users WHERE email=?", (user.get("email"),))
         row = c.fetchone()
         plan = row["plan"] if row and row["plan"] else "free"
         conn.close()
