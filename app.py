@@ -206,7 +206,7 @@ def check_user_limit(email):
     count = c.fetchone()[0]
     conn.close()
 
-    if count >= 3:
+    if count >= 1:
         return False, "limit_reached"
     return True, "ok"
 
