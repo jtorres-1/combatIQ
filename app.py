@@ -176,12 +176,12 @@ def can_user_predict(email):
     if not email:
         return False, None, "none"
 
+    conn = None
     try:
         conn = get_db()
         c = conn.cursor()
         c.execute("SELECT id, plan FROM users WHERE email=?", (email,))
         row = c.fetchone()
-        conn.close()
 
         if not row:
             return False, None, "none"
@@ -194,8 +194,6 @@ def can_user_predict(email):
             return True, user_id, plan
 
         # Free users: check today's count
-        conn = get_db()
-        c = conn.cursor()
         today_start = datetime.combine(date.today(), datetime.min.time())
         c.execute(
             "SELECT COUNT(*) FROM predictions WHERE user_id=? AND created_at >= ?",
@@ -203,7 +201,6 @@ def can_user_predict(email):
         )
         result = c.fetchone()
         count = result[0] if result else 0
-        conn.close()
 
         # Free tier: 1 prediction per day
         allowed = count < 1
@@ -212,6 +209,9 @@ def can_user_predict(email):
     except Exception as e:
         print(f"[ERROR] can_user_predict failed: {e}")
         return False, None, "error"
+    finally:
+        if conn:
+            conn.close()
 
 # =====================================================
 # FIXED PREDICTION LOGGING - SINGLE CALL, NO DUPLICATES
@@ -339,14 +339,25 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
             with open(cache_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
             
-            print(f"[CACHE HIT] Serving cached prediction for {fighter1} vs {fighter2}")
-            
-            # CRITICAL: Cached predictions do NOT increment usage
-            # Just serve the data directly
-            return render_template("index.html", **data, user=user)
+            # Validate cache has required keys
+            required_keys = ["fighter1", "fighter2", "stats1", "stats2", "result", "confidence"]
+            if not all(k in data for k in required_keys):
+                print(f"[CACHE INVALID] Missing keys in cache, regenerating")
+                os.remove(cache_path)
+            else:
+                print(f"[CACHE HIT] Serving cached prediction for {fighter1} vs {fighter2}")
+                # CRITICAL: Cached predictions do NOT increment usage
+                # Just serve the data directly
+                return render_template("index.html", **data, user=user)
         
+        except (json.JSONDecodeError, IOError, KeyError) as e:
+            print(f"[CACHE ERROR] Corrupted cache file, deleting: {e}")
+            try:
+                os.remove(cache_path)
+            except:
+                pass
         except Exception as e:
-            print(f"[CACHE ERROR] Failed to load cache: {e}")
+            print(f"[CACHE ERROR] Unexpected error loading cache: {e}")
             # Fall through to generation
 
     # =====================================================
@@ -372,23 +383,29 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
     print(f"[GENERATING] New prediction for {fighter1} vs {fighter2}")
     print(f"[DEBUG] About to scrape. fighter1={fighter1}, fighter2={fighter2}, user_email={user.get('email') if user else 'None'}")
 
-    # Scrape stats with fallback
+    # Scrape stats with comprehensive fallback
+    stats1 = {}
+    stats2 = {}
+    
     try:
-        stats1 = scrape_fighter_stats(fighter1, force_refresh=force_refresh)
-        if not stats1 or not isinstance(stats1, dict):
-            stats1 = {}
+        result = scrape_fighter_stats(fighter1, force_refresh=force_refresh)
+        if result and isinstance(result, dict):
+            stats1 = result
+        else:
+            print(f"[SCRAPER WARN] {fighter1} returned invalid data: {type(result)}")
     except Exception as e:
         print(f"[SCRAPER ERROR] Failed to scrape {fighter1}: {e}")
-        stats1 = {}
 
     try:
-        stats2 = scrape_fighter_stats(fighter2, force_refresh=force_refresh)
-        if not stats2 or not isinstance(stats2, dict):
-            stats2 = {}
+        result = scrape_fighter_stats(fighter2, force_refresh=force_refresh)
+        if result and isinstance(result, dict):
+            stats2 = result
+        else:
+            print(f"[SCRAPER WARN] {fighter2} returned invalid data: {type(result)}")
     except Exception as e:
         print(f"[SCRAPER ERROR] Failed to scrape {fighter2}: {e}")
-        stats2 = {}
 
+    # Safe extraction with None guards
     h1 = safe_stat_value(stats1.get("height") if stats1 else None)
     h2 = safe_stat_value(stats2.get("height") if stats2 else None)
     r1 = safe_stat_value(stats1.get("reach") if stats1 else None)
@@ -463,11 +480,16 @@ Write clean, concise analysis with natural spacing.
         print(f"[CACHE SAVED] {cache_path}")
     except Exception as e:
         print(f"[CACHE ERROR] Failed to save cache: {e}")
+        # Non-fatal, continue
 
     # =====================================================
     # STEP 5: LOG PREDICTION (ONLY ONCE, ONLY FOR NEW GENERATIONS)
     # =====================================================
-    log_prediction(user_id, "fight", fighter1, fighter2, result, confidence)
+    try:
+        log_prediction(user_id, "fight", fighter1, fighter2, result, confidence)
+    except Exception as e:
+        print(f"[DB ERROR] Failed to log prediction (non-fatal): {e}")
+        # Non-fatal, user already has their result
 
     return render_template("index.html", **cache_data, user=user)
 
