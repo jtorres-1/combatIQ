@@ -92,10 +92,13 @@ os.makedirs(CACHE_DIR, exist_ok=True)
 # ---------------------------
 # Database connection
 # ---------------------------
+DB_PATH = os.path.join(os.path.dirname(__file__), "combatiq.db")
+
 def get_db():
-    conn = sqlite3.connect("combatiq.db")
+    conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
+
 
 # =====================================================
 # GOOGLE OAUTH LOGIN SYSTEM
