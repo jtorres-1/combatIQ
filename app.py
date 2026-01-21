@@ -77,7 +77,7 @@ DOMAIN = os.getenv("DOMAIN", "http://127.0.0.1:5050")
 # ---------------------------
 # Init Limiter + Logging
 # ---------------------------
-# limiter = Limiter(get_remote_address, app=app, default_limits=["5 per minute"])
+limiter = Limiter(get_remote_address, app=app, default_limits=["5 per minute"])
 logging.basicConfig(filename="usage.log", level=logging.INFO, format="%(asctime)s %(message)s")
 
 # ---------------------------
@@ -92,13 +92,10 @@ os.makedirs(CACHE_DIR, exist_ok=True)
 # ---------------------------
 # Database connection
 # ---------------------------
-DB_PATH = os.path.join(os.path.dirname(__file__), "combatiq.db")
-
 def get_db():
-    conn = sqlite3.connect(DB_PATH)
+    conn = sqlite3.connect("combatiq.db")
     conn.row_factory = sqlite3.Row
     return conn
-
 
 # =====================================================
 # GOOGLE OAUTH LOGIN SYSTEM
@@ -177,7 +174,7 @@ def logout():
     return redirect(url_for("index"))
 
 # =====================================================
-# PAYWALL HELPER FUNCTION 1 prediction free dail
+# PAYWALL HELPER FUNCTION
 # =====================================================
 def check_user_limit(email):
     """Check if a free user has exceeded 3 predictions today."""
@@ -201,17 +198,15 @@ def check_user_limit(email):
         return True, "pro"
 
     # Count today's predictions
-    today_start = date.today().isoformat()
-
+    today_start = datetime.combine(date.today(), datetime.min.time())
     c.execute(
-        "SELECT COUNT(*) FROM predictions WHERE user_id=? AND DATE(created_at)=?",
+        "SELECT COUNT(*) FROM predictions WHERE user_id=? AND created_at >= ?",
         (user_id, today_start),
     )
-
     count = c.fetchone()[0]
     conn.close()
 
-    if count >= 1:
+    if count >= 3:
         return False, "limit_reached"
     return True, "ok"
 
@@ -219,8 +214,7 @@ def check_user_limit(email):
 # HOME — Fight Prediction Mode
 # =====================================================
 @app.route("/", methods=["GET", "POST"])
-# @limiter.limit("2 per minute", methods=["POST"])
-
+@limiter.limit("5 per minute")
 def index():
     user = session.get("user")
 
@@ -236,26 +230,6 @@ def index():
     if request.method == "GET" and request.args.get("matchup"):
         matchup = request.args.get("matchup", "").strip()
 
-        
-
-        if not matchup:
-            return render_template(
-                "index.html",
-                result="<p>Please enter a matchup.</p>",
-                fighter1="",
-                fighter2="",
-                stats1={},
-                stats2={},
-                confidence=None,
-                height1_pct=50,
-                height2_pct=50,
-                reach1_pct=50,
-                reach2_pct=50,
-                user=user,
-            )
-
-
-
         fighters = [p.strip() for p in re.split(r"\s*vs\s*|\s*VS\s*|\s*Vs\s*", matchup) if p.strip()]
         if len(fighters) < 2:
             return render_template(
@@ -268,87 +242,26 @@ def index():
 
         fighter1, fighter2 = fighters
 
-        # Directly run prediction flow# GET should only prefill the form, NOT run prediction
-        return render_template(
-            "index.html",
-            fighter1=fighter1,
-            fighter2=fighter2,
-            user=user
-        )
-
-
+        # Directly run prediction flow
+        return run_prediction_flow(fighter1, fighter2, user, force_refresh=False)
 
     # =====================================================
     # 2. Handle POST submission
     # =====================================================
     if request.method == "POST":
-        try:
-            # Require login
-            if not user:
-                return redirect(url_for("login"))
-    
-            allowed, reason = check_user_limit(user["email"])
-            if not allowed and reason == "limit_reached":
-                return render_template(
-                    "index.html",
-                    result="LIMIT HIT",
-                    fighter1="",
-                    fighter2="",
-                    stats1={},
-                    stats2={},
-                    confidence=None,
-                    height1_pct=50,
-                    height2_pct=50,
-                    reach1_pct=50,
-                    reach2_pct=50,
-                    user=user,
-                )
-    
-            matchup = request.form.get("matchup", "")
-            matchup = matchup.strip()
-    
-            if not matchup:
-                return render_template(
-                    "index.html",
-                    result="EMPTY MATCHUP",
-                    fighter1="",
-                    fighter2="",
-                    stats1={},
-                    stats2={},
-                    confidence=None,
-                    height1_pct=50,
-                    height2_pct=50,
-                    reach1_pct=50,
-                    reach2_pct=50,
-                    user=user,
-                )
-    
-            fighters = [p.strip() for p in re.split(r"\s*vs\s*", matchup) if p.strip()]
-            if len(fighters) < 2:
-                return render_template(
-                    "index.html",
-                    result="BAD FORMAT",
-                    fighter1="",
-                    fighter2="",
-                    stats1={},
-                    stats2={},
-                    confidence=None,
-                    height1_pct=50,
-                    height2_pct=50,
-                    reach1_pct=50,
-                    reach2_pct=50,
-                    user=user,
-                )
-    
-            fighter1, fighter2 = fighters
-            return run_prediction_flow(fighter1, fighter2, user)
-    
-        except Exception as e:
-            import traceback
-            print("POST ROUTE CRASH")
-            print(traceback.format_exc())
-            return "POST CRASH", 500
 
+        # Require login
+        if not user:
+            return redirect(url_for("login"))
+
+        # Paywall
+        allowed, reason = check_user_limit(user["email"])
+        if not allowed and reason == "limit_reached":
+            upgrade_message = "<p style='color:gold;text-align:center;'><strong>Free Tier Limit Reached:</strong> Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a> for unlimited daily predictions.</p>"
+            return render_template("index.html", result=upgrade_message, user=user)
+
+        matchup = request.form.get("matchup", "").strip()
+        force_refresh = "force_refresh" in request.form
 
         fighters = [p.strip() for p in re.split(r"\s*vs\s*|\s*VS\s*|\s*Vs\s*", matchup) if p.strip()]
         if len(fighters) < 2:
@@ -395,65 +308,11 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
     if not force_refresh and os.path.exists(cache_path):
         with open(cache_path, "r", encoding="utf-8") as f:
             data = json.load(f)
-    
-        # log prediction
-        try:
-            conn = get_db()
-            c = conn.cursor()
-    
-            user_id = None
-            if user:
-                c.execute("SELECT id FROM users WHERE email=?", (user["email"],))
-                row = c.fetchone()
-                if row:
-                    user_id = row["id"]
-    
-            c.execute(
-                """
-                INSERT INTO predictions
-                (user_id, mode, fighter1, fighter2, result, confidence, created_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    user_id,
-                    "fight",
-                    fighter1,
-                    fighter2,
-                    data.get("result"),
-                    data.get("confidence"),
-                    datetime.now(),
-                )
-            )
-    
-            conn.commit()
-            conn.close()
-        except Exception as e:
-            print(f"[DB ERROR] Failed to log fight prediction: {e}")
-    
-        return render_template(
-            "index.html",
-            fighter1=data.get("fighter1", ""),
-            fighter2=data.get("fighter2", ""),
-            stats1=data.get("stats1", {}),
-            stats2=data.get("stats2", {}),
-            result=data.get("result"),
-            confidence=data.get("confidence"),
-            height1_pct=data.get("height1_pct", 50),
-            height2_pct=data.get("height2_pct", 50),
-            reach1_pct=data.get("reach1_pct", 50),
-            reach2_pct=data.get("reach2_pct", 50),
-            user=user,
-        )
-    
-    
+        return render_template("index.html", **data, user=user)
 
     # Scrape stats
     stats1 = scrape_fighter_stats(fighter1, force_refresh=force_refresh)
     stats2 = scrape_fighter_stats(fighter2, force_refresh=force_refresh)
-
-    stats1 = stats1 if isinstance(stats1, dict) else {}
-    stats2 = stats2 if isinstance(stats2, dict) else {}
-
 
     h1 = safe_stat_value(stats1.get("height"))
     h2 = safe_stat_value(stats2.get("height"))
@@ -533,7 +392,7 @@ Write clean, concise analysis with natural spacing.
 # BETTING MODE
 # =====================================================
 @app.route("/betting", methods=["GET", "POST"])
-# @limiter.limit("5 per minute")
+@limiter.limit("5 per minute")
 def betting():
     prediction = None
     fighter = stat = ""
@@ -567,27 +426,7 @@ def betting():
         if user:
             allowed, reason = check_user_limit(user["email"])
             if not allowed and reason == "limit_reached":
-                upgrade_message = """
-                <div style='text-align:center; padding:16px;'>
-                  <p style='color:#facc15; font-weight:700; font-size:18px;'>
-                    You’ve used your free prediction for today
-                  </p>
-                  <p style='color:#d1d5db; margin-top:8px;'>
-                    CombatIQ Pro unlocks <strong>unlimited fight predictions</strong> and
-                    <strong>unlimited betting stat analysis</strong>.
-                  </p>
-                  <p style='color:#9ca3af; margin-top:6px; font-size:14px;'>
-                    Built for bettors who don’t guess.
-                  </p>
-                  <a href='/upgrade'
-                     style='display:inline-block; margin-top:14px; background:#facc15;
-                            color:black; padding:10px 18px; border-radius:8px;
-                            font-weight:700; text-decoration:none;'>
-                     Unlock Pro for $9.99/month
-                  </a>
-                </div>
-                """
-
+                upgrade_message = "<p style='color:gold;text-align:center;'><strong>Free Tier Limit Reached:</strong> Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a> for unlimited daily predictions.</p>"
                 return render_template("betting.html", prediction=upgrade_message, user=user)
         else:
             return redirect(url_for("login"))
@@ -809,7 +648,7 @@ def cancel():
 # STRIPE WEBHOOK ENDPOINT
 # =====================================================
 @app.route("/webhook", methods=["POST"])
-# @limiter.exempt
+@limiter.exempt
 def stripe_webhook():
     payload = request.data
     sig_header = request.headers.get("Stripe-Signature")
@@ -850,7 +689,7 @@ def stripe_webhook():
 # RUN APP
 # =====================================================
 if __name__ == "__main__":
-    port = 8080
+    port = 5050
     if len(sys.argv) > 2 and sys.argv[1] == "--port":
         port = int(sys.argv[2])
     app.run(host="0.0.0.0", port=port, debug=True)
