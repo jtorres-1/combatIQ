@@ -201,11 +201,13 @@ def check_user_limit(email):
         return True, "pro"
 
     # Count today's predictions
-    today_start = datetime.combine(date.today(), datetime.min.time())
+    today_start = date.today().isoformat()
+
     c.execute(
-        "SELECT COUNT(*) FROM predictions WHERE user_id=? AND created_at >= ?",
+        "SELECT COUNT(*) FROM predictions WHERE user_id=? AND DATE(created_at)=?",
         (user_id, today_start),
     )
+
     count = c.fetchone()[0]
     conn.close()
 
