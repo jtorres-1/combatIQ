@@ -77,7 +77,7 @@ DOMAIN = os.getenv("DOMAIN", "http://127.0.0.1:5050")
 # ---------------------------
 # Init Limiter + Logging
 # ---------------------------
-limiter = Limiter(get_remote_address, app=app, default_limits=["5 per minute"])
+# limiter = Limiter(get_remote_address, app=app, default_limits=["5 per minute"])
 logging.basicConfig(filename="usage.log", level=logging.INFO, format="%(asctime)s %(message)s")
 
 # ---------------------------
@@ -316,20 +316,20 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
                 c = conn.cursor()
                 c.execute("SELECT id FROM users WHERE email=?", (user["email"],))
                 row = c.fetchone()
-                    if row:
-                        c.execute(
-                            """
-                            INSERT INTO predictions (user_id, mode, fighter1, fighter2, result, confidence)
-                            VALUES (?, ?, ?, ?, ?, ?)
-                            """,
-                            (
-                                row["id"],
-                                "fight", 
-                                data["fighter1"],
-                                data["fighter2"], 
-                                data["result"], 
-                                data["confidence"]
-                            ),
+                if row:
+                    c.execute(
+                        """
+                        INSERT INTO predictions (user_id, mode, fighter1, fighter2, result, confidence)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                        """,
+                        (
+                            row["id"],
+                            "fight", 
+                            data["fighter1"],
+                            data["fighter2"], 
+                            data["result"], 
+                            data["confidence"]
+                        ),
                     )
                     conn.commit()
                 conn.close()
@@ -414,6 +414,33 @@ Write clean, concise analysis with natural spacing.
 
     with open(cache_path, "w", encoding="utf-8") as f:
         json.dump(cache_data, f, indent=2, ensure_ascii=False)
+
+    try:
+        if user:
+            conn = get_db()
+            c = conn.cursor()
+            c.execute("SELECT id FROM users WHERE email=?", (user["email"],))
+            row = c.fetchone()
+            if row:
+                c.execute(
+                    """
+                    INSERT INTO predictions (user_id, mode, fighter1, fighter2, result, confidence)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        row["id"],
+                        "fight",
+                        fighter1,
+                        fighter2,
+                        result,
+                        confidence,
+                    ),
+                )
+                conn.commit()
+            conn.close()
+    except Exception as e:
+        print(f"[DB ERROR] Fresh prediction log failed: {e}")
+
 
 
     return render_template("index.html", **cache_data, user=user)
