@@ -564,7 +564,7 @@ Write clean, concise analysis with natural spacing.
 # BETTING MODE
 # =====================================================
 @app.route("/betting", methods=["GET", "POST"])
-@limiter.limit("5 per minute")
+# @limiter.limit("5 per minute")
 def betting():
     prediction = None
     fighter = stat = ""
@@ -840,7 +840,7 @@ def cancel():
 # STRIPE WEBHOOK ENDPOINT
 # =====================================================
 @app.route("/webhook", methods=["POST"])
-@limiter.exempt
+# @limiter.exempt
 def stripe_webhook():
     payload = request.data
     sig_header = request.headers.get("Stripe-Signature")
