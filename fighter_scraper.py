@@ -388,6 +388,22 @@ def scrape_fighter_stats(name: str, force_refresh: bool = False):
     if not result["source"]:
         result["partial"] = True
 
+        # ---- ENFORCE DEFAULT SCHEMA (prevents first-scrape crashes) ----
+    DEFAULTS = {
+        "height": "N/A",
+        "reach": "N/A",
+        "weight": "N/A",
+        "stance": "Unknown",
+        "record": "N/A",
+        "avg_sig_strikes": 0,
+        "avg_takedowns": 0,
+        "avg_submissions": 0,
+    }
+    
+    for k, v in DEFAULTS.items():
+        result.setdefault(k, v)
+
+
     with open(cache_path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2, ensure_ascii=False)
 
