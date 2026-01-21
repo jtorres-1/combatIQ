@@ -881,7 +881,7 @@ def stripe_webhook():
 # RUN APP
 # =====================================================
 if __name__ == "__main__":
-    port = 5050
+    port = 8080
     if len(sys.argv) > 2 and sys.argv[1] == "--port":
         port = int(sys.argv[2])
     app.run(host="0.0.0.0", port=port, debug=True)
