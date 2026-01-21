@@ -234,12 +234,9 @@ def index():
     # 1. Handle GET /?matchup=...
     # =====================================================
     if request.method == "GET" and request.args.get("matchup"):
-        try:
-            matchup = request.form.get("matchup", "")
-        except Exception:
-            matchup = ""
+        matchup = request.args.get("matchup", "").strip()
+
         
-        matchup = matchup.strip()
 
         if not matchup:
             return render_template(
@@ -271,41 +268,14 @@ def index():
 
         fighter1, fighter2 = fighters
 
-        # Directly run prediction flow
-        if not user:
-            return redirect(url_for("login"))
-        
-        allowed, reason = check_user_limit(user["email"])
-        if not allowed and reason == "limit_reached":
-            upgrade_message = "<p style='color:gold;text-align:center;'><strong>Daily free limit reached.</strong><br><a href='/upgrade' style='color:deepskyblue;font-weight:bold;'>Upgrade to Pro</a></p>"
-            return render_template(
-                "index.html",
-                result=upgrade_message,
-                fighter1="",
-                fighter2="",
-                stats1={},
-                stats2={},
-                confidence=None,
-                height1_pct=50,
-                height2_pct=50,
-                reach1_pct=50,
-                reach2_pct=50,
-                user=user,
-            )
+        # Directly run prediction flow# GET should only prefill the form, NOT run prediction
+    return render_template(
+        "index.html",
+        fighter1=fighter1,
+        fighter2=fighter2,
+        user=user
+    )
 
-
-        try:
-            return run_prediction_flow(fighter1, fighter2, user, force_refresh=False)
-        except Exception as e:
-            print("[PREDICTION ERROR]", e)
-            return render_template(
-                "index.html",
-                result="<p>Prediction failed. Please try again or refresh.</p>",
-                user=user
-            )
-
-        
-        return run_prediction_flow(fighter1, fighter2, user, force_refresh=False)
 
 
     # =====================================================
