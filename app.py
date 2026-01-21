@@ -312,53 +312,73 @@ def index():
     # 2. Handle POST submission
     # =====================================================
     if request.method == "POST":
+        try:
+            # Require login
+            if not user:
+                return redirect(url_for("login"))
+    
+            allowed, reason = check_user_limit(user["email"])
+            if not allowed and reason == "limit_reached":
+                return render_template(
+                    "index.html",
+                    result="LIMIT HIT",
+                    fighter1="",
+                    fighter2="",
+                    stats1={},
+                    stats2={},
+                    confidence=None,
+                    height1_pct=50,
+                    height2_pct=50,
+                    reach1_pct=50,
+                    reach2_pct=50,
+                    user=user,
+                )
+    
+            matchup = request.form.get("matchup", "")
+            matchup = matchup.strip()
+    
+            if not matchup:
+                return render_template(
+                    "index.html",
+                    result="EMPTY MATCHUP",
+                    fighter1="",
+                    fighter2="",
+                    stats1={},
+                    stats2={},
+                    confidence=None,
+                    height1_pct=50,
+                    height2_pct=50,
+                    reach1_pct=50,
+                    reach2_pct=50,
+                    user=user,
+                )
+    
+            fighters = [p.strip() for p in re.split(r"\s*vs\s*", matchup) if p.strip()]
+            if len(fighters) < 2:
+                return render_template(
+                    "index.html",
+                    result="BAD FORMAT",
+                    fighter1="",
+                    fighter2="",
+                    stats1={},
+                    stats2={},
+                    confidence=None,
+                    height1_pct=50,
+                    height2_pct=50,
+                    reach1_pct=50,
+                    reach2_pct=50,
+                    user=user,
+                )
+    
+            fighter1, fighter2 = fighters
+            return run_prediction_flow(fighter1, fighter2, user)
+    
+        except Exception as e:
+            import traceback
+            print("POST ROUTE CRASH")
+            print(traceback.format_exc())
+            return "POST CRASH", 500
 
-        # Require login
-        if not user:
-            return redirect(url_for("login"))
-
-        # Paywall
-        allowed, reason = check_user_limit(user["email"])
-        if not allowed and reason == "limit_reached":
-            upgrade_message = """
-            <div style='text-align:center; padding:16px;'>
-              <p style='color:#facc15; font-weight:700; font-size:18px;'>
-                You’ve used your free prediction for today
-              </p>
-              <p style='color:#d1d5db; margin-top:8px;'>
-                CombatIQ Pro unlocks <strong>unlimited fight predictions</strong> and
-                <strong>unlimited betting stat analysis</strong>.
-              </p>
-              <p style='color:#9ca3af; margin-top:6px; font-size:14px;'>
-                Built for bettors who don’t guess.
-              </p>
-              <a href='/upgrade'
-                 style='display:inline-block; margin-top:14px; background:#facc15;
-                        color:black; padding:10px 18px; border-radius:8px;
-                        font-weight:700; text-decoration:none;'>
-                 Unlock Pro for $9.99/month
-              </a>
-            </div>
-            """
-
-            return render_template(
-                "index.html",
-                result=upgrade_message,
-                fighter1="",
-                fighter2="",
-                stats1={},
-                stats2={},
-                confidence=None,
-                height1_pct=50,
-                height2_pct=50,
-                reach1_pct=50,
-                reach2_pct=50,
-                user=user,
-            )
-
-
-        matchup = request.form.get("matchup", "").strip()
-        force_refresh = "force_refresh" in request.form
 
         fighters = [p.strip() for p in re.split(r"\s*vs\s*|\s*VS\s*|\s*Vs\s*", matchup) if p.strip()]
         if len(fighters) < 2:
