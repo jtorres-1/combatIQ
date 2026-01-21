@@ -227,6 +227,13 @@ def index():
     # =====================================================
     # 1. Handle GET /?matchup=...
     # =====================================================
+
+    if user:
+        allowed, reason = check_user_limit(user["email"])
+        if not allowed and reason == "limit_reached":
+            upgrade_message = "<p style='color:gold;text-align:center;'><strong>Free Tier Limit Reached:</strong> Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a>.</p>"
+            return render_template("index.html", result=upgrade_message, user=user)
+
     if request.method == "GET" and request.args.get("matchup"):
         matchup = request.args.get("matchup", "").strip()
 
@@ -450,7 +457,7 @@ Write clean, concise analysis with natural spacing.
 # BETTING MODE
 # =====================================================
 @app.route("/betting", methods=["GET", "POST"])
-@limiter.limit("5 per minute")
+# @limiter.limit("5 per minute")
 def betting():
     prediction = None
     fighter = stat = ""
@@ -706,7 +713,7 @@ def cancel():
 # STRIPE WEBHOOK ENDPOINT
 # =====================================================
 @app.route("/webhook", methods=["POST"])
-@limiter.exempt
+# @limiter.exempt
 def stripe_webhook():
     payload = request.data
     sig_header = request.headers.get("Stripe-Signature")
