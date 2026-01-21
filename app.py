@@ -228,29 +228,29 @@ def index():
     # 1. Handle GET /?matchup=...
     # =====================================================
 
-    if user:
-        allowed, reason = check_user_limit(user["email"])
-        if not allowed and reason == "limit_reached":
-            upgrade_message = "<p style='color:gold;text-align:center;'><strong>Free Tier Limit Reached:</strong> Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a>.</p>"
-            return render_template("index.html", result=upgrade_message, user=user)
 
     if request.method == "GET" and request.args.get("matchup"):
-        matchup = request.args.get("matchup", "").strip()
 
+        if not user:
+            return redirect(url_for("login"))
+    
+        allowed, reason = check_user_limit(user["email"])
+        if not allowed and reason == "limit_reached":
+            upgrade_message = "<p style='color:gold;text-align:center;'><strong>Free Tier Limit Reached:</strong> Upgrade to <a href='/upgrade'>CombatIQ Pro</a>.</p>"
+            return render_template("index.html", result=upgrade_message, user=user)
+    
+        matchup = request.args.get("matchup", "").strip()
         fighters = [p.strip() for p in re.split(r"\s*vs\s*|\s*VS\s*|\s*Vs\s*", matchup) if p.strip()]
         if len(fighters) < 2:
             return render_template(
                 "index.html",
                 result="<p>Please enter matchup as 'Fighter A vs Fighter B'</p>",
-                fighter1="",
-                fighter2="",
                 user=user
             )
-
+    
         fighter1, fighter2 = fighters
-
-        # Directly run prediction flow
         return run_prediction_flow(fighter1, fighter2, user, force_refresh=False)
+
 
     # =====================================================
     # 2. Handle POST submission
