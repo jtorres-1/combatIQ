@@ -190,7 +190,8 @@ def check_user_limit(email):
         return False, "no_user"
 
     user_id = row["id"]
-    plan = row["plan"]
+    plan = row["plan"] if "plan" in row.keys() and row["plan"] else "free"
+
 
     # Pro users always pass
     if plan == "pro":
