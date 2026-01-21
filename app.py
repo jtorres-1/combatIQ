@@ -77,7 +77,7 @@ DOMAIN = os.getenv("DOMAIN", "http://127.0.0.1:5050")
 # ---------------------------
 # Init Limiter + Logging
 # ---------------------------
-limiter = Limiter(get_remote_address, app=app, default_limits=["5 per minute"])
+# limiter = Limiter(get_remote_address, app=app, default_limits=["5 per minute"])
 logging.basicConfig(filename="usage.log", level=logging.INFO, format="%(asctime)s %(message)s")
 
 # ---------------------------
