@@ -65,11 +65,7 @@ else:
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
     app.config["SESSION_COOKIE_SECURE"] = False
 
-
-
 GOOGLE_REDIRECT_URI = os.getenv("GOOGLE_REDIRECT_URI", "https://combatiq.app/auth/callback")
-
-
 
 # ---------------------------
 # Stripe Setup
@@ -106,11 +102,8 @@ def get_db():
 # GOOGLE OAUTH LOGIN SYSTEM
 # =====================================================
 
-
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 GOOGLE_SECRET_PATH = os.getenv("GOOGLE_CLIENT_SECRET_PATH", "client_secret.json")
-
-
 
 def build_flow():
     return Flow.from_client_secrets_file(
@@ -123,8 +116,6 @@ def build_flow():
         redirect_uri=GOOGLE_REDIRECT_URI,
     )
 
-
-
 @app.route("/login")
 def login():
     flow = build_flow()
@@ -132,10 +123,7 @@ def login():
     session["state"] = state
     return redirect(authorization_url)
 
-
-
 @app.route("/auth/callback")
-
 def callback():
     flow = build_flow()
 
@@ -153,10 +141,7 @@ def callback():
         GOOGLE_CLIENT_ID
     )
 
-
-
     session["user"] = id_info
-
 
     # Save user in DB if not exists
     try:
@@ -179,48 +164,86 @@ def logout():
     return redirect(url_for("index"))
 
 # =====================================================
-# PAYWALL HELPER FUNCTION
+# FIXED PAYWALL HELPER - NULL-SAFE + CLEANER LOGIC
 # =====================================================
-def check_user_limit(email):
-    """Check if a free user has exceeded 3 predictions today."""
+def can_user_predict(email):
+    """
+    Returns (allowed: bool, user_id: int|None, plan: str)
+    - allowed=True means user can proceed with prediction
+    - user_id is needed for DB logging after generation
+    - plan indicates 'pro' or 'free'
+    """
     if not email:
-        return False, "login_required"
+        return False, None, "none"
 
-    conn = get_db()
-    c = conn.cursor()
-    c.execute("SELECT id, plan FROM users WHERE email=?", (email,))
-    row = c.fetchone()
-    if not row:
+    try:
+        conn = get_db()
+        c = conn.cursor()
+        c.execute("SELECT id, plan FROM users WHERE email=?", (email,))
+        row = c.fetchone()
         conn.close()
-        return False, "no_user"
 
-    user_id = row["id"]
-    plan = row["plan"] if "plan" in row.keys() and row["plan"] else "free"
+        if not row:
+            return False, None, "none"
 
+        user_id = row["id"]
+        plan = row["plan"] if row["plan"] else "free"
 
-    # Pro users always pass
-    if plan == "pro":
+        # Pro users always allowed
+        if plan == "pro":
+            return True, user_id, plan
+
+        # Free users: check today's count
+        conn = get_db()
+        c = conn.cursor()
+        today_start = datetime.combine(date.today(), datetime.min.time())
+        c.execute(
+            "SELECT COUNT(*) FROM predictions WHERE user_id=? AND created_at >= ?",
+            (user_id, today_start),
+        )
+        result = c.fetchone()
+        count = result[0] if result else 0
         conn.close()
-        return True, "pro"
 
-    # Count today's predictions
-    today_start = datetime.combine(date.today(), datetime.min.time())
-    c.execute(
-        "SELECT COUNT(*) FROM predictions WHERE user_id=? AND created_at >= ?",
-        (user_id, today_start),
-    )
-    count = c.fetchone()[0]
-    conn.close()
+        # Free tier: 1 prediction per day
+        allowed = count < 1
+        return allowed, user_id, plan
 
-    if count >= 1:
-        return False, "limit_reached"
-    return True, "ok"
+    except Exception as e:
+        print(f"[ERROR] can_user_predict failed: {e}")
+        return False, None, "error"
+
+# =====================================================
+# FIXED PREDICTION LOGGING - SINGLE CALL, NO DUPLICATES
+# =====================================================
+def log_prediction(user_id, mode, fighter1, fighter2, result, confidence):
+    """
+    Logs a prediction to the database.
+    Only called ONCE per new prediction generation.
+    """
+    if not user_id:
+        return
+
+    try:
+        conn = get_db()
+        c = conn.cursor()
+        c.execute(
+            """
+            INSERT INTO predictions (user_id, mode, fighter1, fighter2, result, confidence, created_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (user_id, mode, fighter1, fighter2, result, confidence, datetime.now()),
+        )
+        conn.commit()
+        conn.close()
+        print(f"[DB LOG] Prediction logged for user_id={user_id}, mode={mode}")
+    except Exception as e:
+        print(f"[DB ERROR] Failed to log prediction: {e}")
 
 # =====================================================
 # HOME — Fight Prediction Mode
 # =====================================================
 @app.route("/", methods=["GET", "POST"])
-# @limiter.limit("5 per minute")
 def index():
     user = session.get("user")
 
@@ -231,20 +254,12 @@ def index():
     height1_pct = height2_pct = reach1_pct = reach2_pct = 50
 
     # =====================================================
-    # 1. Handle GET /?matchup=...
+    # Handle GET /?matchup=...
     # =====================================================
-
-
     if request.method == "GET" and request.args.get("matchup"):
-
         if not user:
             return redirect(url_for("login"))
-    
-        allowed, reason = check_user_limit(user["email"])
-        if not allowed and reason == "limit_reached":
-            upgrade_message = "<p style='color:gold;text-align:center;'><strong>Free Tier Limit Reached:</strong> Upgrade to <a href='/upgrade'>CombatIQ Pro</a>.</p>"
-            return render_template("index.html", result=upgrade_message, user=user)
-    
+
         matchup = request.args.get("matchup", "").strip()
         fighters = [p.strip() for p in re.split(r"\s*vs\s*|\s*VS\s*|\s*Vs\s*", matchup) if p.strip()]
         if len(fighters) < 2:
@@ -253,25 +268,16 @@ def index():
                 result="<p>Please enter matchup as 'Fighter A vs Fighter B'</p>",
                 user=user
             )
-    
+
         fighter1, fighter2 = fighters
         return run_prediction_flow(fighter1, fighter2, user, force_refresh=False)
 
-
     # =====================================================
-    # 2. Handle POST submission
+    # Handle POST submission
     # =====================================================
     if request.method == "POST":
-
-        # Require login
         if not user:
             return redirect(url_for("login"))
-
-        # Paywall
-        allowed, reason = check_user_limit(user["email"])
-        if not allowed and reason == "limit_reached":
-            upgrade_message = "<p style='color:gold;text-align:center;'><strong>Free Tier Limit Reached:</strong> Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a> for unlimited daily predictions.</p>"
-            return render_template("index.html", result=upgrade_message, user=user)
 
         matchup = request.form.get("matchup", "").strip()
         force_refresh = "force_refresh" in request.form
@@ -287,8 +293,6 @@ def index():
             )
 
         fighter1, fighter2 = fighters
-
-        # Use same prediction flow
         return run_prediction_flow(fighter1, fighter2, user, force_refresh)
 
     # =====================================================
@@ -312,46 +316,60 @@ def index():
 def clean_name(name):
     return re.sub(r"[^a-z0-9_]+", "", name.lower().replace(" ", "_"))
 
+# =====================================================
+# FIXED PREDICTION FLOW - CACHE FIRST, THEN LIMIT CHECK
+# =====================================================
 def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
+    """
+    CORRECT FLOW:
+    1. Check cache FIRST (if not force_refresh)
+    2. If cache hit → serve immediately, NO DB insert, NO usage increment
+    3. If cache miss → check limit
+    4. If limit exceeded → redirect to upgrade
+    5. If allowed → generate prediction, cache it, log ONCE
+    """
     matchup_key = f"{clean_name(fighter1)}_vs_{clean_name(fighter2)}.json"
-
     cache_path = os.path.join(CACHE_DIR, matchup_key)
 
-    # Use cache if available
+    # =====================================================
+    # STEP 1: CHECK CACHE FIRST (if not forcing refresh)
+    # =====================================================
     if not force_refresh and os.path.exists(cache_path):
-        with open(cache_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
-    
-        # still count prediction usage
         try:
-            if user:
-                conn = get_db()
-                c = conn.cursor()
-                c.execute("SELECT id FROM users WHERE email=?", (user["email"],))
-                row = c.fetchone()
-                if row:
-                    c.execute(
-                        """
-                        INSERT INTO predictions (user_id, mode, fighter1, fighter2, result, confidence)
-                        VALUES (?, ?, ?, ?, ?, ?)
-                        """,
-                        (
-                            row["id"],
-                            "fight", 
-                            data["fighter1"],
-                            data["fighter2"], 
-                            data["result"], 
-                            data["confidence"]
-                        ),
-                    )
-                    conn.commit()
-                conn.close()
-        except Exception as e:
-            print(f"[DB ERROR] Cache prediction log failed: {e}")
+            with open(cache_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            
+            print(f"[CACHE HIT] Serving cached prediction for {fighter1} vs {fighter2}")
+            
+            # CRITICAL: Cached predictions do NOT increment usage
+            # Just serve the data directly
+            return render_template("index.html", **data, user=user)
         
-        return render_template("index.html", **data, user=user)
+        except Exception as e:
+            print(f"[CACHE ERROR] Failed to load cache: {e}")
+            # Fall through to generation
 
+    # =====================================================
+    # STEP 2: CACHE MISS - CHECK IF USER CAN GENERATE NEW PREDICTION
+    # =====================================================
+    email = user.get("email") if user else None
+    allowed, user_id, plan = can_user_predict(email)
 
+    if not allowed:
+        print(f"[LIMIT REACHED] User {email} hit free tier limit")
+        upgrade_message = (
+            "<p style='color:gold;text-align:center;'>"
+            "<strong>Free Tier Limit Reached:</strong> "
+            "Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a> "
+            "for unlimited daily predictions."
+            "</p>"
+        )
+        return render_template("index.html", result=upgrade_message, user=user)
+
+    # =====================================================
+    # STEP 3: GENERATE NEW PREDICTION
+    # =====================================================
+    print(f"[GENERATING] New prediction for {fighter1} vs {fighter2}")
 
     # Scrape stats
     stats1 = scrape_fighter_stats(fighter1, force_refresh=force_refresh)
@@ -369,7 +387,6 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
     height1_pct, height2_pct = normalize_bar(h1, h2)
     reach1_pct, reach2_pct = normalize_bar(r1, r2)
 
-    # Better structured formatting prompt
     prompt = f"""
 Analyze the fight between {fighter1} and {fighter2}.
 
@@ -393,8 +410,6 @@ Required sections:
 Write clean, concise analysis with natural spacing.
 """
 
-
-
     try:
         response = client.chat.completions.create(
             model=GPT_MODEL,
@@ -408,10 +423,13 @@ Write clean, concise analysis with natural spacing.
         confidence = estimate_confidence(result)
 
     except Exception as e:
+        print(f"[API ERROR] OpenAI call failed: {e}")
         result = "<p>Analysis unavailable. Showing stat based summary instead.</p>"
         confidence = 70
 
-    # Cache save
+    # =====================================================
+    # STEP 4: CACHE THE RESULT
+    # =====================================================
     cache_data = {
         "fighter1": fighter1,
         "fighter2": fighter2,
@@ -425,45 +443,25 @@ Write clean, concise analysis with natural spacing.
         "reach2_pct": reach2_pct,
     }
 
-    with open(cache_path, "w", encoding="utf-8") as f:
-        json.dump(cache_data, f, indent=2, ensure_ascii=False)
-
     try:
-        if user:
-            conn = get_db()
-            c = conn.cursor()
-            c.execute("SELECT id FROM users WHERE email=?", (user["email"],))
-            row = c.fetchone()
-            if row:
-                c.execute(
-                    """
-                    INSERT INTO predictions (user_id, mode, fighter1, fighter2, result, confidence)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        row["id"],
-                        "fight",
-                        fighter1,
-                        fighter2,
-                        result,
-                        confidence,
-                    ),
-                )
-                conn.commit()
-            conn.close()
+        with open(cache_path, "w", encoding="utf-8") as f:
+            json.dump(cache_data, f, indent=2, ensure_ascii=False)
+        print(f"[CACHE SAVED] {cache_path}")
     except Exception as e:
-        print(f"[DB ERROR] Fresh prediction log failed: {e}")
+        print(f"[CACHE ERROR] Failed to save cache: {e}")
 
-
+    # =====================================================
+    # STEP 5: LOG PREDICTION (ONLY ONCE, ONLY FOR NEW GENERATIONS)
+    # =====================================================
+    log_prediction(user_id, "fight", fighter1, fighter2, result, confidence)
 
     return render_template("index.html", **cache_data, user=user)
 
 
 # =====================================================
-# BETTING MODE
+# BETTING MODE - FIXED WITH SAME PATTERN
 # =====================================================
 @app.route("/betting", methods=["GET", "POST"])
-# @limiter.limit("5 per minute")
 def betting():
     prediction = None
     fighter = stat = ""
@@ -493,14 +491,23 @@ def betting():
             print("[WARN] Failed to save recent prediction:", e)
 
     if request.method == "POST":
-        # --- Paywall enforcement ---
-        if user:
-            allowed, reason = check_user_limit(user["email"])
-            if not allowed and reason == "limit_reached":
-                upgrade_message = "<p style='color:gold;text-align:center;'><strong>Free Tier Limit Reached:</strong> Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a> for unlimited daily predictions.</p>"
-                return render_template("betting.html", prediction=upgrade_message, user=user)
-        else:
+        # Require login
+        if not user:
             return redirect(url_for("login"))
+
+        # Check limit BEFORE processing
+        email = user.get("email")
+        allowed, user_id, plan = can_user_predict(email)
+
+        if not allowed:
+            upgrade_message = (
+                "<p style='color:gold;text-align:center;'>"
+                "<strong>Free Tier Limit Reached:</strong> "
+                "Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a> "
+                "for unlimited daily predictions."
+                "</p>"
+            )
+            return render_template("betting.html", prediction=upgrade_message, user=user)
 
         fighter = request.form.get("fighter", "").strip()
         stat = request.form.get("stat", "").lower().strip()
@@ -572,25 +579,8 @@ def betting():
                     "timestamp": str(datetime.now()),
                 })
 
-                # --- Save to Database ---
-                try:
-                    conn = get_db()
-                    c = conn.cursor()
-                    user_id = None
-                    if user:
-                        c.execute("SELECT id FROM users WHERE email=?", (user["email"],))
-                        row = c.fetchone()
-                        if row:
-                            user_id = row["id"]
-
-                    c.execute(
-                        "INSERT INTO predictions (user_id, mode, fighter1, fighter2, result, confidence, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                        (user_id, "betting", fighter, stat, pick, confidence, datetime.now()),
-                    )
-                    conn.commit()
-                    conn.close()
-                except Exception as e:
-                    print(f"[DB ERROR] Failed to log betting prediction: {e}")
+                # Log to DB (only once per new generation)
+                log_prediction(user_id, "betting", fighter, stat, pick, confidence)
 
     recent_predictions = []
     if os.path.exists(RECENT_PATH):
@@ -648,12 +638,16 @@ def upgrade():
         return redirect(url_for("login"))
 
     # Fetch plan for display
-    conn = get_db()
-    c = conn.cursor()
-    c.execute("SELECT plan FROM users WHERE email=?", (user["email"],))
-    row = c.fetchone()
-    plan = row["plan"] if row else "free"
-    conn.close()
+    try:
+        conn = get_db()
+        c = conn.cursor()
+        c.execute("SELECT plan FROM users WHERE email=?", (user["email"],))
+        row = c.fetchone()
+        plan = row["plan"] if row and row["plan"] else "free"
+        conn.close()
+    except Exception as e:
+        print(f"[DB ERROR] Failed to fetch plan: {e}")
+        plan = "free"
 
     return render_template(
         "upgrade.html",
@@ -714,12 +708,10 @@ def cancel():
     user = session.get("user")
     return render_template("cancel.html", user=user)
 
-
 # =====================================================
 # STRIPE WEBHOOK ENDPOINT
 # =====================================================
 @app.route("/webhook", methods=["POST"])
-# @limiter.exempt
 def stripe_webhook():
     payload = request.data
     sig_header = request.headers.get("Stripe-Signature")
@@ -741,7 +733,6 @@ def stripe_webhook():
             session_data.get("customer_email")
             or (session_data.get("customer_details") or {}).get("email")
         )
-
 
         if email:
             try:
