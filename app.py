@@ -299,7 +299,7 @@ def index():
     # =====================================================
     if request.method == "GET" and request.args.get("matchup"):
         matchup = request.args.get("matchup", "").strip()
-        fighters = [p.strip() for p in re.split(r"\s*vs\s*|\s*VS\s*|\s*Vs\s*", matchup) if p.strip()]
+        fighters = [p.strip() for p in re.split(r"\s+vs\s+", matchup, flags=re.IGNORECASE) if p.strip()]
         if len(fighters) != 2:
             return render_template(
                 "index.html",
@@ -326,7 +326,7 @@ def index():
         matchup = request.form.get("matchup", "").strip()
         force_refresh = "force_refresh" in request.form
 
-        fighters = [p.strip() for p in re.split(r"\s*vs\s*|\s*VS\s*|\s*Vs\s*", matchup) if p.strip()]
+        fighters = [p.strip() for p in re.split(r"\s+vs\s+", matchup, flags=re.IGNORECASE) if p.strip()]
         if len(fighters) != 2:
             return render_template(
                 "index.html",
