@@ -303,7 +303,7 @@ def index():
         if len(fighters) != 2:
             return render_template(
                 "index.html",
-                result="<p>Please enter matchup as 'Fighter A vs Fighter B'</p>",
+                result=None,
                 fighter1="",
                 fighter2="",
                 stats1={},
@@ -330,7 +330,7 @@ def index():
         if len(fighters) != 2:
             return render_template(
                 "index.html",
-                result="<p>Please enter matchup as 'Fighter A vs Fighter B'</p>",
+                result=None,
                 fighter1="",
                 fighter2="",
                 stats1={},
