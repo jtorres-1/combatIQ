@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Sign In - CombatIQ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Inter, sans-serif;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex items-center justify-center px-4">
+  
+  <div class="max-w-md w-full bg-neutral-900 border border-neutral-800 rounded-xl p-8 text-center">
+    
+    <div class="mb-6">
+      <span class="text-6xl">🥊</span>
+    </div>
+    
+    <h1 class="text-3xl font-bold text-red-400 mb-4">You've Seen What It Can Do</h1>
+    
+    <p class="text-neutral-300 mb-2">
+      Sign in with Google to unlock:
+    </p>
+    
+    <ul class="text-left text-neutral-300 mb-6 mx-auto max-w-xs space-y-2">
+      <li>✅ 1 free prediction per day</li>
+      <li>✅ Save your prediction history</li>
+      <li>✅ Access betting mode</li>
+      <li>✅ Upgrade option for unlimited</li>
+    </ul>
+    
+    <a href="{{ url_for('login') }}" 
+       class="block w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg mb-4 transition">
+      Sign In with Google (Free)
+    </a>
+    
+    <p class="text-sm text-neutral-400 mb-6">
+      Your first prediction was: <span class="text-yellow-400">{{ fighter1 }} vs {{ fighter2 }}</span>
+    </p>
+    
+    <p class="text-xs text-neutral-500">
+      No credit card required. Takes 5 seconds.
+    </p>
+  </div>
+
+</body>
+</html>
