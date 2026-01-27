@@ -471,11 +471,11 @@ Return BEAUTIFULLY FORMATTED HTML that displays cleanly inside a narrow content 
 Use clear structure, spacing, and readable formatting.
 
 Formatting rules:
-• Use <h3> section headers using this style: <h3 class='section-title'>Title</h3>
-• Use <p> for paragraphs, but keep paragraphs short (2 to 3 sentences).
-• Add spacing between sections using: <div class='spacer'></div>
-• Use bullet points (<ul><li>) where helpful.
-• NO code blocks, no markdown.
+- Use <h3> section headers using this style: <h3 class='section-title'>Title</h3>
+- Use <p> for paragraphs, but keep paragraphs short (2 to 3 sentences).
+- Add spacing between sections using: <div class='spacer'></div>
+- Use bullet points (<ul><li>) where helpful.
+- NO code blocks, no markdown.
 
 Required sections:
 1. <h3 class='section-title'>Striking</h3>
@@ -583,13 +583,6 @@ def betting():
         allowed, user_id, plan = can_user_predict(email, None, None)
 
         if not allowed:
-            upgrade_message = (
-                "<p style='color:gold;text-align:center;'>"
-                "<strong>Free Tier Limit Reached:</strong> "
-                "Upgrade to <a href='/upgrade' style='color:deepskyblue;'>CombatIQ Pro</a> "
-                "for unlimited daily predictions."
-                "</p>"
-            )
             return redirect(url_for("upgrade"))
 
         fighter = request.form.get("fighter", "").strip()
