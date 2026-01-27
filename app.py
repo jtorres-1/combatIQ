@@ -1,8 +1,8 @@
 # app.py — CombatIQ Fight Predictor + Betting Mode + User History + Free/Pro Paywall System + Stripe
+from datetime import datetime, date, timedelta
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, abort
 from openai import OpenAI
 import os, re, json, random, sys, logging, sqlite3
-from datetime import datetime, date
 from dotenv import load_dotenv
 from fighter_scraper import scrape_fighter_stats
 from flask_limiter import Limiter
@@ -57,6 +57,8 @@ def safe_stat_value(stat, fallback=175):
 load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "supersecretkey")
+app.config["PERMANENT_SESSION_LIFETIME"] = 2592000  # 30 days in seconds
+app.permanent_session_lifetime = 2592000
 
 if os.getenv("FLASK_ENV") == "production":
     app.config["SESSION_COOKIE_SAMESITE"] = "None"
@@ -314,25 +316,27 @@ def index():
     # =====================================================
     # Handle POST submission
     # =====================================================
-    if request.method == "POST":
-        if not user:
-            return redirect(url_for("login"))
-
-        matchup = request.form.get("matchup", "").strip()
-        force_refresh = "force_refresh" in request.form
-
+    # =====================================================
+    # Handle GET /?matchup=...
+    # =====================================================
+    if request.method == "GET" and request.args.get("matchup"):
+        matchup = request.args.get("matchup", "").strip()
         fighters = [p.strip() for p in re.split(r"\s*vs\s*|\s*VS\s*|\s*Vs\s*", matchup) if p.strip()]
         if len(fighters) < 2:
             return render_template(
                 "index.html",
                 result="<p>Please enter matchup as 'Fighter A vs Fighter B'</p>",
-                fighter1="",
-                fighter2="",
                 user=user
             )
 
         fighter1, fighter2 = fighters
-        return run_prediction_flow(fighter1, fighter2, user, force_refresh)
+        return run_prediction_flow(fighter1, fighter2, user, force_refresh=False)
+
+    # =====================================================
+    # Handle POST submission
+    # =====================================================
+    if request.method == "POST":
+        matchup = request.form.get("matchup", "").strip()
 
     # =====================================================
     # Default render
@@ -370,6 +374,24 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
     matchup_key = f"{clean_name(fighter1)}_vs_{clean_name(fighter2)}.json"
     cache_path = os.path.join(CACHE_DIR, matchup_key)
 
+    # =====================================================
+    # ANONYMOUS USER HANDLING
+    # =====================================================
+    if not user:
+        # Check if they've used their free anonymous prediction
+        if session.get("anonymous_used"):
+            # Already used - show signup gate
+            return render_template(
+                "signup_gate.html",
+                fighter1=fighter1,
+                fighter2=fighter2
+            )
+        else:
+            # First visit - allow one prediction and mark as used
+            session["anonymous_used"] = True
+            print("[ANONYMOUS] First prediction allowed")
+    
+    # Continue with existing cache check...
     # =====================================================
     # STEP 1: CHECK CACHE FIRST (if not forcing refresh)
     # =====================================================
