@@ -300,13 +300,13 @@ def index():
     if request.method == "GET" and request.args.get("matchup"):
         matchup = request.args.get("matchup", "").strip()
         fighters = [p.strip() for p in re.split(r"\s*vs\s*|\s*VS\s*|\s*Vs\s*", matchup) if p.strip()]
-        if len(fighters) < 2:
+        if len(fighters) != 2:  # Changed from < 2 to != 2
             return render_template(
                 "index.html",
                 result="<p>Please enter matchup as 'Fighter A vs Fighter B'</p>",
                 user=user
             )
-
+        
         fighter1, fighter2 = fighters
         return run_prediction_flow(fighter1, fighter2, user, force_refresh=False)
 
@@ -318,15 +318,13 @@ def index():
         force_refresh = "force_refresh" in request.form
 
         fighters = [p.strip() for p in re.split(r"\s*vs\s*|\s*VS\s*|\s*Vs\s*", matchup) if p.strip()]
-        if len(fighters) < 2:
+        if len(fighters) != 2:  # Changed from < 2 to != 2
             return render_template(
                 "index.html",
                 result="<p>Please enter matchup as 'Fighter A vs Fighter B'</p>",
-                fighter1="",
-                fighter2="",
                 user=user
             )
-
+        
         fighter1, fighter2 = fighters
         return run_prediction_flow(fighter1, fighter2, user, force_refresh)
 
