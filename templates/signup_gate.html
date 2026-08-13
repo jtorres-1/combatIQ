@@ -14,39 +14,37 @@
   </style>
 </head>
 <body class="min-h-screen flex items-center justify-center px-4">
-  
+
   <div class="max-w-md w-full bg-neutral-900 border border-neutral-800 rounded-xl p-8 text-center">
-    
+
     <div class="mb-6">
       <span class="text-6xl">🥊</span>
     </div>
-    
-    <h1 class="text-3xl font-bold text-red-400 mb-4">You've Seen What It Can Do</h1>
-    
-    <p class="text-neutral-300 mb-2">
-      Sign in with Google to unlock:
+
+    <h1 class="text-3xl font-bold text-red-400 mb-3">You've Used Today's Free Predictions</h1>
+
+    <p class="text-neutral-300 mb-6">
+      You've used your {{ guest_limit }} free predictions for today as a guest.
+      Create a free account for {{ account_limit }} predictions a day, plus saved history and betting mode.
     </p>
-    
-    <ul class="text-left text-neutral-300 mb-6 mx-auto max-w-xs space-y-2">
-      <li>✅ 1 free prediction per day</li>
-      <li>✅ Save your prediction history</li>
-      <li>✅ Access betting mode</li>
-      <li>✅ Upgrade option for unlimited</li>
-    </ul>
-    
-    <a href="{{ url_for('login') }}" 
-       class="block w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg mb-4 transition">
-      Sign In with Google (Free)
+
+    <a href="{{ url_for('login') }}"
+       class="block w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 rounded-lg mb-3 transition">
+      Create Free Account with Google
     </a>
-    
-    <p class="text-sm text-neutral-400 mb-6">
-      Your first prediction was: <span class="text-yellow-400">{{ fighter1 }} vs {{ fighter2 }}</span>
+
+    <a href="{{ url_for('upgrade') }}"
+       class="block w-full bg-yellow-400 hover:bg-yellow-300 text-black font-semibold py-3 rounded-lg mb-4 transition">
+      Or Skip to Unlimited (CombatIQ Pro)
+    </a>
+
+    <p class="text-sm text-neutral-400 mb-2">
+      Your last prediction was: <span class="text-yellow-400">{{ fighter1 }} vs {{ fighter2 }}</span>
     </p>
-    
+
     <p class="text-xs text-neutral-500">
-      No credit card required. Takes 5 seconds.
+      Your free predictions reset tomorrow. No credit card needed to create an account.
     </p>
   </div>
-
 </body>
 </html>
