@@ -6,12 +6,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
     body {
       background: #000;
       color: white;
-      font-family: Inter, sans-serif;
+      font-family: 'Inter', sans-serif;
+    }
+
+    h1, h2, .title {
+      font-family: 'Space Grotesk', sans-serif;
     }
 
     @media (max-width: 640px) {
@@ -35,7 +41,7 @@
 
   <!-- NAV -->
   <nav class="w-full max-w-6xl border-b border-neutral-800 py-4 flex justify-between items-center">
-    <h1 class="text-3xl font-bold text-red-500">⚔️ Combat IQ</h1>
+    <h1 class="text-3xl font-bold text-red-500">Combat IQ</h1>
 
     <!-- Desktop nav -->
     <div class="hidden sm:flex gap-6 text-sm items-center">
@@ -47,7 +53,7 @@
       <a class="text-yellow-400 hover:text-yellow-300" href="/upgrade">Upgrade</a>
 
       {% if user and user.email %}
-      <span class="text-xs text-gray-400">Signed in as 
+      <span class="text-xs text-gray-400">Signed in as
         <span class="text-yellow-400">{{ user.email }}</span></span>
       <a class="text-xs text-red-400 hover:text-red-300" href="{{ url_for('logout') }}">Logout</a>
       {% else %}
@@ -67,7 +73,7 @@
     <a href="/upgrade" class="text-yellow-400">Upgrade</a>
 
     {% if user and user.email %}
-    <span class="text-xs text-gray-400">Signed in as 
+    <span class="text-xs text-gray-400">Signed in as
       <span class="text-yellow-400">{{ user.email }}</span></span>
     <a href="{{ url_for('logout') }}" class="text-red-400 text-sm">Logout</a>
     {% else %}
@@ -77,12 +83,11 @@
 
   <!-- MAIN CONTENT -->
   <div class="plan bg-neutral-900 border border-neutral-800 rounded-2xl shadow-lg mt-16 p-8 max-w-sm w-full text-center">
-    
+
     <h1 class="title text-yellow-400 text-3xl font-extrabold mb-3">CombatIQ Pro</h1>
 
     <p class="text-neutral-300 mb-4">
-      Unlimited UFC fight predictions and betting stat analysis — no daily limits, no guessing.
-
+      Every UFC card, every matchup, no daily cap.
     </p>
 
     <ul class="features text-left mx-auto mb-5 max-w-xs text-neutral-300 leading-relaxed">
@@ -96,19 +101,19 @@
     <div class="price text-yellow-400 font-bold text-3xl mb-6">$9.99 per month</div>
 
     <p class="text-sm text-neutral-400 mb-4">
-      Free users are limited to <span class="text-yellow-400 font-semibold">1 prediction per day</span>.
+      Guests get <span class="text-yellow-400 font-semibold">{{ guest_limit }} free predictions a day</span>.
+      Free accounts get <span class="text-yellow-400 font-semibold">{{ account_limit }} a day</span> plus saved history and betting mode.
     </p>
-
 
     {% if plan == "pro" %}
       <p class="text-green-400 font-semibold mb-4">
-        ✓ You are already on CombatIQ Pro.
+        You're already on CombatIQ Pro.
       </p>
       <a href="/" class="text-sm text-gray-300 hover:text-white">← Back to CombatIQ</a>
 
     {% else %}
       <form action="{{ url_for('create_checkout_session') }}" method="POST">
-        <button type="submit" 
+        <button type="submit"
           class="btn bg-yellow-400 text-black w-full font-semibold rounded-lg py-3 hover:bg-yellow-300 transition">
           Unlock Unlimited Predictions
         </button>
