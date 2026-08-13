@@ -373,11 +373,19 @@ def clean_name(name):
 def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
     """
     CORRECT FLOW:
-    1. Check cache FIRST (if not force_refresh)
-    2. If cache hit → serve immediately, NO DB insert, NO usage increment
-    3. If cache miss → check limit
-    4. If limit exceeded → redirect to upgrade
-    5. If allowed → generate prediction, cache it, log ONCE
+    1. Anonymous first-time visitor gets marked and flagged to skip the paywall
+       check entirely for this one request, previously they were marked allowed
+       here but then immediately blocked by can_user_predict(email=None), which
+       always returns False for a missing email. That silently broke the
+       advertised "first prediction free, no login required" flow for any
+       matchup not already sitting in cache.
+    2. Check cache (if not force_refresh). If cache hit, serve immediately,
+       no DB insert, no usage increment.
+    3. If cache miss and not an anonymous first use, check the real limit.
+    4. If limit exceeded, redirect to upgrade.
+    5. If allowed, generate prediction, cache it, log once (log_prediction
+       already no-ops when user_id is None, so anonymous generations are
+       never written to the predictions table).
     """
     matchup_key = f"{clean_name(fighter1)}_vs_{clean_name(fighter2)}.json"
     cache_path = os.path.join(CACHE_DIR, matchup_key)
@@ -385,6 +393,8 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
     # =====================================================
     # ANONYMOUS USER HANDLING
     # =====================================================
+    is_anonymous_first_use = False
+
     if not user:
         # Check if they've used their free anonymous prediction
         if session.get("anonymous_used"):
@@ -397,9 +407,9 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
         else:
             # First visit - allow one prediction and mark as used
             session["anonymous_used"] = True
+            is_anonymous_first_use = True
             print("[ANONYMOUS] First prediction allowed")
-    
-    # Continue with existing cache check...
+
     # =====================================================
     # STEP 1: CHECK CACHE FIRST (if not forcing refresh)
     # =====================================================
@@ -432,11 +442,16 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
     # =====================================================
     # STEP 2: CACHE MISS - CHECK IF USER CAN GENERATE NEW PREDICTION
     # =====================================================
-    email = user.get("email") if user else None
-    allowed, user_id, plan = can_user_predict(email, fighter1, fighter2)
+    if is_anonymous_first_use:
+        # This request already earned its free pass above, skip the real
+        # paywall check entirely so it can't be blocked by a missing email.
+        allowed, user_id, plan = True, None, "anonymous"
+    else:
+        email = user.get("email") if user else None
+        allowed, user_id, plan = can_user_predict(email, fighter1, fighter2)
 
     if not allowed:
-        print(f"[LIMIT REACHED] User {email} hit free tier limit")
+        print(f"[LIMIT REACHED] User {user.get('email') if user else 'anonymous'} hit free tier limit")
         return redirect(url_for("upgrade"))
 
     # =====================================================
