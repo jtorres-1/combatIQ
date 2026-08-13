@@ -78,6 +78,29 @@ STRIPE_PRICE_ID = os.getenv("STRIPE_PRICE_ID")
 DOMAIN = os.getenv("DOMAIN", "http://127.0.0.1:5050")
 
 # ---------------------------
+# Tier limits
+# ---------------------------
+# Guests (no account) get a real taste of the product before any signup ask,
+# per 2026 freemium research: ungated trial use converts as well or better
+# than gating immediately, because people convert after feeling real value,
+# not before. Free accounts get more than guests so creating an account is
+# actually worth it, not identical to staying anonymous.
+GUEST_DAILY_LIMIT = 3
+FREE_ACCOUNT_DAILY_LIMIT = 5
+
+def get_guest_usage():
+    """Returns how many predictions this session's guest has used today.
+    Resets automatically once the stored date no longer matches today."""
+    today = date.today().isoformat()
+    if session.get("guest_date") != today:
+        session["guest_date"] = today
+        session["guest_count"] = 0
+    return session.get("guest_count", 0)
+
+def increment_guest_usage():
+    session["guest_count"] = session.get("guest_count", 0) + 1
+
+# ---------------------------
 # Init Limiter + Logging
 # ---------------------------
 # limiter = Limiter(get_remote_address, app=app, default_limits=["5 per minute"])
@@ -101,7 +124,7 @@ def get_db():
     return conn
 
 # =====================================================
-# GOOGLE OAUTH LOGIN SYSTEM
+# GOOGLE OAUTH LOGIN SYSTEM (optional, not required to try the tool)
 # =====================================================
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
@@ -174,8 +197,8 @@ def can_user_predict(email, fighter1=None, fighter2=None):
     - allowed=True means user can proceed with prediction
     - user_id is needed for DB logging after generation
     - plan indicates 'pro' or 'free'
-    
-    NEW: If fighter1 and fighter2 are provided, checks if THIS specific matchup
+
+    If fighter1 and fighter2 are provided, checks if THIS specific matchup
     was already generated today. Allows refreshes of the same matchup.
     """
     if not email:
@@ -200,20 +223,18 @@ def can_user_predict(email, fighter1=None, fighter2=None):
 
         # Free users: check if THIS specific matchup exists today
         today_start = datetime.combine(date.today(), datetime.min.time())
-        
+
         if fighter1 and fighter2:
-            # Normalize fighter names for comparison
             f1_lower = fighter1.lower().strip()
             f2_lower = fighter2.lower().strip()
-            
-            # Check if this exact matchup (either direction) was generated today
+
             c.execute(
                 """
-                SELECT COUNT(*) FROM predictions 
-                WHERE user_id=? 
-                AND created_at >= ? 
+                SELECT COUNT(*) FROM predictions
+                WHERE user_id=?
+                AND created_at >= ?
                 AND (
-                    (LOWER(TRIM(fighter1))=? AND LOWER(TRIM(fighter2))=?) OR 
+                    (LOWER(TRIM(fighter1))=? AND LOWER(TRIM(fighter2))=?) OR
                     (LOWER(TRIM(fighter1))=? AND LOWER(TRIM(fighter2))=?)
                 )
                 """,
@@ -221,17 +242,16 @@ def can_user_predict(email, fighter1=None, fighter2=None):
             )
             result = c.fetchone()
             matchup_exists = (result[0] if result else 0) > 0
-            
+
             if matchup_exists:
-                # They already generated this matchup today - allow refresh
                 print(f"[MATCHUP EXISTS] Allowing refresh for {fighter1} vs {fighter2}")
                 return True, user_id, plan
-        
+
         # Count UNIQUE matchups today (case-insensitive)
         c.execute(
             """
-            SELECT COUNT(DISTINCT LOWER(TRIM(fighter1)) || ' vs ' || LOWER(TRIM(fighter2))) 
-            FROM predictions 
+            SELECT COUNT(DISTINCT LOWER(TRIM(fighter1)) || ' vs ' || LOWER(TRIM(fighter2)))
+            FROM predictions
             WHERE user_id=? AND created_at >= ?
             """,
             (user_id, today_start)
@@ -239,12 +259,12 @@ def can_user_predict(email, fighter1=None, fighter2=None):
         result = c.fetchone()
         unique_matchups = result[0] if result else 0
 
-        # Free tier: 1 unique matchup per day
-        allowed = unique_matchups < 1
-        
+        # Free account tier: FREE_ACCOUNT_DAILY_LIMIT unique matchups per day
+        allowed = unique_matchups < FREE_ACCOUNT_DAILY_LIMIT
+
         if not allowed:
             print(f"[LIMIT] User has {unique_matchups} unique matchup(s) today")
-        
+
         return allowed, user_id, plan
 
     except Exception as e:
@@ -260,7 +280,8 @@ def can_user_predict(email, fighter1=None, fighter2=None):
 def log_prediction(user_id, mode, fighter1, fighter2, result, confidence):
     """
     Logs a prediction to the database.
-    Only called ONCE per new prediction generation.
+    Only called ONCE per new prediction generation. Guests have no user_id
+    so this silently no-ops for them, guest usage lives in the session only.
     """
     if not user_id:
         return
@@ -294,34 +315,19 @@ def index():
     confidence = None
     height1_pct = height2_pct = reach1_pct = reach2_pct = 50
 
-    # =====================================================
-    # Handle GET /?matchup=...
-    # =====================================================
     if request.method == "GET" and request.args.get("matchup"):
         matchup = request.args.get("matchup", "").strip()
         fighters = [p.strip() for p in re.split(r"\s+vs\s+", matchup, flags=re.IGNORECASE) if p.strip()]
         if len(fighters) != 2:
             return render_template(
                 "index.html",
-                result=None,
-                fighter1="",
-                fighter2="",
-                stats1={},
-                stats2={},
-                confidence=None,
-                height1_pct=50,
-                height2_pct=50,
-                reach1_pct=50,
-                reach2_pct=50,
-                user=user
+                result=None, fighter1="", fighter2="", stats1={}, stats2={},
+                confidence=None, height1_pct=50, height2_pct=50,
+                reach1_pct=50, reach2_pct=50, user=user
             )
-        
         fighter1, fighter2 = fighters
         return run_prediction_flow(fighter1, fighter2, user, force_refresh=False)
 
-    # =====================================================
-    # Handle POST submission
-    # =====================================================
     if request.method == "POST":
         matchup = request.form.get("matchup", "").strip()
         force_refresh = "force_refresh" in request.form
@@ -330,85 +336,67 @@ def index():
         if len(fighters) != 2:
             return render_template(
                 "index.html",
-                result=None,
-                fighter1="",
-                fighter2="",
-                stats1={},
-                stats2={},
-                confidence=None,
-                height1_pct=50,
-                height2_pct=50,
-                reach1_pct=50,
-                reach2_pct=50,
-                user=user
+                result=None, fighter1="", fighter2="", stats1={}, stats2={},
+                confidence=None, height1_pct=50, height2_pct=50,
+                reach1_pct=50, reach2_pct=50, user=user
             )
-        
         fighter1, fighter2 = fighters
         return run_prediction_flow(fighter1, fighter2, user, force_refresh)
 
-    # =====================================================
-    # Default render
-    # =====================================================
     return render_template(
         "index.html",
-        result=result,
-        fighter1=fighter1,
-        fighter2=fighter2,
-        stats1=stats1,
-        stats2=stats2,
-        confidence=confidence,
-        height1_pct=height1_pct,
-        height2_pct=height2_pct,
-        reach1_pct=reach1_pct,
-        reach2_pct=reach2_pct,
-        user=user,
+        result=result, fighter1=fighter1, fighter2=fighter2,
+        stats1=stats1, stats2=stats2, confidence=confidence,
+        height1_pct=height1_pct, height2_pct=height2_pct,
+        reach1_pct=reach1_pct, reach2_pct=reach2_pct, user=user,
     )
 
 def clean_name(name):
     return re.sub(r"[^a-z0-9_]+", "", name.lower().replace(" ", "_"))
 
 # =====================================================
-# FIXED PREDICTION FLOW - CACHE FIRST, THEN LIMIT CHECK
+# PREDICTION FLOW - GUEST QUOTA + CACHE FIRST + ACCOUNT LIMIT
 # =====================================================
 def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
     """
-    CORRECT FLOW:
-    1. Anonymous first-time visitor gets marked and flagged to skip the paywall
-       check entirely for this one request, previously they were marked allowed
-       here but then immediately blocked by can_user_predict(email=None), which
-       always returns False for a missing email. That silently broke the
-       advertised "first prediction free, no login required" flow for any
-       matchup not already sitting in cache.
-    2. Check cache (if not force_refresh). If cache hit, serve immediately,
-       no DB insert, no usage increment.
-    3. If cache miss and not an anonymous first use, check the real limit.
-    4. If limit exceeded, redirect to upgrade.
-    5. If allowed, generate prediction, cache it, log once (log_prediction
-       already no-ops when user_id is None, so anonymous generations are
-       never written to the predictions table).
+    Flow, in order:
+    1. Guests (no account) get GUEST_DAILY_LIMIT predictions per day, tracked
+       by session, no email or login required. This replaces the old
+       one-time-ever anonymous flag, which also had a real bug where the
+       one free pass it granted was immediately blocked by the paywall
+       check below it, since that check always fails for a missing email.
+    2. Cache check, shared by everyone. A cache hit never counts against
+       anyone's daily count, guest or account.
+    3. Cache miss: guests spend one of their daily uses, logged-in users
+       go through the real account-tier check.
+    4. If not allowed, guests see the signup/upgrade gate, account holders
+       past their limit go to the Pro upgrade page.
+    5. Generate, cache, log (log_prediction no-ops for guests since they
+       have no user_id).
     """
     matchup_key = f"{clean_name(fighter1)}_vs_{clean_name(fighter2)}.json"
     cache_path = os.path.join(CACHE_DIR, matchup_key)
 
-    # =====================================================
-    # ANONYMOUS USER HANDLING
-    # =====================================================
-    is_anonymous_first_use = False
+    is_guest = not user
+    guest_will_increment = False
 
-    if not user:
-        # Check if they've used their free anonymous prediction
-        if session.get("anonymous_used"):
-            # Already used - show signup gate
+    # =====================================================
+    # STEP 0: GUEST DAILY LIMIT (checked before cache so a guest who's
+    # out of uses can't bypass the gate just by hitting a cached matchup
+    # over and over, though cache hits themselves don't cost a use)
+    # =====================================================
+    if is_guest:
+        guest_used = get_guest_usage()
+        if guest_used >= GUEST_DAILY_LIMIT and not (
+            not force_refresh and os.path.exists(cache_path)
+        ):
             return render_template(
                 "signup_gate.html",
                 fighter1=fighter1,
-                fighter2=fighter2
+                fighter2=fighter2,
+                guest_limit=GUEST_DAILY_LIMIT,
+                account_limit=FREE_ACCOUNT_DAILY_LIMIT,
             )
-        else:
-            # First visit - allow one prediction and mark as used
-            session["anonymous_used"] = True
-            is_anonymous_first_use = True
-            print("[ANONYMOUS] First prediction allowed")
 
     # =====================================================
     # STEP 1: CHECK CACHE FIRST (if not forcing refresh)
@@ -417,18 +405,15 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
         try:
             with open(cache_path, "r", encoding="utf-8") as f:
                 data = json.load(f)
-            
-            # Validate cache has required keys
+
             required_keys = ["fighter1", "fighter2", "stats1", "stats2", "result", "confidence"]
             if not all(k in data for k in required_keys):
                 print(f"[CACHE INVALID] Missing keys in cache, regenerating")
                 os.remove(cache_path)
             else:
                 print(f"[CACHE HIT] Serving cached prediction for {fighter1} vs {fighter2}")
-                # CRITICAL: Cached predictions do NOT increment usage
-                # Just serve the data directly
                 return render_template("index.html", **data, user=user)
-        
+
         except (json.JSONDecodeError, IOError, KeyError) as e:
             print(f"[CACHE ERROR] Corrupted cache file, deleting: {e}")
             try:
@@ -437,33 +422,30 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
                 pass
         except Exception as e:
             print(f"[CACHE ERROR] Unexpected error loading cache: {e}")
-            # Fall through to generation
 
     # =====================================================
     # STEP 2: CACHE MISS - CHECK IF USER CAN GENERATE NEW PREDICTION
     # =====================================================
-    if is_anonymous_first_use:
-        # This request already earned its free pass above, skip the real
-        # paywall check entirely so it can't be blocked by a missing email.
-        allowed, user_id, plan = True, None, "anonymous"
+    if is_guest:
+        allowed, user_id, plan = True, None, "guest"
+        guest_will_increment = True
     else:
         email = user.get("email") if user else None
         allowed, user_id, plan = can_user_predict(email, fighter1, fighter2)
 
     if not allowed:
-        print(f"[LIMIT REACHED] User {user.get('email') if user else 'anonymous'} hit free tier limit")
+        print(f"[LIMIT REACHED] {'guest' if is_guest else user.get('email')} hit their tier limit")
         return redirect(url_for("upgrade"))
 
     # =====================================================
     # STEP 3: GENERATE NEW PREDICTION
     # =====================================================
     print(f"[GENERATING] New prediction for {fighter1} vs {fighter2}")
-    print(f"[DEBUG] About to scrape. fighter1={fighter1}, fighter2={fighter2}, user_email={user.get('email') if user else 'None'}")
+    print(f"[DEBUG] About to scrape. fighter1={fighter1}, fighter2={fighter2}, user_email={user.get('email') if user else 'guest'}")
 
-    # Scrape stats with comprehensive fallback
     stats1 = {}
     stats2 = {}
-    
+
     try:
         result = scrape_fighter_stats(fighter1, force_refresh=force_refresh)
         if result and isinstance(result, dict):
@@ -482,7 +464,6 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
     except Exception as e:
         print(f"[SCRAPER ERROR] Failed to scrape {fighter2}: {e}")
 
-    # Safe extraction with None guards
     h1 = safe_stat_value(stats1.get("height") if stats1 else None)
     h2 = safe_stat_value(stats2.get("height") if stats2 else None)
     r1 = safe_stat_value(stats1.get("reach") if stats1 else None)
@@ -498,7 +479,7 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
     prompt = f"""
 Analyze the fight between {fighter1} and {fighter2}.
 
-Return BEAUTIFULLY FORMATTED HTML that displays cleanly inside a narrow content box.  
+Return BEAUTIFULLY FORMATTED HTML that displays cleanly inside a narrow content box.
 Use clear structure, spacing, and readable formatting.
 
 Formatting rules:
@@ -557,22 +538,23 @@ Write clean, concise analysis with natural spacing.
         print(f"[CACHE SAVED] {cache_path}")
     except Exception as e:
         print(f"[CACHE ERROR] Failed to save cache: {e}")
-        # Non-fatal, continue
 
     # =====================================================
-    # STEP 5: LOG PREDICTION (ONLY ONCE, ONLY FOR NEW GENERATIONS)
+    # STEP 5: GUEST USAGE + LOGGING
     # =====================================================
+    if guest_will_increment:
+        increment_guest_usage()
+
     try:
         log_prediction(user_id, "fight", fighter1, fighter2, result, confidence)
     except Exception as e:
         print(f"[DB ERROR] Failed to log prediction (non-fatal): {e}")
-        # Non-fatal, user already has their result
 
     return render_template("index.html", **cache_data, user=user)
 
 
 # =====================================================
-# BETTING MODE - FIXED WITH SAME PATTERN
+# BETTING MODE - unchanged, still requires an account
 # =====================================================
 @app.route("/betting", methods=["GET", "POST"])
 def betting():
@@ -604,13 +586,10 @@ def betting():
             print("[WARN] Failed to save recent prediction:", e)
 
     if request.method == "POST":
-        # Require login
         if not user:
             return redirect(url_for("login"))
 
-        # Check limit BEFORE processing
         email = user.get("email")
-        # For betting mode, we don't have fighter names, so pass None
         allowed, user_id, plan = can_user_predict(email, None, None)
 
         if not allowed:
@@ -686,7 +665,6 @@ def betting():
                     "timestamp": str(datetime.now()),
                 })
 
-                # Log to DB (only once per new generation)
                 log_prediction(user_id, "betting", fighter, stat, pick, confidence)
 
     recent_predictions = []
@@ -741,26 +719,27 @@ def history():
 @app.route("/upgrade")
 def upgrade():
     user = session.get("user")
-    if not user:
-        return redirect(url_for("login"))
 
-    # Fetch plan for display
-    try:
-        conn = get_db()
-        c = conn.cursor()
-        c.execute("SELECT plan FROM users WHERE email=?", (user.get("email"),))
-        row = c.fetchone()
-        plan = row["plan"] if row and row["plan"] else "free"
-        conn.close()
-    except Exception as e:
-        print(f"[DB ERROR] Failed to fetch plan: {e}")
-        plan = "free"
+    plan = "guest"
+    if user:
+        try:
+            conn = get_db()
+            c = conn.cursor()
+            c.execute("SELECT plan FROM users WHERE email=?", (user.get("email"),))
+            row = c.fetchone()
+            plan = row["plan"] if row and row["plan"] else "free"
+            conn.close()
+        except Exception as e:
+            print(f"[DB ERROR] Failed to fetch plan: {e}")
+            plan = "free"
 
     return render_template(
         "upgrade.html",
         user=user,
         plan=plan,
-        stripe_public_key=STRIPE_PUBLIC_KEY
+        stripe_public_key=STRIPE_PUBLIC_KEY,
+        guest_limit=GUEST_DAILY_LIMIT,
+        account_limit=FREE_ACCOUNT_DAILY_LIMIT,
     )
 
 @app.route("/create-checkout-session", methods=["POST"])
