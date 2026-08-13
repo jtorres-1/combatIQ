@@ -194,27 +194,39 @@
 
   <!-- EXAMPLE MATCHUPS -->
   <div class="mt-12 max-w-3xl w-full">
-    <p class="text-xs tracking-widest mb-4" style="color: var(--muted);">TRY A MATCHUP</p>
+    {% if upcoming and upcoming.event_name and upcoming.matchups %}
+    <p class="text-xs tracking-widest mb-1" style="color: var(--muted);">{{ upcoming.event_name|upper }}{% if upcoming.date %} — {{ upcoming.date }}{% endif %}</p>
+    <p class="text-xs tracking-widest mb-4" style="color: var(--muted);">TRY A MATCHUP FROM THIS CARD</p>
 
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-px" style="background: var(--line);">
+      {% for m in upcoming.matchups[:6] %}
+      <a href="/?matchup={{ m.fighter1 }} vs {{ m.fighter2 }}"
+         class="p-4 transition hover:opacity-80" style="background: var(--surface);">
+        <p class="text-white font-medium">{{ m.fighter1 }} vs {{ m.fighter2 }}</p>
+      </a>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <p class="text-xs tracking-widest mb-4" style="color: var(--muted);">TRY A MATCHUP</p>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-px" style="background: var(--line);">
       <a href="/?matchup=Sean Strickland vs Khamzat Chimaev"
          class="p-4 transition hover:opacity-80" style="background: var(--surface);">
         <p class="text-white font-medium">Strickland vs Chimaev</p>
         <p class="data text-neutral-500 text-sm mt-1">61% confidence</p>
       </a>
-
       <a href="/?matchup=Petr Yan vs Cory Sandhagen"
          class="p-4 transition hover:opacity-80" style="background: var(--surface);">
         <p class="text-white font-medium">Yan vs Sandhagen</p>
         <p class="text-neutral-500 text-sm mt-1">High-pace striking matchup</p>
       </a>
-
       <a href="/?matchup=Max Holloway vs Charles Oliveira"
          class="p-4 transition hover:opacity-80" style="background: var(--surface);">
         <p class="text-white font-medium">Holloway vs Oliveira</p>
         <p class="text-neutral-500 text-sm mt-1">Volume striking vs submission threat</p>
       </a>
     </div>
+    {% endif %}
   </div>
 
   <!-- WHAT IT DOES -->
@@ -234,7 +246,7 @@
 
     <div class="p-5 text-center" style="background: var(--surface);">
       <img class="w-full h-56 object-cover rounded"
-           src="{{ (stats1.get('image') or url_for('static','fighters/fighter_placeholder.jpg')) | safe }}"
+           src="{{ (stats1.get('image') or url_for('static', filename='fighters/fighter_placeholder.jpg')) | safe }}"
            alt="{{ fighter1 }}">
       <h3 class="display text-2xl mt-3" style="color: var(--red);">{{ fighter1 }}</h3>
       <p class="data text-sm mt-2 text-neutral-300">Record: {{ stats1.get('record', 'N/A') }}</p>
@@ -245,7 +257,7 @@
 
     <div class="p-5 text-center" style="background: var(--surface);">
       <img class="w-full h-56 object-cover rounded"
-           src="{{ (stats2.get('image') or url_for('static','fighters/fighter_placeholder.jpg')) | safe }}"
+           src="{{ (stats2.get('image') or url_for('static', filename='fighters/fighter_placeholder.jpg')) | safe }}"
            alt="{{ fighter2 }}">
       <h3 class="display text-2xl mt-3" style="color: var(--red);">{{ fighter2 }}</h3>
       <p class="data text-sm mt-2 text-neutral-300">Record: {{ stats2.get('record', 'N/A') }}</p>
