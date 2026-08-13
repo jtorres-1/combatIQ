@@ -4,7 +4,7 @@ from flask import Flask, render_template, request, jsonify, session, redirect, u
 from openai import OpenAI
 import os, re, json, random, sys, logging, sqlite3
 from dotenv import load_dotenv
-from fighter_scraper import scrape_fighter_stats
+from fighter_scraper import scrape_fighter_stats, scrape_upcoming_event
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from google_auth_oauthlib.flow import Flow
@@ -80,11 +80,6 @@ DOMAIN = os.getenv("DOMAIN", "http://127.0.0.1:5050")
 # ---------------------------
 # Tier limits
 # ---------------------------
-# Guests (no account) get a real taste of the product before any signup ask,
-# per 2026 freemium research: ungated trial use converts as well or better
-# than gating immediately, because people convert after feeling real value,
-# not before. Free accounts get more than guests so creating an account is
-# actually worth it, not identical to staying anonymous.
 GUEST_DAILY_LIMIT = 3
 FREE_ACCOUNT_DAILY_LIMIT = 5
 
@@ -168,7 +163,6 @@ def callback():
 
     session["user"] = id_info
 
-    # Save user in DB if not exists
     try:
         conn = get_db()
         c = conn.cursor()
@@ -192,15 +186,6 @@ def logout():
 # FIXED PAYWALL HELPER - NULL-SAFE + CLEANER LOGIC
 # =====================================================
 def can_user_predict(email, fighter1=None, fighter2=None):
-    """
-    Returns (allowed: bool, user_id: int|None, plan: str)
-    - allowed=True means user can proceed with prediction
-    - user_id is needed for DB logging after generation
-    - plan indicates 'pro' or 'free'
-
-    If fighter1 and fighter2 are provided, checks if THIS specific matchup
-    was already generated today. Allows refreshes of the same matchup.
-    """
     if not email:
         return False, None, "none"
 
@@ -217,11 +202,9 @@ def can_user_predict(email, fighter1=None, fighter2=None):
         user_id = row["id"]
         plan = row["plan"] if row["plan"] else "free"
 
-        # Pro users always allowed
         if plan == "pro":
             return True, user_id, plan
 
-        # Free users: check if THIS specific matchup exists today
         today_start = datetime.combine(date.today(), datetime.min.time())
 
         if fighter1 and fighter2:
@@ -247,7 +230,6 @@ def can_user_predict(email, fighter1=None, fighter2=None):
                 print(f"[MATCHUP EXISTS] Allowing refresh for {fighter1} vs {fighter2}")
                 return True, user_id, plan
 
-        # Count UNIQUE matchups today (case-insensitive)
         c.execute(
             """
             SELECT COUNT(DISTINCT LOWER(TRIM(fighter1)) || ' vs ' || LOWER(TRIM(fighter2)))
@@ -259,7 +241,6 @@ def can_user_predict(email, fighter1=None, fighter2=None):
         result = c.fetchone()
         unique_matchups = result[0] if result else 0
 
-        # Free account tier: FREE_ACCOUNT_DAILY_LIMIT unique matchups per day
         allowed = unique_matchups < FREE_ACCOUNT_DAILY_LIMIT
 
         if not allowed:
@@ -278,11 +259,6 @@ def can_user_predict(email, fighter1=None, fighter2=None):
 # FIXED PREDICTION LOGGING - SINGLE CALL, NO DUPLICATES
 # =====================================================
 def log_prediction(user_id, mode, fighter1, fighter2, result, confidence):
-    """
-    Logs a prediction to the database.
-    Only called ONCE per new prediction generation. Guests have no user_id
-    so this silently no-ops for them, guest usage lives in the session only.
-    """
     if not user_id:
         return
 
@@ -319,11 +295,12 @@ def index():
         matchup = request.args.get("matchup", "").strip()
         fighters = [p.strip() for p in re.split(r"\s+vs\s+", matchup, flags=re.IGNORECASE) if p.strip()]
         if len(fighters) != 2:
+            upcoming = scrape_upcoming_event()
             return render_template(
                 "index.html",
                 result=None, fighter1="", fighter2="", stats1={}, stats2={},
                 confidence=None, height1_pct=50, height2_pct=50,
-                reach1_pct=50, reach2_pct=50, user=user
+                reach1_pct=50, reach2_pct=50, user=user, upcoming=upcoming
             )
         fighter1, fighter2 = fighters
         return run_prediction_flow(fighter1, fighter2, user, force_refresh=False)
@@ -334,21 +311,24 @@ def index():
 
         fighters = [p.strip() for p in re.split(r"\s+vs\s+", matchup, flags=re.IGNORECASE) if p.strip()]
         if len(fighters) != 2:
+            upcoming = scrape_upcoming_event()
             return render_template(
                 "index.html",
                 result=None, fighter1="", fighter2="", stats1={}, stats2={},
                 confidence=None, height1_pct=50, height2_pct=50,
-                reach1_pct=50, reach2_pct=50, user=user
+                reach1_pct=50, reach2_pct=50, user=user, upcoming=upcoming
             )
         fighter1, fighter2 = fighters
         return run_prediction_flow(fighter1, fighter2, user, force_refresh)
 
+    upcoming = scrape_upcoming_event()
     return render_template(
         "index.html",
         result=result, fighter1=fighter1, fighter2=fighter2,
         stats1=stats1, stats2=stats2, confidence=confidence,
         height1_pct=height1_pct, height2_pct=height2_pct,
         reach1_pct=reach1_pct, reach2_pct=reach2_pct, user=user,
+        upcoming=upcoming,
     )
 
 def clean_name(name):
@@ -358,33 +338,12 @@ def clean_name(name):
 # PREDICTION FLOW - GUEST QUOTA + CACHE FIRST + ACCOUNT LIMIT
 # =====================================================
 def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
-    """
-    Flow, in order:
-    1. Guests (no account) get GUEST_DAILY_LIMIT predictions per day, tracked
-       by session, no email or login required. This replaces the old
-       one-time-ever anonymous flag, which also had a real bug where the
-       one free pass it granted was immediately blocked by the paywall
-       check below it, since that check always fails for a missing email.
-    2. Cache check, shared by everyone. A cache hit never counts against
-       anyone's daily count, guest or account.
-    3. Cache miss: guests spend one of their daily uses, logged-in users
-       go through the real account-tier check.
-    4. If not allowed, guests see the signup/upgrade gate, account holders
-       past their limit go to the Pro upgrade page.
-    5. Generate, cache, log (log_prediction no-ops for guests since they
-       have no user_id).
-    """
     matchup_key = f"{clean_name(fighter1)}_vs_{clean_name(fighter2)}.json"
     cache_path = os.path.join(CACHE_DIR, matchup_key)
 
     is_guest = not user
     guest_will_increment = False
 
-    # =====================================================
-    # STEP 0: GUEST DAILY LIMIT (checked before cache so a guest who's
-    # out of uses can't bypass the gate just by hitting a cached matchup
-    # over and over, though cache hits themselves don't cost a use)
-    # =====================================================
     if is_guest:
         guest_used = get_guest_usage()
         if guest_used >= GUEST_DAILY_LIMIT and not (
@@ -398,9 +357,6 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
                 account_limit=FREE_ACCOUNT_DAILY_LIMIT,
             )
 
-    # =====================================================
-    # STEP 1: CHECK CACHE FIRST (if not forcing refresh)
-    # =====================================================
     if not force_refresh and os.path.exists(cache_path):
         try:
             with open(cache_path, "r", encoding="utf-8") as f:
@@ -412,7 +368,8 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
                 os.remove(cache_path)
             else:
                 print(f"[CACHE HIT] Serving cached prediction for {fighter1} vs {fighter2}")
-                return render_template("index.html", **data, user=user)
+                upcoming = scrape_upcoming_event()
+                return render_template("index.html", **data, user=user, upcoming=upcoming)
 
         except (json.JSONDecodeError, IOError, KeyError) as e:
             print(f"[CACHE ERROR] Corrupted cache file, deleting: {e}")
@@ -423,9 +380,6 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
         except Exception as e:
             print(f"[CACHE ERROR] Unexpected error loading cache: {e}")
 
-    # =====================================================
-    # STEP 2: CACHE MISS - CHECK IF USER CAN GENERATE NEW PREDICTION
-    # =====================================================
     if is_guest:
         allowed, user_id, plan = True, None, "guest"
         guest_will_increment = True
@@ -437,9 +391,6 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
         print(f"[LIMIT REACHED] {'guest' if is_guest else user.get('email')} hit their tier limit")
         return redirect(url_for("upgrade"))
 
-    # =====================================================
-    # STEP 3: GENERATE NEW PREDICTION
-    # =====================================================
     print(f"[GENERATING] New prediction for {fighter1} vs {fighter2}")
     print(f"[DEBUG] About to scrape. fighter1={fighter1}, fighter2={fighter2}, user_email={user.get('email') if user else 'guest'}")
 
@@ -520,9 +471,6 @@ Write clean, concise analysis with natural spacing.
         result = "<p>Analysis unavailable. Showing stat based summary instead.</p>"
         confidence = 70
 
-    # =====================================================
-    # STEP 4: CACHE THE RESULT
-    # =====================================================
     cache_data = {
         "fighter1": fighter1,
         "fighter2": fighter2,
@@ -543,9 +491,6 @@ Write clean, concise analysis with natural spacing.
     except Exception as e:
         print(f"[CACHE ERROR] Failed to save cache: {e}")
 
-    # =====================================================
-    # STEP 5: GUEST USAGE + LOGGING
-    # =====================================================
     if guest_will_increment:
         increment_guest_usage()
 
@@ -554,7 +499,8 @@ Write clean, concise analysis with natural spacing.
     except Exception as e:
         print(f"[DB ERROR] Failed to log prediction (non-fatal): {e}")
 
-    return render_template("index.html", **cache_data, user=user)
+    upcoming = scrape_upcoming_event()
+    return render_template("index.html", **cache_data, user=user, upcoming=upcoming)
 
 
 # =====================================================
