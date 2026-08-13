@@ -271,6 +271,73 @@ def scrape_ufcstats(name):
 
 
 # ------------------------------------------------------------
+# UPCOMING EVENT / CARD SCRAPER
+# ------------------------------------------------------------
+EVENT_CACHE_DIR = "event_cache"
+os.makedirs(EVENT_CACHE_DIR, exist_ok=True)
+EVENT_CACHE_TTL_SECONDS = 6 * 60 * 60  # refresh every 6 hours
+
+def scrape_upcoming_event(force_refresh=False):
+    """Pulls the next upcoming UFC event and its full fight card from
+    UFCStats. Cached for EVENT_CACHE_TTL_SECONDS so this doesn't hit the
+    site on every homepage load. Returns:
+    {"event_name": str, "date": str, "matchups": [{"fighter1": str, "fighter2": str}, ...]}
+    On any failure, returns an empty result rather than raising, callers
+    should fall back to static examples when this comes back empty.
+    """
+    cache_path = os.path.join(EVENT_CACHE_DIR, "upcoming.json")
+
+    if not force_refresh and os.path.exists(cache_path):
+        age = time.time() - os.path.getmtime(cache_path)
+        if age < EVENT_CACHE_TTL_SECONDS:
+            try:
+                with open(cache_path, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass  # fall through and re-scrape on a corrupted cache
+
+    empty = {"event_name": None, "date": None, "matchups": []}
+    try:
+        resp = safe_get("http://ufcstats.com/statistics/events/upcoming")
+        if not resp:
+            return empty
+        soup = BeautifulSoup(resp.text, "html.parser")
+
+        event_link = soup.select_one("a.b-link.b-link_style_black")
+        if not event_link:
+            return empty
+
+        event_name = event_link.get_text(strip=True)
+        event_url = event_link["href"]
+        row = event_link.find_parent("tr")
+        date_el = row.select_one(".b-statistics__date") if row else None
+        event_date = date_el.get_text(strip=True) if date_el else None
+
+        event_resp = safe_get(event_url)
+        if not event_resp:
+            return empty
+        event_soup = BeautifulSoup(event_resp.text, "html.parser")
+
+        matchups = []
+        fight_rows = event_soup.select("tr.b-fight-details__table-row")
+        for fight_row in fight_rows:
+            name_links = fight_row.select("a.b-link.b-link_style_black")
+            names = [a.get_text(strip=True) for a in name_links if a.get_text(strip=True)]
+            if len(names) >= 2:
+                matchups.append({"fighter1": names[0], "fighter2": names[1]})
+
+        result = {"event_name": event_name, "date": event_date, "matchups": matchups}
+
+        with open(cache_path, "w", encoding="utf-8") as f:
+            json.dump(result, f, indent=2, ensure_ascii=False)
+
+        return result
+    except Exception as e:
+        print(f"[EVENT SCRAPER ERROR] {e}")
+        return empty
+
+
+# ------------------------------------------------------------
 # MASTER SCRAPER
 # ------------------------------------------------------------
 def scrape_fighter_stats(name: str, force_refresh: bool = False):
