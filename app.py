@@ -479,6 +479,10 @@ def run_prediction_flow(fighter1, fighter2, user, force_refresh=False):
     prompt = f"""
 Analyze the fight between {fighter1} and {fighter2}.
 
+You MUST pick one fighter as the more likely winner. Do not present it as a
+toss-up or say "either could win." Even in a close fight, commit to one name
+based on the stronger case, and make that pick clear in the Prediction section.
+
 Return BEAUTIFULLY FORMATTED HTML that displays cleanly inside a narrow content box.
 Use clear structure, spacing, and readable formatting.
 
@@ -494,7 +498,7 @@ Required sections:
 2. <h3 class='section-title'>Grappling</h3>
 3. <h3 class='section-title'>Fight IQ</h3>
 4. <h3 class='section-title'>Recent Form</h3>
-5. <h3 class='section-title'>Prediction</h3>
+5. <h3 class='section-title'>Prediction</h3> — state the predicted winner by name in the first sentence of this section.
 
 Write clean, concise analysis with natural spacing.
 """
