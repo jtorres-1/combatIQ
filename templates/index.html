@@ -2,281 +2,293 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>⚔️ Combat IQ • Fight Predictor</title>
+  <title>Combat IQ — Fight Predictions</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #131313;
+      --line: #262626;
+      --red: #c81e1e;
+      --gold: #d4a72c;
+      --text: #f2f2f0;
+      --muted: #8a8a86;
+    }
+
     body {
-      background: #000;
-      color: #fff;
-      font-family: Inter, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .display {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.02em;
+    }
+
+    .data {
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .vs-mark {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      color: var(--red);
+      letter-spacing: 0.05em;
     }
 
     @media (max-width: 640px) {
-      .hero-title { font-size: 2.2rem; }
-      .hero-sub { font-size: 1.1rem; }
+      .hero-title { font-size: 3rem; line-height: 0.95; }
+      .vs-mark { font-size: 1.75rem; }
       .mobile-input { font-size: 1.1rem !important; padding: 1rem !important; }
       .mobile-button { font-size: 1.1rem !important; padding: 1rem !important; }
     }
 
     .section-title {
-      font-size: 1.4rem;
-      color: #ff4d4d;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      letter-spacing: 0.04em;
+      color: var(--red);
       margin-top: 1.5rem;
       margin-bottom: 0.5rem;
-      font-weight: 700;
     }
 
-    .spacer {
-      height: 1rem;
+    .spacer { height: 1rem; }
+
+    article p { margin-bottom: 1rem; line-height: 1.65; color: var(--text); }
+    article ul { margin-left: 1.2rem; margin-bottom: 1rem; list-style-type: disc; color: var(--text); }
+
+    :focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
     }
 
-    article p {
-      margin-bottom: 1rem;
-      line-height: 1.65;
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
     }
-
-    article ul {
-      margin-left: 1.2rem;
-      margin-bottom: 1rem;
-      list-style-type: disc;
-    }
-
   </style>
 </head>
 
 <body class="min-h-screen flex flex-col items-center px-4">
 
   <!-- NAVIGATION -->
-  <nav class="w-full max-w-6xl border-b border-neutral-800 py-4 flex justify-between items-center">
-    <h1 class="text-3xl font-bold text-red-500">⚔️ Combat IQ</h1>
+  <nav class="w-full max-w-6xl border-b py-4 flex justify-between items-center" style="border-color: var(--line);">
+    <h1 class="display text-2xl tracking-wide" style="color: var(--red);">COMBAT IQ</h1>
 
-    <!-- Desktop links -->
     <div class="hidden sm:flex gap-6 text-sm items-center">
-      <a class="text-gray-300 hover:text-yellow-400" href="/">Home</a>
-      <a class="text-gray-300 hover:text-yellow-400" href="/betting">Betting Mode</a>
+      <a class="hover:text-white transition" style="color: var(--muted);" href="/">Home</a>
+      <a class="hover:text-white transition" style="color: var(--muted);" href="/betting">Betting Mode</a>
 
       {% if user %}
-      <a class="text-gray-300 hover:text-yellow-400" href="/history">History</a>
+      <a class="hover:text-white transition" style="color: var(--muted);" href="/history">History</a>
       {% endif %}
 
-      <a class="bg-yellow-400 text-black font-bold px-4 py-2 rounded-md hover:bg-yellow-300 transition"
+      <a class="font-semibold px-4 py-2 rounded-md transition"
+         style="background: var(--gold); color: #0a0a0a;"
          href="/upgrade">Upgrade</a>
 
       {% if user and user.email %}
-      <span class="text-xs text-gray-400">
-        Signed in as <span class="text-yellow-400">{{ user.email }}</span>
+      <span class="text-xs" style="color: var(--muted);">
+        {{ user.email }}
       </span>
-      <a class="text-xs text-red-400 hover:text-red-300" href="{{ url_for('logout') }}">Logout</a>
+      <a class="text-xs hover:text-white transition" style="color: var(--red);" href="{{ url_for('logout') }}">Sign out</a>
       {% else %}
-      <a class="text-xs text-gray-300 hover:text-white" href="{{ url_for('login') }}">Sign in</a>
+      <a class="text-xs hover:text-white transition" style="color: var(--muted);" href="{{ url_for('login') }}">Sign in</a>
       {% endif %}
     </div>
 
-    <button id="menuBtn" class="sm:hidden text-white text-3xl">&#9776;</button>
+    <button id="menuBtn" class="sm:hidden text-white text-3xl" aria-label="Open menu">&#9776;</button>
   </nav>
 
   <!-- Mobile Dropdown -->
   <div id="mobileMenu"
-       class="hidden w-full max-w-6xl bg-neutral-900 border-b border-neutral-800 p-4 sm:hidden flex flex-col gap-3 text-base">
-    <a href="/" class="text-gray-200">Home</a>
-    <a href="/betting" class="text-gray-200">Betting Mode</a>
-
+       class="hidden w-full max-w-6xl p-4 sm:hidden flex flex-col gap-3 text-base border-b"
+       style="background: var(--surface); border-color: var(--line);">
+    <a href="/" style="color: var(--text);">Home</a>
+    <a href="/betting" style="color: var(--text);">Betting Mode</a>
     {% if user %}
-    <a href="/history" class="text-gray-200">History</a>
+    <a href="/history" style="color: var(--text);">History</a>
     {% endif %}
-
-    <a href="/upgrade" class="text-yellow-400 font-bold">Upgrade</a>
+    <a href="/upgrade" class="font-semibold" style="color: var(--gold);">Upgrade</a>
 
     {% if user and user.email %}
-    <span class="text-xs text-gray-400">Signed in as <span class="text-yellow-400">{{ user.email }}</span></span>
-    <a href="{{ url_for('logout') }}" class="text-red-400 text-sm">Logout</a>
+    <span class="text-xs" style="color: var(--muted);">{{ user.email }}</span>
+    <a href="{{ url_for('logout') }}" class="text-sm" style="color: var(--red);">Sign out</a>
     {% else %}
-    <a href="{{ url_for('login') }}" class="text-gray-200 text-sm">Sign in</a>
+    <a href="{{ url_for('login') }}" class="text-sm" style="color: var(--text);">Sign in</a>
     {% endif %}
   </div>
 
+  <!-- HERO: fight-announcement style -->
+  <section class="mt-14 w-full max-w-3xl text-center">
+    <p class="text-xs tracking-widest mb-3" style="color: var(--muted);">MAIN EVENT</p>
 
-  <!-- HERO SECTION -->
-  <section class="mt-10 w-full max-w-3xl text-center">
-
-    <h2 class="hero-title text-red-400 font-extrabold mb-4 text-3xl sm:text-5xl leading-tight">
-      Predict UFC Fights With Data Driven Accuracy
+    <h2 class="hero-title display text-6xl sm:text-7xl leading-none mb-2">
+      KNOW THE FIGHT
     </h2>
+    <div class="vs-mark my-2">BEFORE IT STARTS</div>
 
-    <p class="hero-sub text-neutral-300 mb-6 text-base sm:text-lg">
-      Try your first prediction free — no login required.
-      AI-powered breakdowns with confidence scores to help you make smarter bets.
+    <p class="text-neutral-400 mb-8 text-base sm:text-lg max-w-xl mx-auto">
+      Enter any matchup. Get real fight data, a full breakdown, and a confidence number, not a guess.
     </p>
 
     <a href="/upgrade"
-       class="inline-block mb-10 bg-yellow-400 hover:bg-yellow-300 text-black font-bold px-8 py-3 rounded-lg text-lg shadow-xl transition transform hover:scale-[1.03]">
-       Upgrade to Pro Access
+       class="inline-block mb-10 font-semibold px-8 py-3 rounded-lg text-lg transition transform hover:scale-[1.02]"
+       style="background: var(--gold); color: #0a0a0a;">
+       Go Unlimited
     </a>
   </section>
 
-
-  <!-- SOCIAL PROOF -->
-  <div class="mt-4 mb-10 w-full max-w-3xl grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
-
-    <div class="bg-neutral-900 border border-neutral-800 rounded-lg p-4">
-      <p class="text-xl font-bold text-yellow-400">1,300+</p>
-      <p class="text-neutral-400 text-sm">Bettors reached</p>
+  <!-- SOCIAL PROOF: styled as fight-card stat line, not badge grid -->
+  <div class="mt-4 mb-10 w-full max-w-3xl">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-px" style="background: var(--line);">
+      <div class="p-4 text-center" style="background: var(--surface);">
+        <p class="data text-xl font-medium" style="color: var(--gold);">1,300+</p>
+        <p class="text-neutral-500 text-xs uppercase tracking-wide mt-1">Bettors reached</p>
+      </div>
+      <div class="p-4 text-center" style="background: var(--surface);">
+        <p class="data text-xl font-medium" style="color: var(--gold);">200+</p>
+        <p class="text-neutral-500 text-xs uppercase tracking-wide mt-1">Fights tested</p>
+      </div>
+      <div class="p-4 text-center" style="background: var(--surface);">
+        <p class="data text-xl font-medium" style="color: var(--gold);">3 sources</p>
+        <p class="text-neutral-500 text-xs uppercase tracking-wide mt-1">Fight data pulled per matchup</p>
+      </div>
     </div>
-
-    <div class="bg-neutral-900 border border-neutral-800 rounded-lg p-4">
-      <p class="text-xl font-bold text-yellow-400">200+ fights</p>
-      <p class="text-neutral-400 text-sm">Tested predictions</p>
-    </div>
-
-    <div class="bg-neutral-900 border border-neutral-800 rounded-lg p-4">
-      <p class="text-xl font-bold text-yellow-400">Multi Source</p>
-      <p class="text-neutral-400 text-sm">Real fight data</p>
-    </div>
-
   </div>
-
 
   <!-- MATCHUP FORM -->
   <section class="w-full max-w-2xl text-center">
-
     <form method="POST" class="flex flex-col sm:flex-row gap-3 w-full justify-center">
-
       <div class="relative w-full">
         <input
           id="matchupInput"
           type="text"
           name="matchup"
-          placeholder="Enter matchup (e.g., Alexander Volkanovski vs Ilia Topuria)"
+          placeholder="Fighter one vs Fighter two"
           required
-          class="mobile-input bg-neutral-900 text-white border border-neutral-700 rounded-lg flex-1 px-4 py-3 focus:ring-2 focus:ring-red-500 w-full"
+          class="mobile-input border rounded-lg flex-1 px-4 py-3 w-full"
+          style="background: var(--surface); color: var(--text); border-color: var(--line);"
         />
-
         <div id="suggestions"
-             class="absolute left-0 right-0 mt-1 bg-neutral-900 border border-neutral-700 rounded-lg hidden z-50 max-h-60 overflow-y-auto"></div>
+             class="absolute left-0 right-0 mt-1 border rounded-lg hidden z-50 max-h-60 overflow-y-auto"
+             style="background: var(--surface); border-color: var(--line);"></div>
       </div>
 
       <button
         type="submit"
-        class="mobile-button bg-red-600 hover:bg-red-700 px-8 py-3 rounded-lg font-semibold text-white transition">
-        Analyze Fight
+        class="mobile-button px-8 py-3 rounded-lg font-semibold text-white transition"
+        style="background: var(--red);">
+        Analyze
       </button>
-
     </form>
   </section>
 
-
-  <!-- EXAMPLE Fights -->
+  <!-- EXAMPLE MATCHUPS -->
   <div class="mt-12 max-w-3xl w-full">
-    <h3 class="text-xl font-bold text-red-400 mb-4">Example Fight Predictions</h3>
+    <p class="text-xs tracking-widest mb-4" style="color: var(--muted);">TRY A MATCHUP</p>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-px" style="background: var(--line);">
       <a href="/?matchup=Sean Strickland vs Khamzat Chimaev"
-         class="bg-neutral-900 border border-neutral-800 rounded-lg p-4 hover:border-red-500 transition">
-        <p class="text-white font-semibold">Strickland vs Chimaev</p>
-        <p class="text-neutral-400 text-sm">61 percent confidence</p>
+         class="p-4 transition hover:opacity-80" style="background: var(--surface);">
+        <p class="text-white font-medium">Strickland vs Chimaev</p>
+        <p class="data text-neutral-500 text-sm mt-1">61% confidence</p>
       </a>
 
       <a href="/?matchup=Petr Yan vs Cory Sandhagen"
-         class="bg-neutral-900 border border-neutral-800 rounded-lg p-4 hover:border-red-500 transition">
-        <p class="text-white font-semibold">Yan vs Sandhagen</p>
-        <p class="text-neutral-400 text-sm">High level striking battle</p>
+         class="p-4 transition hover:opacity-80" style="background: var(--surface);">
+        <p class="text-white font-medium">Yan vs Sandhagen</p>
+        <p class="text-neutral-500 text-sm mt-1">High-pace striking matchup</p>
       </a>
 
       <a href="/?matchup=Max Holloway vs Charles Oliveira"
-         class="bg-neutral-900 border border-neutral-800 rounded-lg p-4 hover:border-red-500 transition">
-        <p class="text-white font-semibold">Holloway vs Oliveira</p>
-        <p class="text-neutral-400 text-sm">Elite pace vs submission danger</p>
+         class="p-4 transition hover:opacity-80" style="background: var(--surface);">
+        <p class="text-white font-medium">Holloway vs Oliveira</p>
+        <p class="text-neutral-500 text-sm mt-1">Volume striking vs submission threat</p>
       </a>
-
     </div>
   </div>
 
-
-  <!-- WHY CombatIQ Works -->
+  <!-- WHAT IT DOES -->
   <div class="mt-14 max-w-3xl w-full">
-    <h3 class="text-xl font-bold text-red-400 mb-4">Why CombatIQ Beats Guessing</h3>
+    <p class="text-xs tracking-widest mb-4" style="color: var(--muted);">HOW IT WORKS</p>
 
     <ul class="space-y-3 text-neutral-300 text-sm">
-      <li>• Scrapes real fight data from multiple sources</li>
-      <li>• AI compares styles, tendencies, and historical patterns</li>
-      <li>• Confidence scoring to remove emotion from picks</li>
-      <li>• Full breakdowns generated in seconds</li>
+      <li class="flex gap-3"><span class="data" style="color: var(--red);">01</span> Pulls each fighter's real record, reach, height, and career stats from three data sources</li>
+      <li class="flex gap-3"><span class="data" style="color: var(--red);">02</span> Compares styles, tendencies, and recent form between the two</li>
+      <li class="flex gap-3"><span class="data" style="color: var(--red);">03</span> Gives you one confidence number instead of a coin flip</li>
     </ul>
   </div>
 
-
   <!-- RESULTS SECTION -->
   {% if result %}
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl w-full mt-12">
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-px max-w-4xl w-full mt-14" style="background: var(--line);">
 
-    <div class="bg-neutral-900 p-4 rounded-xl border border-neutral-700 text-center">
-      <img class="w-full h-56 object-cover rounded-lg"
+    <div class="p-5 text-center" style="background: var(--surface);">
+      <img class="w-full h-56 object-cover rounded"
            src="{{ (stats1.get('image') or url_for('static','fighters/fighter_placeholder.jpg')) | safe }}"
            alt="{{ fighter1 }}">
-      <h3 class="text-xl font-semibold mt-3 text-red-400">{{ fighter1 }}</h3>
-      <p><strong class="text-yellow-400">Record:</strong> {{ stats1.get('record', 'N/A') }}</p>
-      <p><strong class="text-yellow-400">Height:</strong> {{ stats1.get('height', 'N/A') }}</p>
-      <p><strong class="text-yellow-400">Reach:</strong> {{ stats1.get('reach', 'N/A') }}</p>
-      <p><strong class="text-yellow-400">Stance:</strong> {{ stats1.get('stance', 'N/A') }}</p>
+      <h3 class="display text-2xl mt-3" style="color: var(--red);">{{ fighter1 }}</h3>
+      <p class="data text-sm mt-2 text-neutral-300">Record: {{ stats1.get('record', 'N/A') }}</p>
+      <p class="data text-sm text-neutral-300">Height: {{ stats1.get('height', 'N/A') }}</p>
+      <p class="data text-sm text-neutral-300">Reach: {{ stats1.get('reach', 'N/A') }}</p>
+      <p class="data text-sm text-neutral-300">Stance: {{ stats1.get('stance', 'N/A') }}</p>
     </div>
 
-    <div class="bg-neutral-900 p-4 rounded-xl border border-neutral-700 text-center">
-      <img class="w-full h-56 object-cover rounded-lg"
+    <div class="p-5 text-center" style="background: var(--surface);">
+      <img class="w-full h-56 object-cover rounded"
            src="{{ (stats2.get('image') or url_for('static','fighters/fighter_placeholder.jpg')) | safe }}"
            alt="{{ fighter2 }}">
-      <h3 class="text-xl font-semibold mt-3 text-red-400">{{ fighter2 }}</h3>
-      <p><strong class="text-yellow-400">Record:</strong> {{ stats2.get('record', 'N/A') }}</p>
-      <p><strong class="text-yellow-400">Height:</strong> {{ stats2.get('height', 'N/A') }}</p>
-      <p><strong class="text-yellow-400">Reach:</strong> {{ stats2.get('reach', 'N/A') }}</p>
-      <p><strong class="text-yellow-400">Stance:</strong> {{ stats2.get('stance', 'N/A') }}</p>
+      <h3 class="display text-2xl mt-3" style="color: var(--red);">{{ fighter2 }}</h3>
+      <p class="data text-sm mt-2 text-neutral-300">Record: {{ stats2.get('record', 'N/A') }}</p>
+      <p class="data text-sm text-neutral-300">Height: {{ stats2.get('height', 'N/A') }}</p>
+      <p class="data text-sm text-neutral-300">Reach: {{ stats2.get('reach', 'N/A') }}</p>
+      <p class="data text-sm text-neutral-300">Stance: {{ stats2.get('stance', 'N/A') }}</p>
     </div>
 
   </div>
 
   <div class="max-w-3xl mt-10 w-full">
-    <h2 class="text-2xl text-red-400 font-bold mb-4 border-b border-red-600 pb-2">Stat Comparison</h2>
+    <p class="text-xs tracking-widest mb-4" style="color: var(--muted);">TALE OF THE TAPE</p>
 
     <div class="mb-5">
-      <div class="flex justify-between text-xs text-neutral-400 mb-1">
-        <span>Height Comparison</span>
-        <span>{{ fighter1 }} vs {{ fighter2 }}</span>
+      <div class="flex justify-between data text-xs text-neutral-400 mb-1">
+        <span>HEIGHT</span>
+        <span>{{ fighter1 }} / {{ fighter2 }}</span>
       </div>
-      <div class="h-3 bg-neutral-800 rounded-full overflow-hidden">
-        <div class="bg-red-500 h-full" style="width: {{ height1_pct }}%"></div>
+      <div class="h-2 rounded-full overflow-hidden" style="background: var(--surface);">
+        <div class="h-full" style="width: {{ height1_pct }}%; background: var(--red);"></div>
       </div>
     </div>
 
     <div>
-      <div class="flex justify-between text-xs text-neutral-400 mb-1">
-        <span>Reach Comparison</span>
-        <span>{{ fighter1 }} vs {{ fighter2 }}</span>
+      <div class="flex justify-between data text-xs text-neutral-400 mb-1">
+        <span>REACH</span>
+        <span>{{ fighter1 }} / {{ fighter2 }}</span>
       </div>
-      <div class="h-3 bg-neutral-800 rounded-full overflow-hidden">
-        <div class="bg-blue-500 h-full" style="width: {{ reach1_pct }}%"></div>
+      <div class="h-2 rounded-full overflow-hidden" style="background: var(--surface);">
+        <div class="h-full" style="width: {{ reach1_pct }}%; background: var(--gold);"></div>
       </div>
     </div>
-
   </div>
 
   {% if confidence %}
-  <div class="max-w-3xl w-full mt-8 bg-neutral-900 border border-neutral-700 rounded-lg p-4 text-center">
-    <p class="text-yellow-400 text-lg font-semibold">
-      🧠 AI Confidence Score:
-      <span class="text-white">{{ confidence }}%</span>
-    </p>
+  <div class="max-w-3xl w-full mt-8 border rounded-lg p-4 text-center" style="background: var(--surface); border-color: var(--line);">
+    <p class="text-sm uppercase tracking-wide" style="color: var(--muted);">Confidence</p>
+    <p class="data text-3xl font-medium mt-1" style="color: var(--gold);">{{ confidence }}%</p>
   </div>
   {% endif %}
 
-  <div class="max-w-3xl w-full bg-neutral-900 border border-neutral-700 rounded-lg p-6 mt-10 mb-20">
-    <h2 class="text-2xl text-red-400 font-bold mb-4">Fight IQ Report</h2>
-    <article class="prose prose-invert leading-relaxed">{{ result|safe }}</article>
+  <div class="max-w-3xl w-full border rounded-lg p-6 mt-10 mb-20" style="background: var(--surface); border-color: var(--line);">
+    <p class="text-xs tracking-widest mb-4" style="color: var(--muted);">FIGHT BREAKDOWN</p>
+    <article class="leading-relaxed">{{ result|safe }}</article>
   </div>
   {% endif %}
-
 
   <!-- JS -->
   <script>
@@ -309,7 +321,7 @@
       }
 
       box.innerHTML = matches.map(m => `
-        <div class="px-3 py-2 hover:bg-neutral-800 cursor-pointer">${m}</div>
+        <div class="px-3 py-2 cursor-pointer hover:opacity-80" style="border-bottom: 1px solid var(--line);">${m}</div>
       `).join("");
 
       box.classList.remove("hidden");
